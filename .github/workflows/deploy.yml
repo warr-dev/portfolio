@@ -84,7 +84,13 @@ jobs:
           echo "Target root for deployment: $TARGET"
 
           # 1. Sync full application to $TARGET/portfolio/
-          rsync -avz --delete -e "ssh -p $HOSTINGER_SSH_PORT" staging/portfolio/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio/"
+          # Preserving server-side .env, SQLite databases, and user uploads from --delete
+          rsync -avz --delete \
+                --exclude='.env' \
+                --exclude='database/*.sqlite*' \
+                --exclude='storage/app/public/*' \
+                -e "ssh -p $HOSTINGER_SSH_PORT" \
+                staging/portfolio/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio/"
 
           # 2. Configure public_html -> portfolio/public symlink and run optimizations
           ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
