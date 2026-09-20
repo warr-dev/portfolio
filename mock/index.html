@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warren Dalawampu — Senior Backend & Systems Software Engineer</title>
+  <meta name="description" content="Senior Full-Stack & Systems Engineer with 6+ years experience in Laravel, Node.js, C++ hardware drivers, and distributed architecture.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: '#010102',
+            surface: {
+              1: '#0f1011',
+              2: '#141516',
+              3: '#18191a',
+              4: '#191a1b',
+            },
+            hairline: {
+              DEFAULT: '#23252a',
+              strong: '#34343a',
+              tertiary: '#3e3e44',
+            },
+            ink: {
+              DEFAULT: '#f7f8f8',
+              muted: '#d0d6e0',
+              subtle: '#8a8f98',
+              tertiary: '#62666d',
+            },
+            accent: {
+              DEFAULT: '#5e6ad2',
+              hover: '#828fff',
+              focus: '#5e69d1',
+              soft: 'rgba(94, 106, 210, 0.12)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #010102;
+      color: #f7f8f8;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+    .grid-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .glow-accent {
+      background: radial-gradient(circle at 50% 0%, rgba(94, 106, 210, 0.18), transparent 70%);
+    }
+  </style>
+</head>
+<body class="selection:bg-[#5e6ad2] selection:text-white min-h-screen relative flex flex-col justify-between">
+
+  <!-- Background Ambience -->
+  <div class="fixed inset-0 grid-pattern opacity-40 pointer-events-none"></div>
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[450px] glow-accent pointer-events-none"></div>
+
+  <!-- Top Sticky Navigation Dock -->
+  <header class="sticky top-4 z-50 flex justify-center px-4 w-full">
+    <nav class="w-full max-w-4xl bg-[#0f1011]/85 backdrop-blur-md border border-[#23252a] rounded-full px-5 py-2.5 flex items-center justify-between shadow-2xl transition-all">
+      <!-- Monogram Logo -->
+      <a href="#" class="flex items-center gap-2 group">
+        <div class="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2] group-hover:border-[#5e6ad2] transition-colors">
+          W
+        </div>
+        <span class="font-medium text-sm text-[#f7f8f8] tracking-tight">warren<span class="text-[#8a8f98]">.dev</span></span>
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center gap-6 text-xs font-medium text-[#8a8f98]">
+        <a href="#recruiter-hub" class="text-[#5e6ad2] hover:text-[#828fff] transition-colors flex items-center gap-1">
+          <span>Recruiter Hub</span>
+          <span class="text-[10px] font-mono px-1 rounded bg-[#5e6ad2]/20">CV</span>
+        </a>
+        <a href="#experience" class="hover:text-[#f7f8f8] transition-colors">Experience</a>
+        <a href="#hardware-systems" class="hover:text-[#f7f8f8] transition-colors">Hardware & Systems</a>
+        <a href="#skills" class="hover:text-[#f7f8f8] transition-colors">Skills</a>
+        <a href="#contact" class="hover:text-[#f7f8f8] transition-colors">Contact</a>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <a href="Warren_Dalawampu_CV_2026.pdf" download="Warren_Dalawampu_CV_2026.pdf" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#141516] hover:bg-[#18191a] border border-[#23252a] hover:border-[#34343a] text-xs font-mono text-[#d0d6e0] transition-colors">
+          <svg class="w-3.5 h-3.5 text-[#5e6ad2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span>CV 2026.pdf</span>
+        </a>
+        <a href="#contact" class="bg-[#5e6ad2] hover:bg-[#828fff] text-white text-xs font-medium px-3.5 py-1.5 rounded-md transition-all duration-150 shadow-[0_0_16px_rgba(94,106,210,0.35)] active:scale-95">
+          Hire Warren
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 space-y-28">
+
+    <!-- Hero Section -->
+    <section class="space-y-6 pt-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Open to Senior Backend & Distributed Systems Roles</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141516] border border-[#23252a] text-xs font-mono text-[#8a8f98]">
+          <span>📍 Pasig City, Philippines (Remote Worldwide)</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-[#f7f8f8] leading-[1.08]">
+          Warren Dalawampu
+        </h1>
+        <p class="text-xl sm:text-2xl text-[#d0d6e0] font-light tracking-tight">
+          Senior Backend Developer & Systems Software Engineer
+        </p>
+      </div>
+
+      <p class="text-base sm:text-lg text-[#8a8f98] max-w-2xl leading-relaxed">
+        6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, and payment gateways across Laravel, Node.js, Linux infrastructure, and Docker.
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <a href="Warren_Dalawampu_CV_2026.pdf" download="Warren_Dalawampu_CV_2026.pdf" class="bg-[#5e6ad2] hover:bg-[#828fff] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-[0_0_20px_rgba(94,106,210,0.35)] flex items-center gap-2 active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Download Comprehensive CV (PDF)</span>
+        </a>
+        <a href="Warren_Dalawampu_Resume.pdf" download="Warren_Dalawampu_Resume.pdf" class="bg-[#0f1011] hover:bg-[#141516] text-[#d0d6e0] border border-[#23252a] hover:border-[#34343a] px-3.5 py-2 rounded-md text-xs font-mono transition-colors flex items-center gap-1.5">
+          <span>ATS 1-Page Resume</span>
+          <span class="text-[#8a8f98]">↓</span>
+        </a>
+        <a href="https://github.com/warr-dev" target="_blank" class="bg-transparent hover:bg-[#0f1011] text-[#8a8f98] hover:text-[#f7f8f8] border border-transparent hover:border-[#23252a] px-3.5 py-2 rounded-md text-xs font-mono transition-colors flex items-center gap-1.5">
+          <span>github.com/warr-dev</span>
+          <span>↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Recruiter Fast-Track Hub -->
+    <section id="recruiter-hub" class="space-y-6">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-mono text-[#5e6ad2] uppercase tracking-wider mb-1">
+            <span>⚡ Recruiter Fast-Track & Hiring Overview</span>
+          </div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Executive Summary for Technical Recruiters</h2>
+        </div>
+        <span class="font-mono text-xs text-[#62666d]">Audited 2026 Profile</span>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
+          <span class="text-[11px] font-mono text-[#62666d]">Experience</span>
+          <p class="text-xl font-semibold text-[#f7f8f8]">6+ Years</p>
+          <span class="text-[11px] text-[#8a8f98] block">Backend, IoT & Low-Level</span>
+        </div>
+        <div class="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
+          <span class="text-[11px] font-mono text-[#62666d]">Current Role</span>
+          <p class="text-base font-semibold text-[#f7f8f8] truncate">Senior Backend Dev</p>
+          <span class="text-[11px] text-[#8a8f98] block">NTT Limited Philippines</span>
+        </div>
+        <div class="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
+          <span class="text-[11px] font-mono text-[#62666d]">Education</span>
+          <p class="text-base font-semibold text-[#f7f8f8]">BSIT + MSIT</p>
+          <span class="text-[11px] text-[#8a8f98] block">BatStateU & MinSU</span>
+        </div>
+        <div class="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
+          <span class="text-[11px] font-mono text-[#62666d]">Contact</span>
+          <p class="text-xs font-mono text-[#5e6ad2] pt-1 truncate">+63 956 164 5935</p>
+          <span class="text-[11px] text-[#8a8f98] block">warrdev08@gmail.com</span>
+        </div>
+      </div>
+
+      <!-- Core Competencies Pillars -->
+      <div class="bg-[#0f1011] border border-[#23252a] rounded-xl p-6 space-y-5">
+        <h3 class="text-xs font-mono uppercase tracking-wider text-[#d0d6e0]">Key Technical Differentiators</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs leading-relaxed">
+          <div class="space-y-2">
+            <span class="font-mono text-[#5e6ad2]">01 / Casino Gaming & High-Load</span>
+            <p class="text-[#8a8f98]">
+              Built streaming servers and RESTful game APIs in Laravel/Node.js using Protobuf, Redis, and Telescope. Integrated third-party game providers, payment switches (Xendit, UnionBank), and real-time state machines.
+            </p>
+          </div>
+          <div class="space-y-2">
+            <span class="font-mono text-[#5e6ad2]">02 / Bare-Metal Hardware & C++</span>
+            <p class="text-[#8a8f98]">
+              Solely architected a standalone localized casino system from the base Ubuntu OS up: wrote proprietary C++ drivers for bill acceptors, ticket validators, and thermal printers, bridged via WebSocket servers into an Electron client.
+            </p>
+          </div>
+          <div class="space-y-2">
+            <span class="font-mono text-[#5e6ad2]">03 / Infrastructure & DevOps</span>
+            <p class="text-[#8a8f98]">
+              Deep Linux background: self-hosted GitLab + Runners, WireGuard VPNs, Cloudflare Tunnels, Dockerized environments, Portainer, BookStack, automated Telegram notification bots, and automated GitHub webhook deployments.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Career History Timeline -->
+    <section id="experience" class="space-y-8">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Professional Experience</h2>
+          <p class="text-xs text-[#8a8f98] mt-0.5">Chronological trajectory of technical leadership and hands-on execution</p>
+        </div>
+        <span class="font-mono text-xs text-[#62666d]">2019 — Present</span>
+      </div>
+
+      <div class="relative pl-6 space-y-12 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1px] before:bg-[#23252a]">
+        
+        <!-- Role 1 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#5e6ad2] border-2 border-[#010102]"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-semibold text-[#f7f8f8]">Senior Backend Developer</h3>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#5e6ad2]/15 text-[#828fff] border border-[#5e6ad2]/30">Current</span>
+            </div>
+            <span class="text-xs font-mono text-[#8a8f98]">Aug 2024 — Present</span>
+          </div>
+          <p class="text-xs font-mono text-[#5e6ad2]">NTT Limited Philippines Branch</p>
+          <ul class="text-xs text-[#8a8f98] leading-relaxed space-y-2 list-disc list-inside">
+            <li>Collaborated with senior engineering team to design scalable architecture for an enterprise online casino gaming platform.</li>
+            <li>Mentored and supervised junior developers during architectural planning, code reviews, and implementation phases.</li>
+            <li>Independently developed a localized casino system running on a LAN Ubuntu server from scratch, building from base OS up through C++ hardware drivers to an Electron client app.</li>
+            <li>Authored native C++ drivers for casino gaming terminal hardware (bill/ticket acceptors, printers, buttons, LEDs) utilizing proprietary vendor libraries and exposed via a WebSocket server.</li>
+            <li>Integrated enterprise payment providers including Xendit and UnionBank; maintained version control and CI/CD via self-hosted GitLab.</li>
+          </ul>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">PHP</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">Laravel</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">C++</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">WebSockets</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">Electron</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">Xendit</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#141516] text-[#8a8f98] border border-[#23252a]">UnionBank</span>
+          </div>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#34343a] border-2 border-[#010102]"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <h3 class="text-sm font-semibold text-[#f7f8f8]">Configuration Analyst</h3>
+            <span class="text-xs font-mono text-[#8a8f98]">Feb 2024 — Aug 2024</span>
+          </div>
+          <p class="text-xs font-mono text-[#8a8f98]">EClaro Philippines</p>
+          <ul class="text-xs text-[#8a8f98] leading-relaxed space-y-2 list-disc list-inside">
+            <li>Collaborated with multinational distributed engineering squads across the US, UK, India, Pakistan, and Russia.</li>
+            <li>Analyzed business requirements and configured enterprise SaaS insurance claims processing systems using MongoDB aggregation pipelines.</li>
+            <li>Conducted rigorous regression testing cycles to maintain regulatory compliance and auditable claims processing.</li>
+            <li>Documented technical workflows in Jira and Confluence.</li>
+          </ul>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#34343a] border-2 border-[#010102]"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <h3 class="text-sm font-semibold text-[#f7f8f8]">PHP Developer</h3>
+            <span class="text-xs font-mono text-[#8a8f98]">Apr 2023 — Feb 2024</span>
+          </div>
+          <p class="text-xs font-mono text-[#8a8f98]">1 Bit Software Development Corp.</p>
+          <ul class="text-xs text-[#8a8f98] leading-relaxed space-y-2 list-disc list-inside">
+            <li>Built and maintained high-throughput RESTful APIs and live streaming servers using Laravel and Node.js with strict TDD.</li>
+            <li>Architected backend engines for proprietary casino games and integrated external casino game providers.</li>
+            <li>Implemented Protobuf serialization, Redis caching, and database indexing to optimize game packet sizes and network latency.</li>
+            <li>Leveraged advanced Laravel features: events, observers, queue jobs, workers, scheduler, commands, and custom middleware.</li>
+            <li>Built microservice administration portals via DCAT Admin and Telegram bot notification relays.</li>
+          </ul>
+        </div>
+
+        <!-- Role 4 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#34343a] border-2 border-[#010102]"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <h3 class="text-sm font-semibold text-[#f7f8f8]">Junior Backend Developer</h3>
+            <span class="text-xs font-mono text-[#8a8f98]">Oct 2020 — Apr 2023</span>
+          </div>
+          <p class="text-xs font-mono text-[#8a8f98]">MVSoftech, Inc., Calapan</p>
+          <ul class="text-xs text-[#8a8f98] leading-relaxed space-y-2 list-disc list-inside">
+            <li>Created barcode-scanner thin-client kiosk systems for employee attendance integrated with Laravel HRIS.</li>
+            <li>Developed fillable PDF Document Management Systems and Node.js + MongoDB analytics dashboards.</li>
+            <li>Architected internal Linux infrastructure: Nextcloud, WireGuard VPNs, local DNS, reverse proxies, and self-hosted GitLab with CI/CD runners.</li>
+            <li>Built UCRM / UISP plugins broadcasting SMS via Itexmo API and automated directory file ingestion via Python daemons.</li>
+            <li>Mentored interns and conducted client system audits.</li>
+          </ul>
+        </div>
+
+        <!-- Role 5 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#34343a] border-2 border-[#010102]"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <h3 class="text-sm font-semibold text-[#f7f8f8]">Management Information System Officer</h3>
+            <span class="text-xs font-mono text-[#8a8f98]">Jul 2019 — Sep 2020</span>
+          </div>
+          <p class="text-xs font-mono text-[#8a8f98]">Mindoro State University</p>
+          <ul class="text-xs text-[#8a8f98] leading-relaxed space-y-2 list-disc list-inside">
+            <li>Engineered student enrollment web application using an MVC PHP framework.</li>
+            <li>Administered computer labs and campus network switches/routers.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Deep-Dive: Hardware & Systems Architecture -->
+    <section id="hardware-systems" class="space-y-6">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-mono text-[#5e6ad2] uppercase tracking-wider mb-1">
+            <span>Specialized Capability</span>
+          </div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Hardware I/O, C++ & Edge Engineering</h2>
+        </div>
+        <span class="font-mono text-xs text-[#62666d]">Physical to Cloud</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-[#0f1011] border border-[#23252a] p-6 rounded-xl space-y-3">
+          <div class="w-8 h-8 rounded-lg bg-[#141516] border border-[#23252a] flex items-center justify-center text-[#5e6ad2] font-mono text-xs">
+            C++
+          </div>
+          <h3 class="text-sm font-semibold text-[#f7f8f8]">Casino Terminal Hardware Integration</h3>
+          <p class="text-xs text-[#8a8f98] leading-relaxed">
+            Wrote low-level C++ drivers interfacing physical bill acceptors, ticket validators, LED controllers, and thermal printers with offline gaming machines, publishing telemetry to a local WebSocket server.
+          </p>
+        </div>
+
+        <div class="bg-[#0f1011] border border-[#23252a] p-6 rounded-xl space-y-3">
+          <div class="w-8 h-8 rounded-lg bg-[#141516] border border-[#23252a] flex items-center justify-center text-[#5e6ad2] font-mono text-xs">
+            OS
+          </div>
+          <h3 class="text-sm font-semibold text-[#f7f8f8]">Full-Stack OS-to-Client Orchestration</h3>
+          <p class="text-xs text-[#8a8f98] leading-relaxed">
+            Built an end-to-end localized system starting from Ubuntu Server provisioning, network isolation, WebSocket daemons, and Electron desktop frontend to enable offline deployment independent of cloud connectivity.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills & Tech Arsenal -->
+    <section id="skills" class="space-y-8">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Technical Arsenal</h2>
+          <p class="text-xs text-[#8a8f98] mt-0.5">Comprehensive competencies extracted from 6+ years production development</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">Backend & APIs</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Expert</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">PHP</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Laravel 7-12</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Node.js</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">C# (.NET API)</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">RESTful APIs</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Microservices</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">TDD</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">WebSockets</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">DCAT Admin</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">Databases & Streaming</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Advanced</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">MySQL</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">MongoDB</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Redis</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Memcached</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">RabbitMQ</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Protobuf</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">DevOps & Infrastructure</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Advanced</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Docker</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Devcontainer</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Linux (Ubuntu)</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">GitLab CI / Actions</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Nginx / Apache</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Cloudflare</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">WireGuard</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Portainer</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">Hardware, IoT & Low-Level</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Specialist</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">C++ Drivers</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Bill & Ticket Acceptors</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Thermal Printers</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Microcontrollers</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Barcode Kiosks</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">Frontend & Client</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Intermediate</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">ReactJS</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Inertia.js</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Electron</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">JavaScript / ES6</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Tailwind CSS</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-[#62666d]">Integrations & Scripting</h3>
+            <span class="text-[10px] font-mono text-[#5e6ad2]">Advanced</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Xendit</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">UnionBank</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Telegram Bot API</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Python Scripting</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Bash</span>
+            <span class="px-2.5 py-1 rounded bg-[#0f1011] border border-[#23252a] text-xs font-mono text-[#d0d6e0]">Itexmo SMS</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Education & Accolades -->
+    <section class="space-y-6">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Education & Certifications</h2>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-[#0f1011] border border-[#23252a] p-5 rounded-lg space-y-1">
+          <span class="text-xs font-mono text-[#5e6ad2]">Graduate Studies</span>
+          <p class="text-sm font-semibold text-[#f7f8f8]">Master of Science in Information Technology (MSIT)</p>
+          <p class="text-xs text-[#8a8f98]">Batangas State University (Alangilan Campus) · 2019 — 2021</p>
+        </div>
+        <div class="bg-[#0f1011] border border-[#23252a] p-5 rounded-lg space-y-1">
+          <span class="text-xs font-mono text-[#5e6ad2]">Undergraduate Degree & Honors</span>
+          <p class="text-sm font-semibold text-[#f7f8f8]">BS in Information Technology</p>
+          <p class="text-xs text-[#8a8f98]">Mindoro State University (2015 — 2019)</p>
+          <span class="text-xs text-[#5e6ad2] block pt-1">★ Computer Programmer of the Year (2017) · Academic Scholar (70% Tuition Discount)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direct Contact Section -->
+    <section id="contact" class="space-y-8">
+      <div class="flex items-baseline justify-between border-b border-[#23252a] pb-4">
+        <div>
+          <h2 class="text-lg font-semibold tracking-tight text-[#f7f8f8]">Connect with Warren</h2>
+          <p class="text-xs text-[#8a8f98] mt-0.5">Direct hiring channel · Available for senior engineering roles & consulting</p>
+        </div>
+      </div>
+
+      <div class="bg-[#0f1011] border border-[#23252a] rounded-xl p-6 sm:p-8 space-y-6">
+        <form id="mock-form" class="space-y-4" onsubmit="event.preventDefault(); document.getElementById('toast').classList.remove('hidden'); setTimeout(() => document.getElementById('toast').classList.add('hidden'), 4000); this.reset();">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-[#8a8f98]">Name</label>
+              <input type="text" required placeholder="Recruiter / Engineering Manager" class="w-full bg-[#141516] border border-[#23252a] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] placeholder-[#62666d] focus:outline-none focus:border-[#5e6ad2] transition-colors">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-[#8a8f98]">Email</label>
+              <input type="email" required placeholder="manager@company.com" class="w-full bg-[#141516] border border-[#23252a] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] placeholder-[#62666d] focus:outline-none focus:border-[#5e6ad2] transition-colors">
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-mono text-[#8a8f98]">Subject</label>
+            <input type="text" required placeholder="Senior Backend / Full-Stack Engineer Opportunity" class="w-full bg-[#141516] border border-[#23252a] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] placeholder-[#62666d] focus:outline-none focus:border-[#5e6ad2] transition-colors">
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-mono text-[#8a8f98]">Message</label>
+            <textarea rows="4" required placeholder="Share role details, engineering stack, timeline, or interview schedule..." class="w-full bg-[#141516] border border-[#23252a] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] placeholder-[#62666d] focus:outline-none focus:border-[#5e6ad2] transition-colors resize-none"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-[11px] font-mono text-[#62666d]">Delivered directly to warrdev08@gmail.com</span>
+            <button type="submit" class="bg-[#5e6ad2] hover:bg-[#828fff] text-white text-xs font-medium px-5 py-2.5 rounded-md transition-all duration-150 shadow-[0_0_16px_rgba(94,106,210,0.35)] active:scale-95 flex items-center gap-2">
+              <span>Send Message</span>
+              <span>→</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="toast" class="hidden p-3 rounded-md bg-[#141516] border border-emerald-500/30 text-emerald-400 text-xs font-mono flex items-center gap-2">
+          <span>✓</span>
+          <span>Inquiry transmitted. Warren will reply promptly within 24 hours.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Minimal Footer -->
+  <footer class="relative z-10 border-t border-[#23252a] bg-[#010102]/80 py-8 px-6">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#62666d]">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#5e6ad2]"></span>
+        <span>Warren Dalawampu · +63 956 164 5935 · warrdev08@gmail.com</span>
+      </div>
+      <div>
+        <span>© 2026 Warren Dalawampu. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

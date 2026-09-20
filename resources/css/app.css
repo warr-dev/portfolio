@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-canvas: #010102;
+  --color-surface-1: #0f1011;
+  --color-surface-2: #141516;
+  --color-surface-3: #18191a;
+  --color-surface-4: #191a1b;
+
+  --color-hairline: #23252a;
+  --color-hairline-strong: #34343a;
+  --color-hairline-tertiary: #3e3e44;
+
+  --color-ink: #f7f8f8;
+  --color-ink-muted: #d0d6e0;
+  --color-ink-subtle: #8a8f98;
+  --color-ink-tertiary: #62666d;
+
+  --color-accent: #5e6ad2;
+  --color-accent-hover: #828fff;
+  --color-accent-focus: #5e69d1;
+}
+
+body {
+  background-color: #010102;
+  color: #f7f8f8;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+.grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.glow-accent {
+  background: radial-gradient(circle at 50% 0%, rgba(94, 106, 210, 0.18), transparent 70%);
+}
+
+/* Linear Dark Minimalist Sleek Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #2e3138 #010102;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #010102;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #23252a;
+  border-radius: 9999px;
+  border: 2px solid #010102;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5e6ad2;
+}
+
+/* Nested containers scrollbars (modals, dropdowns, code blocks) */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #2e3138 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #23252a;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #5e6ad2;
+}

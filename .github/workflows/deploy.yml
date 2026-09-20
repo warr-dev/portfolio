@@ -1,0 +1,191 @@
+name: Deploy Portfolio to Hostinger Shared Hosting
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build Assets & Deploy to Hostinger
+    runs-on: ubuntu-latest
+    environment: prod
+
+    env:
+      HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+      HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}
+      HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+      HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+      HOSTINGER_TARGET_PATH: ${{ secrets.HOSTINGER_TARGET_PATH || '/home/' }}
+      HOSTINGER_FTP_SERVER: ${{ secrets.HOSTINGER_FTP_SERVER }}
+      HOSTINGER_FTP_USERNAME: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+      HOSTINGER_FTP_PASSWORD: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, bcmath, fileinfo, json
+          coverage: none
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Composer Dependencies
+        run: |
+          composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+      - name: Install NPM Dependencies & Build Tailwind v4 + React Assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Prepare Clean Staging Deployment Directory
+        run: |
+          mkdir -p staging/portfolio_backend
+          mkdir -p staging/public_html
+
+          # 1. Copy Laravel Backend files (excluding public static files)
+          rsync -av --exclude='public' \
+                    --exclude='node_modules' \
+                    --exclude='.git' \
+                    --exclude='tests' \
+                    --exclude='e2e' \
+                    --exclude='storage/logs/*.log' \
+                    ./ staging/portfolio_backend/
+
+          # 2. Copy Public Assets to public_html root
+          cp -r public/* staging/public_html/
+
+          # 3. Create Hostinger-optimized public_html/index.php pointing to ../portfolio_backend
+          cat << 'INDEX_EOF' > staging/public_html/index.php
+          <?php
+
+          use Illuminate\Http\Request;
+
+          define('LARAVEL_START', microtime(true));
+
+          // 1. Check maintenance mode
+          if (file_exists($maintenance = __DIR__.'/../portfolio_backend/storage/framework/maintenance.php')) {
+              require $maintenance;
+          }
+
+          // 2. Register autoloader
+          require __DIR__.'/../portfolio_backend/vendor/autoload.php';
+
+          // 3. Bootstrap application and set public path to this directory
+          $app = require_once __DIR__.'/../portfolio_backend/bootstrap/app.php';
+          $app->usePublicPath(__DIR__);
+
+          // 4. Handle HTTP request
+          $app->handleRequest(Request::capture());
+          INDEX_EOF
+
+          # 4. Ensure .htaccess is included in public_html
+          if [ -f public/.htaccess ]; then
+            cp public/.htaccess staging/public_html/.htaccess
+          fi
+
+      - name: Deploy via SSH and Rsync
+        if: env.HOSTINGER_SSH_HOST != ''
+        run: |
+          mkdir -p ~/.ssh
+          if [ -n "$HOSTINGER_SSH_KEY" ]; then
+            echo "$HOSTINGER_SSH_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+          fi
+          ssh-keyscan -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_HOST" >> ~/.ssh/known_hosts
+
+          # First, inspect remote home directory structure
+          ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'DETECT_PATHS'
+            # Determine actual user root (where public_html lives)
+            USER_ROOT="$HOME"
+            if [ ! -d "$USER_ROOT/public_html" ] && [ -d "$PWD/public_html" ]; then
+              USER_ROOT="$PWD"
+            fi
+            echo "DETECTED_USER_ROOT=$USER_ROOT"
+
+            # Cleanup misplaced directories if portfolio_backend or public_html were nested inside public_html
+            if [ -d "$USER_ROOT/public_html/portfolio_backend" ]; then
+              echo "Moving misplaced portfolio_backend from inside public_html to $USER_ROOT/portfolio_backend"
+              mv -f "$USER_ROOT/public_html/portfolio_backend" "$USER_ROOT/portfolio_backend" 2>/dev/null || true
+            fi
+            if [ -d "$USER_ROOT/public_html/public_html" ]; then
+              echo "Flattening nested public_html/public_html"
+              cp -rf "$USER_ROOT/public_html/public_html/"* "$USER_ROOT/public_html/" 2>/dev/null || true
+              rm -rf "$USER_ROOT/public_html/public_html" 2>/dev/null || true
+            fi
+            # Remove Hostinger default placeholder page
+            rm -f "$USER_ROOT/public_html/default.php" "$USER_ROOT/public_html/default.php.old.php" 2>/dev/null || true
+          DETECT_PATHS
+
+          # Detect target path based on user root
+          TARGET="${HOSTINGER_TARGET_PATH%/}"
+          # If TARGET ends with /public_html, strip it to place portfolio_backend beside public_html
+          if [[ "$TARGET" == */public_html ]]; then
+            TARGET="${TARGET%/public_html}"
+          fi
+
+          echo "Target root for deployment: $TARGET"
+
+          # Sync backend files to $TARGET/portfolio_backend/
+          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/portfolio_backend/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio_backend/"
+
+          # Sync public assets directly to $TARGET/public_html/
+          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/public_html/"
+
+          # Run post-deployment artisan commands via SSH
+          ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
+            TARGET=\"${TARGET}\"
+            if [ -d \"\$TARGET/portfolio_backend\" ]; then
+              cd \"\$TARGET/portfolio_backend\"
+            elif [ -d \"\$HOME/portfolio_backend\" ]; then
+              cd \"\$HOME/portfolio_backend\"
+            fi
+            echo \"Current working directory: \$(pwd)\"
+
+            # Detect PHP 8.3 CLI binary
+            PHP_BIN=\"php\"
+            for candidate in /opt/alt/php83/usr/bin/php /usr/bin/php8.3 /usr/bin/php83 /usr/local/bin/ea-php83 php; do
+              if [ -x \"\$candidate\" ] && \"\$candidate\" -v 2>/dev/null | grep -qE \"8\.[3-9]\"; then
+                PHP_BIN=\"\$candidate\"
+                break
+              fi
+            done
+            echo \"Using PHP: \$PHP_BIN (\$('\$PHP_BIN' -v | head -n 1))\"
+
+            if [ -f artisan ]; then
+              chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+              \$PHP_BIN artisan migrate --force || true
+              \$PHP_BIN artisan view:clear || true
+              \$PHP_BIN artisan config:clear || true
+              \$PHP_BIN artisan route:clear || true
+              \$PHP_BIN artisan config:cache || true
+              \$PHP_BIN artisan route:cache || true
+              \$PHP_BIN artisan view:cache || true
+              echo \"✓ Remote artisan optimizations completed successfully!\"
+              if [ -f storage/logs/laravel.log ]; then
+                echo \"--- Recent Laravel Log Entries ---\"
+                tail -n 25 storage/logs/laravel.log || true
+              fi
+            fi
+          '"
+
+      - name: Deploy via FTPS Fallback
+        if: env.HOSTINGER_SSH_HOST == '' && env.HOSTINGER_FTP_SERVER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: ./staging/
+          server-dir: ./
