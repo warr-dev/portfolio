@@ -96,10 +96,13 @@ To configure continuous deployment, add the following secrets in GitHub Reposito
 | `HOSTINGER_SSH_PORT` | Hostinger SSH port | `65002` |
 | `HOSTINGER_SSH_USER` | Hostinger SSH username | `u123456789` |
 | `HOSTINGER_SSH_KEY` | Private SSH key (id_rsa or ed25519) | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
-| `HOSTINGER_TARGET_PATH` | Base home directory path on server | `/home/u123456789/` |
+| `HOSTINGER_TARGET_PATH` | Base directory path on server for target domain | `/home/u102125202/domains/warrdev.site/` (or `/home/u102125202/`) |
 | `HOSTINGER_FTP_SERVER` | *(Fallback)* FTPS Server hostname | `ftp.example.com` |
-| `HOSTINGER_FTP_USERNAME` | *(Fallback)* FTPS username | `u123456789` |
+| `HOSTINGER_FTP_USERNAME` | *(Fallback)* FTPS username | `u102125202` |
 | `HOSTINGER_FTP_PASSWORD` | *(Fallback)* FTPS password | `********` |
+
+> [!NOTE]
+> On Hostinger multi-domain accounts, the web root for domains lives under `/home/uXXXX/domains/<yourdomain.com>/public_html`. Setting `HOSTINGER_TARGET_PATH` to `/home/uXXXX/domains/<yourdomain.com>/` automatically deploys backend assets to `.../domains/<yourdomain.com>/portfolio_backend` and web assets directly into `.../domains/<yourdomain.com>/public_html`.
 
 ---
 

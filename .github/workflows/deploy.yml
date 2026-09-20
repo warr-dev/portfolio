@@ -107,29 +107,6 @@ jobs:
           fi
           ssh-keyscan -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_HOST" >> ~/.ssh/known_hosts
 
-          # First, inspect remote home directory structure
-          ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'DETECT_PATHS'
-            # Determine actual user root (where public_html lives)
-            USER_ROOT="$HOME"
-            if [ ! -d "$USER_ROOT/public_html" ] && [ -d "$PWD/public_html" ]; then
-              USER_ROOT="$PWD"
-            fi
-            echo "DETECTED_USER_ROOT=$USER_ROOT"
-
-            # Cleanup misplaced directories if portfolio_backend or public_html were nested inside public_html
-            if [ -d "$USER_ROOT/public_html/portfolio_backend" ]; then
-              echo "Moving misplaced portfolio_backend from inside public_html to $USER_ROOT/portfolio_backend"
-              mv -f "$USER_ROOT/public_html/portfolio_backend" "$USER_ROOT/portfolio_backend" 2>/dev/null || true
-            fi
-            if [ -d "$USER_ROOT/public_html/public_html" ]; then
-              echo "Flattening nested public_html/public_html"
-              cp -rf "$USER_ROOT/public_html/public_html/"* "$USER_ROOT/public_html/" 2>/dev/null || true
-              rm -rf "$USER_ROOT/public_html/public_html" 2>/dev/null || true
-            fi
-            # Remove Hostinger default placeholder page
-            rm -f "$USER_ROOT/public_html/default.php" "$USER_ROOT/public_html/default.php.old.php" 2>/dev/null || true
-          DETECT_PATHS
-
           # Detect target path based on user root
           TARGET="${HOSTINGER_TARGET_PATH%/}"
           # If TARGET ends with /public_html, strip it to place portfolio_backend beside public_html
@@ -138,6 +115,28 @@ jobs:
           fi
 
           echo "Target root for deployment: $TARGET"
+
+          # First, inspect and cleanup remote directory structure
+          ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
+            TARGET=\"${TARGET}\"
+            echo \"DETECTED_TARGET=\$TARGET\"
+
+            # Ensure public_html exists inside target
+            mkdir -p \"\$TARGET/public_html\"
+
+            # Cleanup misplaced directories if portfolio_backend was nested inside public_html
+            if [ -d \"\$TARGET/public_html/portfolio_backend\" ]; then
+              echo \"Moving misplaced portfolio_backend from inside public_html to \$TARGET/portfolio_backend\"
+              mv -f \"\$TARGET/public_html/portfolio_backend\" \"\$TARGET/portfolio_backend\" 2>/dev/null || true
+            fi
+            if [ -d \"\$TARGET/public_html/public_html\" ]; then
+              echo \"Flattening nested public_html/public_html\"
+              cp -rf \"\$TARGET/public_html/public_html/\"* \"\$TARGET/public_html/\" 2>/dev/null || true
+              rm -rf \"\$TARGET/public_html/public_html\" 2>/dev/null || true
+            fi
+            # Remove Hostinger default placeholder page
+            rm -f \"\$TARGET/public_html/default.php\" \"\$TARGET/public_html/default.php.old.php\" 2>/dev/null || true
+          '"
 
           # Sync backend files to $TARGET/portfolio_backend/
           rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/portfolio_backend/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio_backend/"
