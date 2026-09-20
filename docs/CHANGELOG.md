@@ -5,6 +5,11 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-09-20
 
 ### Added
+- **Hostinger Multi-Tenant Directory Structure (`portfolio/`)**:
+  - Migrated deployment target directory from generic `laravel/` to project-specific `portfolio/`.
+  - Configured Hostinger document root symlink: `public_html -> portfolio/public`.
+  - Updated GitHub Actions CI/CD pipeline (`.github/workflows/deploy.yml`) to deploy to `staging/portfolio`, rsync with `--delete` to `$TARGET/portfolio/`, and run cache warmup from inside `portfolio/`.
+  - Updated `docs/DEPLOYMENT.md` setup guide and server architecture diagrams.
 - **Dynamic Specialized Capability Section & Zero-Entry Hiding (`HardwareSection.jsx` & `Settings.jsx`)**:
   - Made the Specialized Capabilities section ("Hardware I/O, C++ & Edge Engineering") completely dynamic and configurable via Admin Settings (`/admin/settings`).
   - Added support for custom section heading titles, subtitles/tags, and an interactive list of capability cards with custom icons (`Cpu`, `Terminal`, `CircuitBoard`, `Server`, `Radio`, `Shield`, `Database`, `Wrench`), titles, and descriptions.

@@ -6,11 +6,11 @@ This guide documents the architecture, automated CI/CD pipeline, and manual fall
 
 ## 1. Architecture Overview (Symlink Strategy)
 
-Hostinger serves files strictly from `public_html`. Under this standard architecture, the full Laravel application resides in `laravel/`, and `public_html` is connected directly as a symbolic link pointing to `laravel/public`:
+Hostinger serves files strictly from `public_html`. Under this standard architecture, the full project application resides in `{project}/` (e.g. `portfolio/`), and `public_html` is connected directly as a symbolic link pointing to `portfolio/public`:
 
 ```
 /home/u102125202/domains/warrdev.site/
-├── laravel/                    # Complete Laravel application
+├── portfolio/                  # Complete portfolio application
 │   ├── app/
 │   ├── bootstrap/
 │   ├── config/
@@ -26,7 +26,7 @@ Hostinger serves files strictly from `public_html`. Under this standard architec
 │   ├── artisan
 │   └── .env                    # Production environment secrets
 │
-└── public_html -> laravel/public # Symbolic link to Laravel public directory
+└── public_html -> portfolio/public # Symbolic link to portfolio public directory
 ```
 
 ### Connecting `public_html` via Symlink:
@@ -36,15 +36,15 @@ cd ~/domains/warrdev.site/
 # 1. Backup or remove existing directory / stale link
 rm -rf public_html
 
-# 2. Create symbolic link: public_html -> laravel/public
-ln -s laravel/public public_html
+# 2. Create symbolic link: public_html -> portfolio/public
+ln -s portfolio/public public_html
 
 # 3. Verify the link:
 ls -ld public_html
-# Output: lrwxrwxrwx ... public_html -> laravel/public
+# Output: lrwxrwxrwx ... public_html -> portfolio/public
 ```
 
-With this pattern, Laravel's default `public/index.php` and asset paths run unmodified with 100% native compatibility.
+With this pattern, the application's default `public/index.php` and asset paths run unmodified with 100% native compatibility.
 
 ---
 
@@ -122,7 +122,7 @@ LOG_CHANNEL=stack
 LOG_LEVEL=error
 
 DB_CONNECTION=sqlite
-DB_DATABASE=/home/u102125202/domains/warrdev.site/laravel/database/database.sqlite
+DB_DATABASE=/home/u102125202/domains/warrdev.site/portfolio/database/database.sqlite
 
 SESSION_DRIVER=database
 CACHE_STORE=database
@@ -131,18 +131,18 @@ QUEUE_CONNECTION=database
 
 Create the SQLite database file and set permissions:
 ```bash
-touch /home/u102125202/domains/warrdev.site/laravel/database/database.sqlite
-chmod -R 775 /home/u102125202/domains/warrdev.site/laravel/storage
-chmod -R 775 /home/u102125202/domains/warrdev.site/laravel/bootstrap/cache
+touch /home/u102125202/domains/warrdev.site/portfolio/database/database.sqlite
+chmod -R 775 /home/u102125202/domains/warrdev.site/portfolio/storage
+chmod -R 775 /home/u102125202/domains/warrdev.site/portfolio/bootstrap/cache
 ```
 
 ### Step 4: Storage Symlink
-Link the storage directory from `laravel/`:
+Link the storage directory from `portfolio/`:
 ```bash
-cd /home/u102125202/domains/warrdev.site/laravel
+cd /home/u102125202/domains/warrdev.site/portfolio
 php artisan storage:link
 ```
-The link is created at `laravel/public/storage`, which is automatically accessible through `public_html/storage` since `public_html` points directly to `laravel/public`.
+The link is created at `portfolio/public/storage`, which is automatically accessible through `public_html/storage` since `public_html` points directly to `portfolio/public`.
 
 ---
 

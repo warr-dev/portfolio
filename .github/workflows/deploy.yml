@@ -51,15 +51,16 @@ jobs:
 
       - name: Prepare Clean Staging Deployment Directory
         run: |
-          mkdir -p staging/laravel
+          mkdir -p staging/portfolio
 
-          # 1. Package complete Laravel application including compiled public assets
+          # 1. Package complete portfolio application including compiled public assets
           rsync -a -q --exclude='node_modules' \
                       --exclude='.git' \
                       --exclude='tests' \
                       --exclude='e2e' \
+                      --exclude='staging' \
                       --exclude='storage/logs/*.log' \
-                      ./ staging/laravel/
+                      ./ staging/portfolio/
 
           echo "✓ Staging directory prepared successfully."
 
@@ -75,17 +76,17 @@ jobs:
 
           # Detect target path based on user root
           TARGET="${HOSTINGER_TARGET_PATH%/}"
-          # If TARGET ends with /public_html, strip it to place laravel beside public_html
+          # If TARGET ends with /public_html, strip it to place portfolio beside public_html
           if [[ "$TARGET" == */public_html ]]; then
             TARGET="${TARGET%/public_html}"
           fi
 
           echo "Target root for deployment: $TARGET"
 
-          # 1. Sync full Laravel application to $TARGET/laravel/
-          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/laravel/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/laravel/"
+          # 1. Sync full application to $TARGET/portfolio/
+          rsync -avz --delete -e "ssh -p $HOSTINGER_SSH_PORT" staging/portfolio/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio/"
 
-          # 2. Configure public_html -> laravel/public symlink and run optimizations
+          # 2. Configure public_html -> portfolio/public symlink and run optimizations
           ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
             TARGET=\"${TARGET}\"
             echo \"Configuring Hostinger symlink on: \$TARGET\"
@@ -98,12 +99,12 @@ jobs:
               rm -f public_html
             fi
 
-            # Connect public_html via Symlink: public_html -> laravel/public
-            ln -s laravel/public public_html
+            # Connect public_html via Symlink: public_html -> portfolio/public
+            ln -s portfolio/public public_html
             ls -ld public_html
 
-            # Navigate to laravel/ and execute maintenance & cache warmup
-            cd \"\$TARGET/laravel\"
+            # Navigate to portfolio/ and execute maintenance & cache warmup
+            cd \"\$TARGET/portfolio\"
             echo \"Current working directory: \$(pwd)\"
 
             # Detect PHP 8.3 CLI binary
