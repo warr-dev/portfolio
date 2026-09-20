@@ -85,5 +85,7 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 - **Project Media Upload Pipeline & Multipart FormData Handling**:
   - Resolved media upload failure in `/admin/projects` where file objects passed via standard Inertia `useForm` options were dropped during method spoofing or attempted direct column insertion.
   - Migrated project creation and update requests to explicit `FormData` payloads via `router.post(url, formData)` with method spoofing (`_method: 'put'`).
-  - Corrected `ProjectController` to properly store uploaded files into `/storage/projects/` and strip transient `media_file` keys prior to Eloquent mass-assignment.
+- **Hostinger CI/CD Staging Directory Log Verbosity**:
+  - Replaced verbose file-by-file `rsync -av` in `.github/workflows/deploy.yml` with quiet `rsync -a -q`.
+  - Replaced noisy terminal clutter with a single clean status message (`✓ Staging directory prepared successfully.`).
 

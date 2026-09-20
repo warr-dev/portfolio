@@ -54,14 +54,14 @@ jobs:
           mkdir -p staging/portfolio_backend
           mkdir -p staging/public_html
 
-          # 1. Copy Laravel Backend files (excluding public static files)
-          rsync -av --exclude='public' \
-                    --exclude='node_modules' \
-                    --exclude='.git' \
-                    --exclude='tests' \
-                    --exclude='e2e' \
-                    --exclude='storage/logs/*.log' \
-                    ./ staging/portfolio_backend/
+          # 1. Copy Laravel Backend files (excluding public static files quietly)
+          rsync -a -q --exclude='public' \
+                      --exclude='node_modules' \
+                      --exclude='.git' \
+                      --exclude='tests' \
+                      --exclude='e2e' \
+                      --exclude='storage/logs/*.log' \
+                      ./ staging/portfolio_backend/
 
           # 2. Copy Public Assets to public_html root
           cp -r public/* staging/public_html/
@@ -94,6 +94,8 @@ jobs:
           if [ -f public/.htaccess ]; then
             cp public/.htaccess staging/public_html/.htaccess
           fi
+
+          echo "✓ Staging directory prepared successfully."
 
       - name: Deploy via SSH and Rsync
         if: env.HOSTINGER_SSH_HOST != ''

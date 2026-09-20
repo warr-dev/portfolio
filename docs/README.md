@@ -7,4 +7,5 @@ Welcome to the technical documentation hub for the **Warren Dalawampu** develope
 - [Database Schema](DATABASE_SCHEMA.md): Entity relationships, SQLite table schemas, migration definitions, and model specifications.
 - [API Reference](API_REFERENCE.md): REST endpoints, Inertia page payloads, Request validation rules, and JSON response models.
 - [Testing Runbook](TESTING.md): PHPUnit feature tests and Playwright E2E test suites with execution guides.
+- [Deployment Guide](DEPLOYMENT.md): Hostinger shared hosting dual-directory architecture, GitHub Actions CI/CD pipeline, and server configuration.
 - [Roadmap & Issues](ROADMAP.md): Priority-tagged status board synced with self-hosted Vikunja Project #34.
