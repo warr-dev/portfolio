@@ -51,49 +51,15 @@ jobs:
 
       - name: Prepare Clean Staging Deployment Directory
         run: |
-          mkdir -p staging/portfolio_backend
-          mkdir -p staging/public_html
+          mkdir -p staging/laravel
 
-          # 1. Copy Laravel Backend files (excluding public static files quietly)
-          rsync -a -q --exclude='public' \
-                      --exclude='node_modules' \
+          # 1. Package complete Laravel application including compiled public assets
+          rsync -a -q --exclude='node_modules' \
                       --exclude='.git' \
                       --exclude='tests' \
                       --exclude='e2e' \
                       --exclude='storage/logs/*.log' \
-                      ./ staging/portfolio_backend/
-
-          # 2. Copy Public Assets to public_html root
-          cp -r public/* staging/public_html/
-
-          # 3. Create Hostinger-optimized public_html/index.php pointing to ../portfolio_backend
-          cat << 'INDEX_EOF' > staging/public_html/index.php
-          <?php
-
-          use Illuminate\Http\Request;
-
-          define('LARAVEL_START', microtime(true));
-
-          // 1. Check maintenance mode
-          if (file_exists($maintenance = __DIR__.'/../portfolio_backend/storage/framework/maintenance.php')) {
-              require $maintenance;
-          }
-
-          // 2. Register autoloader
-          require __DIR__.'/../portfolio_backend/vendor/autoload.php';
-
-          // 3. Bootstrap application and set public path to this directory
-          $app = require_once __DIR__.'/../portfolio_backend/bootstrap/app.php';
-          $app->usePublicPath(__DIR__);
-
-          // 4. Handle HTTP request
-          $app->handleRequest(Request::capture());
-          INDEX_EOF
-
-          # 4. Ensure .htaccess is included in public_html
-          if [ -f public/.htaccess ]; then
-            cp public/.htaccess staging/public_html/.htaccess
-          fi
+                      ./ staging/laravel/
 
           echo "✓ Staging directory prepared successfully."
 
@@ -109,49 +75,35 @@ jobs:
 
           # Detect target path based on user root
           TARGET="${HOSTINGER_TARGET_PATH%/}"
-          # If TARGET ends with /public_html, strip it to place portfolio_backend beside public_html
+          # If TARGET ends with /public_html, strip it to place laravel beside public_html
           if [[ "$TARGET" == */public_html ]]; then
             TARGET="${TARGET%/public_html}"
           fi
 
           echo "Target root for deployment: $TARGET"
 
-          # First, inspect and cleanup remote directory structure
+          # 1. Sync full Laravel application to $TARGET/laravel/
+          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/laravel/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/laravel/"
+
+          # 2. Configure public_html -> laravel/public symlink and run optimizations
           ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
             TARGET=\"${TARGET}\"
-            echo \"DETECTED_TARGET=\$TARGET\"
+            echo \"Configuring Hostinger symlink on: \$TARGET\"
+            cd \"\$TARGET\"
 
-            # Ensure public_html exists inside target
-            mkdir -p \"\$TARGET/public_html\"
-
-            # Cleanup misplaced directories if portfolio_backend was nested inside public_html
-            if [ -d \"\$TARGET/public_html/portfolio_backend\" ]; then
-              echo \"Moving misplaced portfolio_backend from inside public_html to \$TARGET/portfolio_backend\"
-              mv -f \"\$TARGET/public_html/portfolio_backend\" \"\$TARGET/portfolio_backend\" 2>/dev/null || true
+            # Remove existing directory or stale symlink
+            if [ -d \"public_html\" ] && [ ! -L \"public_html\" ]; then
+              rm -rf public_html
+            elif [ -L \"public_html\" ]; then
+              rm -f public_html
             fi
-            if [ -d \"\$TARGET/public_html/public_html\" ]; then
-              echo \"Flattening nested public_html/public_html\"
-              cp -rf \"\$TARGET/public_html/public_html/\"* \"\$TARGET/public_html/\" 2>/dev/null || true
-              rm -rf \"\$TARGET/public_html/public_html\" 2>/dev/null || true
-            fi
-            # Remove Hostinger default placeholder page
-            rm -f \"\$TARGET/public_html/default.php\" \"\$TARGET/public_html/default.php.old.php\" 2>/dev/null || true
-          '"
 
-          # Sync backend files to $TARGET/portfolio_backend/
-          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/portfolio_backend/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/portfolio_backend/"
+            # Connect public_html via Symlink: public_html -> laravel/public
+            ln -s laravel/public public_html
+            ls -ld public_html
 
-          # Sync public assets directly to $TARGET/public_html/
-          rsync -avz -e "ssh -p $HOSTINGER_SSH_PORT" staging/public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$TARGET/public_html/"
-
-          # Run post-deployment artisan commands via SSH
-          ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" bash -c "'
-            TARGET=\"${TARGET}\"
-            if [ -d \"\$TARGET/portfolio_backend\" ]; then
-              cd \"\$TARGET/portfolio_backend\"
-            elif [ -d \"\$HOME/portfolio_backend\" ]; then
-              cd \"\$HOME/portfolio_backend\"
-            fi
+            # Navigate to laravel/ and execute maintenance & cache warmup
+            cd \"\$TARGET/laravel\"
             echo \"Current working directory: \$(pwd)\"
 
             # Detect PHP 8.3 CLI binary
@@ -166,6 +118,7 @@ jobs:
 
             if [ -f artisan ]; then
               chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+              \$PHP_BIN artisan storage:link || true
               \$PHP_BIN artisan migrate --force || true
               \$PHP_BIN artisan view:clear || true
               \$PHP_BIN artisan config:clear || true

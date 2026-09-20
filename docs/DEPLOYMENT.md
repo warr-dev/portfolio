@@ -4,55 +4,47 @@ This guide documents the architecture, automated CI/CD pipeline, and manual fall
 
 ---
 
-## 1. Architecture Overview
+## 1. Architecture Overview (Symlink Strategy)
 
-Hostinger shared hosting exposes the document root at `public_html/`. Because Laravel places its public entrypoint in `public/` and requires backend framework directories (`app/`, `config/`, `bootstrap/`, `vendor/`, `storage/`) to reside securely outside the public web server, the deployment architecture separates the project into two side-by-side directories:
+Hostinger serves files strictly from `public_html`. Under this standard architecture, the full Laravel application resides in `laravel/`, and `public_html` is connected directly as a symbolic link pointing to `laravel/public`:
 
 ```
-/home/u123456789/
-├── portfolio_backend/          # Private backend directory (not web-accessible)
+/home/u102125202/domains/warrdev.site/
+├── laravel/                    # Complete Laravel application
 │   ├── app/
 │   ├── bootstrap/
 │   ├── config/
 │   ├── database/
+│   ├── public/                 # Built Vite assets, standard index.php, robots.txt
+│   │   ├── build/
+│   │   ├── storage/ -> ../storage/app/public
+│   │   ├── index.php
+│   │   └── .htaccess
 │   ├── routes/
 │   ├── storage/                # chmod 775
 │   ├── vendor/
 │   ├── artisan
 │   └── .env                    # Production environment secrets
 │
-└── public_html/                # Web server DocumentRoot
-    ├── assets/                 # Built Vite bundles (CSS / JS)
-    ├── storage/ -> ../portfolio_backend/storage/app/public
-    ├── index.php               # Custom production bootstrap (points to ../portfolio_backend)
-    ├── .htaccess               # URL rewriting & security headers
-    ├── robots.txt
-    └── favicon.ico
+└── public_html -> laravel/public # Symbolic link to Laravel public directory
 ```
 
-### Production `public_html/index.php` Bootstrapper
-```php
-<?php
+### Connecting `public_html` via Symlink:
+```bash
+cd ~/domains/warrdev.site/
 
-use Illuminate\Http\Request;
+# 1. Backup or remove existing directory / stale link
+rm -rf public_html
 
-define('LARAVEL_START', microtime(true));
+# 2. Create symbolic link: public_html -> laravel/public
+ln -s laravel/public public_html
 
-// 1. Check maintenance mode
-if (file_exists($maintenance = __DIR__.'/../portfolio_backend/storage/framework/maintenance.php')) {
-    require $maintenance;
-}
-
-// 2. Register autoloader
-require __DIR__.'/../portfolio_backend/vendor/autoload.php';
-
-// 3. Bootstrap application and enforce public path
-$app = require_once __DIR__.'/../portfolio_backend/bootstrap/app.php';
-$app->usePublicPath(__DIR__);
-
-// 4. Handle HTTP request
-$app->handleRequest(Request::capture());
+# 3. Verify the link:
+ls -ld public_html
+# Output: lrwxrwxrwx ... public_html -> laravel/public
 ```
+
+With this pattern, Laravel's default `public/index.php` and asset paths run unmodified with 100% native compatibility.
 
 ---
 
@@ -130,7 +122,7 @@ LOG_CHANNEL=stack
 LOG_LEVEL=error
 
 DB_CONNECTION=sqlite
-DB_DATABASE=/home/u123456789/portfolio_backend/database/database.sqlite
+DB_DATABASE=/home/u102125202/domains/warrdev.site/laravel/database/database.sqlite
 
 SESSION_DRIVER=database
 CACHE_STORE=database
@@ -139,21 +131,18 @@ QUEUE_CONNECTION=database
 
 Create the SQLite database file and set permissions:
 ```bash
-touch /home/u123456789/portfolio_backend/database/database.sqlite
-chmod -R 775 /home/u123456789/portfolio_backend/storage
-chmod -R 775 /home/u123456789/portfolio_backend/bootstrap/cache
+touch /home/u102125202/domains/warrdev.site/laravel/database/database.sqlite
+chmod -R 775 /home/u102125202/domains/warrdev.site/laravel/storage
+chmod -R 775 /home/u102125202/domains/warrdev.site/laravel/bootstrap/cache
 ```
 
 ### Step 4: Storage Symlink
-Link the private storage directory to `public_html`:
+Link the storage directory from `laravel/`:
 ```bash
-cd /home/u123456789/portfolio_backend
+cd /home/u102125202/domains/warrdev.site/laravel
 php artisan storage:link
 ```
-Or manually if needed:
-```bash
-ln -s /home/u123456789/portfolio_backend/storage/app/public /home/u123456789/public_html/storage
-```
+The link is created at `laravel/public/storage`, which is automatically accessible through `public_html/storage` since `public_html` points directly to `laravel/public`.
 
 ---
 

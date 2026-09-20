@@ -88,4 +88,7 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 - **Hostinger CI/CD Staging Directory Log Verbosity**:
   - Replaced verbose file-by-file `rsync -av` in `.github/workflows/deploy.yml` with quiet `rsync -a -q`.
   - Replaced noisy terminal clutter with a single clean status message (`✓ Staging directory prepared successfully.`).
+- **Hostinger Deployment Symlink Architecture (`public_html -> laravel/public`)**:
+  - Migrated deployment pipeline to sync the full Laravel application into `laravel/` and automatically link `public_html` via symbolic link (`ln -s laravel/public public_html`).
+  - Preserved standard Laravel public folder structure and enabled seamless `storage:link` operation without custom index.php overrides.
 
