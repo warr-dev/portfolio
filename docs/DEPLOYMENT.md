@@ -148,14 +148,26 @@ The link is created at `portfolio/public/storage`, which is automatically access
 
 ## 5. Troubleshooting & Maintenance
 
+### Creating an Admin User
+Run the interactive artisan command to create an administrative user:
+```bash
+ssh -p 65002 u102125202@151.106.124.61
+cd ~/domains/warrdev.site/portfolio
+/opt/alt/php83/usr/bin/php artisan make:user
+```
+Or run directly with flags non-interactively:
+```bash
+/opt/alt/php83/usr/bin/php artisan make:user --name="Alex" --email="alex@warrdev.site" --password="YourSecurePassword"
+```
+
 ### Clearing & Re-caching Remotely
 ```bash
-ssh -p 65002 u123456789@HOST
-cd /home/u123456789/portfolio_backend
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+ssh -p 65002 u102125202@151.106.124.61
+cd ~/domains/warrdev.site/portfolio
+/opt/alt/php83/usr/bin/php artisan optimize:clear
+/opt/alt/php83/usr/bin/php artisan config:cache
+/opt/alt/php83/usr/bin/php artisan route:cache
+/opt/alt/php83/usr/bin/php artisan view:cache
 ```
 
 ### Checking Error Logs

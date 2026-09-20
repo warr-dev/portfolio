@@ -5,6 +5,10 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-09-20
 
 ### Added
+- **Interactive & Headless Administrative User Creation Command (`php artisan make:user`)**:
+  - Implemented [`CreateUser.php`](file:///home/war/projects/portfolio/app/Console/Commands/CreateUser.php) Artisan command.
+  - Supports both interactive prompts (hidden password input) and flags (`--name`, `--email`, `--password`).
+  - Includes validation rules ensuring name presence, email format and database uniqueness, and minimum password length.
 - **Hostinger Multi-Tenant Directory Structure (`portfolio/`)**:
   - Migrated deployment target directory from generic `laravel/` to project-specific `portfolio/`.
   - Configured Hostinger document root symlink: `public_html -> portfolio/public`.
