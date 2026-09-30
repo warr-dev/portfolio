@@ -38,9 +38,29 @@ class PortfolioController extends Controller
         $resumePdf = SiteSetting::get('resumePdf', '/Warren_Dalawampu_Resume.pdf');
         $cvPdf = SiteSetting::get('cvPdf', '/Warren_Dalawampu_CV_2026.pdf');
 
-        $activeCvUrl = $activeCv === 'ats_resume' ? $resumePdf : $cvPdf;
-        $activeCvLabel = $activeCv === 'ats_resume' ? 'ATS 1-Page Resume' : 'Comprehensive CV (PDF)';
-        $activeCvFilename = $activeCv === 'ats_resume' ? 'Warren_Dalawampu_Resume.pdf' : 'Warren_Dalawampu_CV_2026.pdf';
+        $defaultCvs = [
+            [
+                'id' => 'comprehensive',
+                'label' => 'Comprehensive Technical CV (2026)',
+                'filename' => 'Warren_Dalawampu_CV_2026.pdf',
+                'url' => $cvPdf,
+                'type' => 'Full Technical Background',
+            ],
+            [
+                'id' => 'ats_resume',
+                'label' => 'ATS 1-Page Summary Resume',
+                'filename' => 'Warren_Dalawampu_Resume.pdf',
+                'url' => $resumePdf,
+                'type' => 'ATS Standard 1-Page',
+            ],
+        ];
+
+        $resumes = SiteSetting::get('resumes', $defaultCvs);
+        $selectedResume = collect($resumes)->firstWhere('id', $activeCv) ?: ($resumes[0] ?? $defaultCvs[0]);
+
+        $activeCvUrl = $selectedResume['url'] ?? $cvPdf;
+        $activeCvLabel = $selectedResume['label'] ?? 'Comprehensive CV (PDF)';
+        $activeCvFilename = $selectedResume['filename'] ?? 'Warren_Dalawampu_CV_2026.pdf';
 
         $recruiterData = [
             'name' => SiteSetting::get('name', 'Warren Dalawampu'),

@@ -298,4 +298,121 @@ class AdminTest extends TestCase
         $this->assertEquals('Helm', $updatedSkill->items[2]['name']);
         $this->assertEquals(4, $updatedSkill->items[2]['level']);
     }
+
+    public function test_admin_can_upload_and_add_new_resume_to_list(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $pdf = \Illuminate\Http\UploadedFile::fake()->create('custom_backend_cv.pdf', 500, 'application/pdf');
+
+        $payload = [
+            'label' => 'Embedded Systems & C++ CV',
+            'type' => 'Low-Level & Hardware',
+            'file' => $pdf,
+        ];
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/resumes', $payload);
+        $response->assertSessionHas('success');
+
+        $resumes = SiteSetting::get('resumes', []);
+        $this->assertNotEmpty($resumes);
+
+        $added = collect($resumes)->firstWhere('label', 'Embedded Systems & C++ CV');
+        $this->assertNotNull($added);
+        $this->assertEquals('Low-Level & Hardware', $added['type']);
+        $this->assertStringEndsWith('.pdf', $added['url']);
+    }
+
+    public function test_admin_can_switch_active_resume(): void
+    {
+        $resumes = [
+            [
+                'id' => 'cv_1',
+                'label' => 'Resume 1',
+                'type' => 'Fullstack',
+                'filename' => 'resume1.pdf',
+                'url' => '/storage/resumes/resume1.pdf',
+            ],
+            [
+                'id' => 'cv_2',
+                'label' => 'Resume 2',
+                'type' => 'Backend',
+                'filename' => 'resume2.pdf',
+                'url' => '/storage/resumes/resume2.pdf',
+            ],
+        ];
+        SiteSetting::set('resumes', $resumes);
+        SiteSetting::set('activeCv', 'cv_1');
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/resumes/active', [
+            'activeCv' => 'cv_2',
+        ]);
+        $response->assertSessionHas('success');
+
+        $this->assertEquals('cv_2', SiteSetting::get('activeCv'));
+    }
+
+    public function test_admin_can_delete_resume_from_list(): void
+    {
+        $resumes = [
+            [
+                'id' => 'cv_1',
+                'label' => 'Resume 1',
+                'type' => 'Fullstack',
+                'filename' => 'resume1.pdf',
+                'url' => '/storage/resumes/resume1.pdf',
+            ],
+            [
+                'id' => 'cv_2',
+                'label' => 'Resume 2',
+                'type' => 'Backend',
+                'filename' => 'resume2.pdf',
+                'url' => '/storage/resumes/resume2.pdf',
+            ],
+        ];
+        SiteSetting::set('resumes', $resumes);
+        SiteSetting::set('activeCv', 'cv_1');
+
+        $response = $this->actingAs($this->admin)->delete('/admin/settings/resumes/cv_2');
+        $response->assertSessionHas('success');
+
+        $updatedResumes = SiteSetting::get('resumes', []);
+        $this->assertCount(1, $updatedResumes);
+        $this->assertEquals('cv_1', $updatedResumes[0]['id']);
+    }
+
+    public function test_admin_can_update_existing_resume(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $resumes = [
+            [
+                'id' => 'cv_edit_test',
+                'label' => 'Original Label',
+                'type' => 'Original Type',
+                'filename' => 'old_file.pdf',
+                'url' => '/storage/resumes/old_file.pdf',
+            ],
+        ];
+        SiteSetting::set('resumes', $resumes);
+
+        $newPdf = \Illuminate\Http\UploadedFile::fake()->create('replacement.pdf', 300, 'application/pdf');
+
+        $updatePayload = [
+            'label' => 'Updated Custom Label',
+            'type' => 'Updated Custom Type',
+            'file' => $newPdf,
+        ];
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/resumes/cv_edit_test', $updatePayload);
+        $response->assertSessionHas('success');
+
+        $updatedList = SiteSetting::get('resumes', []);
+        $this->assertCount(1, $updatedList);
+        $this->assertEquals('Updated Custom Label', $updatedList[0]['label']);
+        $this->assertEquals('Updated Custom Type', $updatedList[0]['type']);
+        $this->assertEquals('replacement.pdf', $updatedList[0]['filename']);
+    }
 }
+
+

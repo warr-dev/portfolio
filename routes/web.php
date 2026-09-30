@@ -30,6 +30,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Profile & Site Settings
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+        Route::post('/settings/resumes', [SettingsController::class, 'storeResume'])->name('settings.resumes.store');
+        Route::post('/settings/resumes/active', [SettingsController::class, 'setActiveResume'])->name('settings.resumes.active');
+        Route::post('/settings/resumes/{id}', [SettingsController::class, 'updateResume'])->name('settings.resumes.update');
+        Route::delete('/settings/resumes/{id}', [SettingsController::class, 'destroyResume'])->name('settings.resumes.destroy');
 
         // Projects Resource
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');

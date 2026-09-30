@@ -27,10 +27,11 @@ class SettingsController extends Controller
         }
 
         $activeCv = SiteSetting::get('activeCv', 'comprehensive');
+        $activeCv = SiteSetting::get('activeCv', 'comprehensive');
         $resumePdf = SiteSetting::get('resumePdf', '/Warren_Dalawampu_Resume.pdf');
         $cvPdf = SiteSetting::get('cvPdf', '/Warren_Dalawampu_CV_2026.pdf');
 
-        $availableCvs = [
+        $defaultCvs = [
             [
                 'id' => 'comprehensive',
                 'label' => 'Comprehensive Technical CV (2026)',
@@ -46,6 +47,12 @@ class SettingsController extends Controller
                 'type' => 'ATS Standard 1-Page',
             ],
         ];
+
+        $resumes = SiteSetting::get('resumes', $defaultCvs);
+        if (empty($resumes)) {
+            $resumes = $defaultCvs;
+            SiteSetting::set('resumes', $resumes);
+        }
 
         $settings = [
             'name' => SiteSetting::get('name', 'Warren Dalawampu'),
@@ -63,7 +70,7 @@ class SettingsController extends Controller
             'activeCv' => $activeCv,
             'resumePdf' => $resumePdf,
             'cvPdf' => $cvPdf,
-            'availableCvs' => $availableCvs,
+            'availableCvs' => $resumes,
             'specializedTitle' => SiteSetting::get('specializedTitle', 'Hardware I/O, C++ & Edge Engineering'),
             'specializedSubtitle' => SiteSetting::get('specializedSubtitle', 'Physical to Cloud'),
             'specializedCapabilities' => SiteSetting::get('specializedCapabilities', []),
@@ -88,7 +95,7 @@ class SettingsController extends Controller
             'linkedin' => 'nullable|url|max:200',
             'careerStartDate' => 'required|date',
             'cvDisplayMode' => 'required|in:both,topbar_only,hero_only,hidden',
-            'activeCv' => 'required|in:comprehensive,ats_resume',
+            'activeCv' => 'required|string|max:100',
             'specializedTitle' => 'nullable|string|max:150',
             'specializedSubtitle' => 'nullable|string|max:100',
             'specializedCapabilities' => 'nullable|array',
@@ -134,4 +141,158 @@ class SettingsController extends Controller
 
         return redirect()->back()->with('success', 'Profile and site settings updated successfully.');
     }
+
+    /**
+     * Upload and add a new resume to the collection.
+     */
+    public function storeResume(Request $request)
+    {
+        $validated = $request->validate([
+            'label' => 'required|string|max:150',
+            'type' => 'nullable|string|max:100',
+            'file' => 'required|file|mimes:pdf|max:15360',
+        ]);
+
+        $file = $request->file('file');
+        $originalFilename = $file->getClientOriginalName();
+        $safeName = \Illuminate\Support\Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
+        $uniqueFilename = $safeName . '-' . time() . '.pdf';
+
+        // Store into public storage
+        $path = $file->storeAs('resumes', $uniqueFilename, 'public');
+        $url = '/storage/' . $path;
+
+        $defaultCvs = [
+            [
+                'id' => 'comprehensive',
+                'label' => 'Comprehensive Technical CV (2026)',
+                'filename' => 'Warren_Dalawampu_CV_2026.pdf',
+                'url' => SiteSetting::get('cvPdf', '/Warren_Dalawampu_CV_2026.pdf'),
+                'type' => 'Full Technical Background',
+            ],
+            [
+                'id' => 'ats_resume',
+                'label' => 'ATS 1-Page Summary Resume',
+                'filename' => 'Warren_Dalawampu_Resume.pdf',
+                'url' => SiteSetting::get('resumePdf', '/Warren_Dalawampu_Resume.pdf'),
+                'type' => 'ATS Standard 1-Page',
+            ],
+        ];
+
+        $resumes = SiteSetting::get('resumes', $defaultCvs);
+
+        $newId = 'resume_' . uniqid();
+        $newResume = [
+            'id' => $newId,
+            'label' => $validated['label'],
+            'type' => $validated['type'] ?: 'Custom CV / Resume',
+            'filename' => $originalFilename,
+            'url' => $url,
+        ];
+
+        $resumes[] = $newResume;
+        SiteSetting::set('resumes', $resumes);
+
+        return redirect()->back()->with('success', "Resume '{$validated['label']}' uploaded successfully.");
+    }
+
+    /**
+     * Update an existing resume's metadata and optionally replace its PDF file.
+     */
+    public function updateResume(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'label' => 'required|string|max:150',
+            'type' => 'nullable|string|max:100',
+            'file' => 'nullable|file|mimes:pdf|max:15360',
+        ]);
+
+        $defaultCvs = [
+            [
+                'id' => 'comprehensive',
+                'label' => 'Comprehensive Technical CV (2026)',
+                'filename' => 'Warren_Dalawampu_CV_2026.pdf',
+                'url' => SiteSetting::get('cvPdf', '/Warren_Dalawampu_CV_2026.pdf'),
+                'type' => 'Full Technical Background',
+            ],
+            [
+                'id' => 'ats_resume',
+                'label' => 'ATS 1-Page Summary Resume',
+                'filename' => 'Warren_Dalawampu_Resume.pdf',
+                'url' => SiteSetting::get('resumePdf', '/Warren_Dalawampu_Resume.pdf'),
+                'type' => 'ATS Standard 1-Page',
+            ],
+        ];
+
+        $resumes = SiteSetting::get('resumes', $defaultCvs);
+        $found = false;
+
+        foreach ($resumes as &$item) {
+            if (($item['id'] ?? '') === $id) {
+                $item['label'] = $validated['label'];
+                $item['type'] = $validated['type'] ?: 'Custom CV / Resume';
+
+                if ($request->hasFile('file')) {
+                    $file = $request->file('file');
+                    $originalFilename = $file->getClientOriginalName();
+                    $safeName = \Illuminate\Support\Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
+                    $uniqueFilename = $safeName . '-' . time() . '.pdf';
+
+                    $path = $file->storeAs('resumes', $uniqueFilename, 'public');
+                    $item['filename'] = $originalFilename;
+                    $item['url'] = '/storage/' . $path;
+                }
+
+                $found = true;
+                break;
+            }
+        }
+
+        if (! $found) {
+            return redirect()->back()->withErrors(['resume' => 'Resume not found.']);
+        }
+
+        SiteSetting::set('resumes', $resumes);
+
+        return redirect()->back()->with('success', "Resume '{$validated['label']}' updated successfully.");
+    }
+
+    /**
+     * Switch active resume displayed on the public website.
+     */
+    public function setActiveResume(Request $request)
+    {
+        $validated = $request->validate([
+            'activeCv' => 'required|string',
+        ]);
+
+        SiteSetting::set('activeCv', $validated['activeCv']);
+
+        return redirect()->back()->with('success', 'Active public resume updated.');
+    }
+
+    /**
+     * Delete a resume from the list.
+     */
+    public function destroyResume($id)
+    {
+        $resumes = SiteSetting::get('resumes', []);
+        $activeCv = SiteSetting::get('activeCv', 'comprehensive');
+
+        // Prevent deleting active resume if other resumes exist
+        if ($activeCv === $id && count($resumes) > 1) {
+            return redirect()->back()->withErrors(['activeCv' => 'Cannot delete the currently active resume. Please select another active resume first.']);
+        }
+
+        $filtered = array_values(array_filter($resumes, fn ($item) => ($item['id'] ?? '') !== $id));
+        SiteSetting::set('resumes', $filtered);
+
+        // If the deleted resume was active, set the first available as active
+        if ($activeCv === $id && !empty($filtered)) {
+            SiteSetting::set('activeCv', $filtered[0]['id']);
+        }
+
+        return redirect()->back()->with('success', 'Resume removed successfully.');
+    }
 }
+

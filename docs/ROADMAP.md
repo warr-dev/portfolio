@@ -28,6 +28,11 @@ Task tracking is synchronized with **Vikunja Project #34 (Portfolio)** at `http:
 | **#235** | `[P1]` / `!  ` | **Todo** | Dynamic JSON-LD Structured Data Schema (Person, ProfilePage, SoftwareSourceCode) |
 | **#236** | `[P2]` / `~  ` | **Todo** | Dynamic XML Sitemap & robots.txt Generator (`/sitemap.xml`, `/robots.txt`) |
 | **#237** | `[P2]` / `~  ` | **Todo** | SEO Meta Tags & OG Image Control in Admin Settings (`/admin/settings`) |
+| **#238** | `[P1]` / `!  ` | **Todo** | Featured Works Showcase & Case Study Hub |
+| **#239** | `[P1]` / `!  ` | **Todo** | Frequently Asked Questions (FAQ) Accordion |
+| **#240** | `[P1]` / `!  ` | **Todo** | Client Feedback & Testimonials Carousel |
+| **#241** | `[P1]` / `!  ` | **Todo** | Collaboration Opportunity Section |
+| **#242** | `[P1]` / `!  ` | **Todo** | Hire Me as Freelancer / Services & Engagement Models |
 
 ---
 

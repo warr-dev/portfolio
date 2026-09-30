@@ -2,6 +2,20 @@
 
 All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be documented in this file.
 
+## [Unreleased] - 2026-09-30
+
+### Added
+- **Dynamic Multi-Resume Library & Active Public Resume Switcher (`SettingsController.php` & `Settings.jsx`)**:
+  - Implemented dynamic resume library in Admin Settings (`/admin/settings`) supporting arbitrary uploaded resumes (PDF).
+  - Added dedicated endpoints:
+    - `POST /admin/settings/resumes`: Uploads new PDF resumes to public storage with custom labels and target focus types (Create).
+    - `POST /admin/settings/resumes/active`: Sets and switches the single active resume displayed to visitors on the website.
+    - `POST /admin/settings/resumes/{id}`: Updates resume label, focus type, and optionally replaces the underlying PDF file (Update).
+    - `DELETE /admin/settings/resumes/{id}`: Safely removes uploaded custom resumes while preventing accidental deletion of the active resume (Delete).
+  - Added interactive in-place Edit UI on resume cards with instant validation and cancellation.
+  - Re-architected `/admin/settings` into focused, tabbed submodules (`CV & Resume Manager`, `Core Profile & Bio`, `Contact & Socials`, `Specialized Capabilities`, and `Security & Auth`) with animated tab switches, count badges, and persistent submodule state.
+  - Added full automated feature test coverage in `tests/Feature/AdminTest.php` (18 tests, 117 assertions passing).
+
 ## [Unreleased] - 2026-09-20
 
 ### Added
