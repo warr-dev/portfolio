@@ -56,6 +56,11 @@ class AdminTest extends TestCase
             'phone' => '+63 956 164 5935',
             'github' => 'https://github.com/warr-dev',
             'linkedin' => 'https://linkedin.com/in/warr-dev-test',
+            'linkedin_enabled' => true,
+            'linkedin_company' => 'Acme Distributed Labs',
+            'linkedin_role' => 'Lead Systems Architect',
+            'linkedin_work_auth' => 'Worldwide B2B & Full-Time',
+            'linkedin_work_auth_note' => 'Available for international contracts',
             'careerStartDate' => '2018-06-01',
             'cvDisplayMode' => 'hero_only',
             'activeCv' => 'ats_resume',
@@ -68,6 +73,10 @@ class AdminTest extends TestCase
                     'description' => 'Developed bare-metal C++ firmware for industrial telemetry.',
                 ],
             ],
+            'seo_title' => 'Warren Dalawampu — Principal Systems Architect',
+            'seo_description' => 'Custom SEO Meta Description for test verification.',
+            'seo_keywords' => 'Warren, Architect, C++, Linux, PHP',
+            'og_image' => 'https://images.unsplash.com/photo-custom-test',
         ];
 
         $response = $this->actingAs($this->admin)->post('/admin/settings', $payload);
@@ -76,11 +85,20 @@ class AdminTest extends TestCase
         $this->assertEquals('Warren Dalawampu (Updated)', SiteSetting::get('name'));
         $this->assertEquals('Principal Systems Architect', SiteSetting::get('title'));
         $this->assertEquals('https://linkedin.com/in/warr-dev-test', SiteSetting::get('linkedin'));
+        $this->assertTrue(SiteSetting::get('linkedin_enabled'));
+        $this->assertEquals('Acme Distributed Labs', SiteSetting::get('linkedin_company'));
+        $this->assertEquals('Lead Systems Architect', SiteSetting::get('linkedin_role'));
+        $this->assertEquals('Worldwide B2B & Full-Time', SiteSetting::get('linkedin_work_auth'));
+        $this->assertEquals('Available for international contracts', SiteSetting::get('linkedin_work_auth_note'));
         $this->assertEquals('2018-06-01', SiteSetting::get('careerStartDate'));
         $this->assertEquals('hero_only', SiteSetting::get('cvDisplayMode'));
         $this->assertEquals('ats_resume', SiteSetting::get('activeCv'));
         $this->assertEquals('Embedded Systems & Edge Compute', SiteSetting::get('specializedTitle'));
         $this->assertEquals('Silicon to Cloud', SiteSetting::get('specializedSubtitle'));
+        $this->assertEquals('Warren Dalawampu — Principal Systems Architect', SiteSetting::get('seo_title'));
+        $this->assertEquals('Custom SEO Meta Description for test verification.', SiteSetting::get('seo_description'));
+        $this->assertEquals('Warren, Architect, C++, Linux, PHP', SiteSetting::get('seo_keywords'));
+        $this->assertEquals('https://images.unsplash.com/photo-custom-test', SiteSetting::get('og_image'));
         $this->assertCount(1, SiteSetting::get('specializedCapabilities'));
         $this->assertStringContainsString('Years', SiteSetting::get('yearsExperience'));
     }

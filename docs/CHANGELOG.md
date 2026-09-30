@@ -5,6 +5,26 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-09-30
 
 ### Added
+- **Complete SEO & Social Graph Suite (`PortfolioLayout.jsx`, `SettingsController.php`, `PortfolioController.php`, `Settings.jsx`)**:
+  - **Dynamic OpenGraph & Twitter Card Meta Tags**: Added full OpenGraph (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`) and Twitter Cards (`summary_large_image`, `twitter:creator`) support across both the main portfolio and individual project case study views.
+  - **Dynamic JSON-LD Structured Data Schema**: Integrated rich Google-recognized schemas (`Person`, `WebSite`, `SoftwareSourceCode`, and `Article`) injecting semantic data directly into `<head>` via `<script type="application/ld+json">`.
+  - **Dynamic XML Sitemap Generator (`/sitemap.xml`)**: Automated sitemap routing outputting valid XML with `<lastmod>`, `<changefreq>`, and priority weightings for the homepage and all active project permalinks.
+  - **Dynamic Robots Directive (`/robots.txt`)**: Programmatic robots handler serving indexation directives, indexing public content, disallowing `/admin`, and pointing web crawlers to `/sitemap.xml`.
+  - **Admin Settings Submodule 05 (SEO & Social Graph)**: Added dedicated management interface in `/admin/settings` controlling global page title, meta description, keywords, and OpenGraph banner uploads (with direct media asset preview and storage in `public/seo/`).
+  - **Scroll-Spy Active Navigation Indicator (`Navbar.jsx`)**: Implemented dynamic bounding client rect scroll listener highlighting the user's active viewport section (`Recruiter Hub`, `Experience`, `Projects`, `Skills`, etc.) with linear purple accent styling and indicator bars on desktop and active pills on mobile.
+  - **Feature & E2E Testing**: Added PHPUnit tests verifying XML generation, robots output, and settings update (`tests/Feature/PortfolioTest.php`, `tests/Feature/AdminTest.php`) and Playwright E2E tests verifying dynamic metadata and active link scroll-spy transitions (all 20 PHPUnit tests and 11 Playwright browser tests passing).
+- **Configurable LinkedIn Profile & Network Section (`LinkedInSection.jsx`, `SettingsController.php`, `PortfolioController.php`)**:
+  - Replaced hardcoded LinkedIn copy in `LinkedInSection.jsx` (`NTT Limited Philippines`, `Senior Backend Developer`, `Remote / B2B / Full-Time`, `Open to worldwide contracts`) with dynamic configuration keys stored in `SiteSetting`.
+  - Added full admin configuration controls inside Submodule 02 (`Contact & Socials`):
+    - LinkedIn Profile URL.
+    - Show/Hide LinkedIn section toggle (`linkedin_enabled`).
+    - Current Engagement / Company (`linkedin_company`).
+    - Current Role / Subtitle (`linkedin_role`).
+    - Work Authorization (`linkedin_work_auth`).
+    - Work Authorization Note (`linkedin_work_auth_note`).
+  - Updated `Navbar.jsx` mobile navigation links to respect the `linkedin_enabled` toggle and profile URL state.
+  - Enhanced `SiteSetting::set` to serialize booleans to JSON, preserving boolean fidelity.
+  - Updated test assertions in `tests/Feature/AdminTest.php` (all 18 tests, 122 assertions passing).
 - **Dynamic Multi-Resume Library & Active Public Resume Switcher (`SettingsController.php` & `Settings.jsx`)**:
   - Implemented dynamic resume library in Admin Settings (`/admin/settings`) supporting arbitrary uploaded resumes (PDF).
   - Added dedicated endpoints:
@@ -14,7 +34,7 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
     - `DELETE /admin/settings/resumes/{id}`: Safely removes uploaded custom resumes while preventing accidental deletion of the active resume (Delete).
   - Added interactive in-place Edit UI on resume cards with instant validation and cancellation.
   - Re-architected `/admin/settings` into focused, tabbed submodules (`CV & Resume Manager`, `Core Profile & Bio`, `Contact & Socials`, `Specialized Capabilities`, and `Security & Auth`) with animated tab switches, count badges, and persistent submodule state.
-  - Added full automated feature test coverage in `tests/Feature/AdminTest.php` (18 tests, 117 assertions passing).
+  - Added full automated feature test coverage in `tests/Feature/AdminTest.php` (18 tests, 122 assertions passing).
 
 ## [Unreleased] - 2026-09-20
 

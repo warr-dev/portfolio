@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PortfolioController::class, 'index'])->name('portfolio.index');
 Route::get('/projects/{project:slug}', [PortfolioController::class, 'showProject'])->name('portfolio.project.show');
 Route::post('/contact', [PortfolioController::class, 'submitContact'])->name('portfolio.contact');
+Route::get('/sitemap.xml', [PortfolioController::class, 'sitemap'])->name('portfolio.sitemap');
+Route::get('/robots.txt', [PortfolioController::class, 'robots'])->name('portfolio.robots');
 
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
 

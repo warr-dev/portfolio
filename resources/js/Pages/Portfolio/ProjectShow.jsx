@@ -107,8 +107,42 @@ export default function ProjectShow({ project, relatedProjects = [], recruiterDa
 
     const galleryItems = Array.isArray(project.gallery) ? project.gallery : [];
 
+    const projectJsonLd = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'SoftwareSourceCode',
+                'name': project.title,
+                'description': project.description,
+                'programmingLanguage': Array.isArray(project.tags) ? project.tags : ['PHP', 'C++'],
+                'author': {
+                    '@type': 'Person',
+                    'name': recruiterData?.name || 'Warren Dalawampu'
+                },
+                ...(project.github_url && project.github_status === 'public' ? { 'codeRepository': project.github_url } : {})
+            },
+            {
+                '@type': 'Article',
+                'headline': `${project.title} — Technical Architecture Case Study`,
+                'description': project.description,
+                'image': project.cover_image || project.media_url,
+                'author': {
+                    '@type': 'Person',
+                    'name': recruiterData?.name || 'Warren Dalawampu'
+                }
+            }
+        ]
+    };
+
     return (
-        <PortfolioLayout title={`${project.title} — Warren Dalawampu`}>
+        <PortfolioLayout 
+            title={recruiterData?.seoTitle || `${project.title} — Warren Dalawampu`}
+            description={recruiterData?.seoDescription || project.description}
+            keywords={recruiterData?.seoKeywords}
+            ogImage={recruiterData?.ogImage}
+            jsonLd={projectJsonLd}
+            recruiterData={recruiterData}
+        >
             <Navbar recruiterData={recruiterData} />
 
             <main className="relative z-10 max-w-4xl mx-auto px-6 pt-12 pb-24 space-y-12">

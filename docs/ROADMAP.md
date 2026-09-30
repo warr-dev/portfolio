@@ -24,10 +24,10 @@ Task tracking is synchronized with **Vikunja Project #34 (Portfolio)** at `http:
 | **#223** | `[P2]` / `~  ` | **Completed** | Automated PHPUnit Feature Tests (4 tests, 23 assertions passed) |
 | **#224** | `[P2]` / `~  ` | **Completed** | Frontend E2E Playwright Tests (4 browser tests passed) |
 | **#222** | `[P2]` / `~  ` | **Completed** | Project Documentation Suite in `docs/` and `/home/war/vault/` |
-| **#234** | `[P1]` / `!  ` | **Todo** | OpenGraph & Twitter Card Meta Tags (rich social/recruiter share previews) |
-| **#235** | `[P1]` / `!  ` | **Todo** | Dynamic JSON-LD Structured Data Schema (Person, ProfilePage, SoftwareSourceCode) |
-| **#236** | `[P2]` / `~  ` | **Todo** | Dynamic XML Sitemap & robots.txt Generator (`/sitemap.xml`, `/robots.txt`) |
-| **#237** | `[P2]` / `~  ` | **Todo** | SEO Meta Tags & OG Image Control in Admin Settings (`/admin/settings`) |
+| **#234** | `[P1]` / `!  ` | **Completed** | OpenGraph & Twitter Card Meta Tags (rich social/recruiter share previews) |
+| **#235** | `[P1]` / `!  ` | **Completed** | Dynamic JSON-LD Structured Data Schema (Person, ProfilePage, SoftwareSourceCode) |
+| **#236** | `[P2]` / `~  ` | **Completed** | Dynamic XML Sitemap & robots.txt Generator (`/sitemap.xml`, `/robots.txt`) |
+| **#237** | `[P2]` / `~  ` | **Completed** | SEO Meta Tags & OG Image Control in Admin Settings (`/admin/settings`) |
 | **#238** | `[P1]` / `!  ` | **Todo** | Featured Works Showcase & Case Study Hub |
 | **#239** | `[P1]` / `!  ` | **Todo** | Frequently Asked Questions (FAQ) Accordion |
 | **#240** | `[P1]` / `!  ` | **Todo** | Client Feedback & Testimonials Carousel |

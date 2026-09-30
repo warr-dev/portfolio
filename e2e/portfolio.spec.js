@@ -31,6 +31,28 @@ test.describe('Warren Dalawampu Portfolio E2E', () => {
         await expect(page.locator('text=Connect on LinkedIn')).toBeVisible();
     });
 
+    test('highlights active link on navigator based on scrolled content', async ({ page }) => {
+        await page.goto('/');
+
+        // Initially at top: Recruiter Hub is active on desktop navbar
+        const recruiterLink = page.locator('nav a[href="#recruiter-hub"]').first();
+        await expect(recruiterLink).toHaveClass(/text-\[#5e6ad2\]/);
+
+        // Scroll to experience section
+        await page.locator('#experience').scrollIntoViewIfNeeded();
+        await page.waitForTimeout(400);
+
+        const experienceLink = page.locator('nav a[href="#experience"]').first();
+        await expect(experienceLink).toHaveClass(/text-\[#5e6ad2\]/);
+
+        // Scroll to projects section
+        await page.locator('#projects').scrollIntoViewIfNeeded();
+        await page.waitForTimeout(400);
+
+        const projectsLink = page.locator('nav a[href="#projects"]').first();
+        await expect(projectsLink).toHaveClass(/text-\[#5e6ad2\]/);
+    });
+
     test('displays featured projects and hardware sections', async ({ page }) => {
         await page.goto('/');
 

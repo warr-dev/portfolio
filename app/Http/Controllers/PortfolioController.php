@@ -72,6 +72,11 @@ class PortfolioController extends Controller
             'phone' => SiteSetting::get('phone', '+63 956 164 5935'),
             'github' => SiteSetting::get('github', 'https://github.com/warr-dev'),
             'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warr-dev'),
+            'linkedinEnabled' => (bool) SiteSetting::get('linkedin_enabled', true),
+            'linkedinCompany' => SiteSetting::get('linkedin_company', 'NTT Limited Philippines'),
+            'linkedinRole' => SiteSetting::get('linkedin_role', 'Senior Backend Developer'),
+            'linkedinWorkAuth' => SiteSetting::get('linkedin_work_auth', 'Remote / B2B / Full-Time'),
+            'linkedinWorkAuthNote' => SiteSetting::get('linkedin_work_auth_note', 'Open to worldwide contracts'),
             'careerStartDate' => $careerStartDate,
             'yearsExperience' => $computedYears,
             'cvDisplayMode' => SiteSetting::get('cvDisplayMode', 'both'),
@@ -84,6 +89,10 @@ class PortfolioController extends Controller
             'specializedTitle' => SiteSetting::get('specializedTitle', 'Hardware I/O, C++ & Edge Engineering'),
             'specializedSubtitle' => SiteSetting::get('specializedSubtitle', 'Physical to Cloud'),
             'specializedCapabilities' => SiteSetting::get('specializedCapabilities', []),
+            'seoTitle' => SiteSetting::get('seo_title', 'Warren Dalawampu — Senior Backend Developer & Systems Software Engineer'),
+            'seoDescription' => SiteSetting::get('seo_description', 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.'),
+            'seoKeywords' => SiteSetting::get('seo_keywords', 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency'),
+            'ogImage' => SiteSetting::get('og_image', ''),
             'education' => [
                 [
                     'degree' => 'Master of Science in Information Technology (MSIT)',
@@ -158,6 +167,10 @@ class PortfolioController extends Controller
             'activeCvUrl' => $activeCv === 'ats_resume' ? $resumePdf : $cvPdf,
             'activeCvLabel' => $activeCv === 'ats_resume' ? 'ATS 1-Page Resume' : 'Comprehensive CV (PDF)',
             'activeCvFilename' => $activeCv === 'ats_resume' ? 'Warren_Dalawampu_Resume.pdf' : 'Warren_Dalawampu_CV_2026.pdf',
+            'seoTitle' => "{$project->title} — Systems Architecture Case Study | Warren Dalawampu",
+            'seoDescription' => $project->description ?: "Technical deep-dive and production architecture for {$project->title} by Warren Dalawampu.",
+            'seoKeywords' => implode(', ', array_merge(['Warren Dalawampu', $project->title, $project->badge], is_array($project->tags) ? $project->tags : [])),
+            'ogImage' => $project->cover_image ?: ($project->media_url ?: SiteSetting::get('og_image', '')),
         ];
 
         // Fetch related/other projects
@@ -171,6 +184,56 @@ class PortfolioController extends Controller
             'project' => $project,
             'relatedProjects' => $relatedProjects,
             'recruiterData' => $recruiterData,
+        ]);
+    }
+
+    /**
+     * Generate dynamic XML sitemap for SEO crawlers.
+     */
+    public function sitemap()
+    {
+        $baseUrl = url('/');
+        $projects = Project::orderBy('updated_at', 'desc')->get();
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        // Homepage
+        $latestUpdate = Project::max('updated_at') ?: now()->toAtomString();
+        $xml .= "  <url>\n";
+        $xml .= "    <loc>{$baseUrl}</loc>\n";
+        $xml .= "    <lastmod>" . \Carbon\Carbon::parse($latestUpdate)->toAtomString() . "</lastmod>\n";
+        $xml .= "    <changefreq>weekly</changefreq>\n";
+        $xml .= "    <priority>1.0</priority>\n";
+        $xml .= "  </url>\n";
+
+        // Projects
+        foreach ($projects as $proj) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>" . route('portfolio.project.show', $proj->slug) . "</loc>\n";
+            $xml .= "    <lastmod>" . $proj->updated_at->toAtomString() . "</lastmod>\n";
+            $xml .= "    <changefreq>monthly</changefreq>\n";
+            $xml .= "    <priority>0.8</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        $xml .= '</urlset>';
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml',
+        ]);
+    }
+
+    /**
+     * Generate dynamic robots.txt linking to the XML sitemap.
+     */
+    public function robots()
+    {
+        $sitemapUrl = url('/sitemap.xml');
+        $robots = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: {$sitemapUrl}\n";
+
+        return response($robots, 200, [
+            'Content-Type' => 'text/plain',
         ]);
     }
 }

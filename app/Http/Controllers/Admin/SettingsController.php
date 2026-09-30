@@ -64,6 +64,11 @@ class SettingsController extends Controller
             'phone' => SiteSetting::get('phone', '+63 956 164 5935'),
             'github' => SiteSetting::get('github', 'https://github.com/warr-dev'),
             'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warr-dev'),
+            'linkedin_enabled' => (bool) SiteSetting::get('linkedin_enabled', true),
+            'linkedin_company' => SiteSetting::get('linkedin_company', 'NTT Limited Philippines'),
+            'linkedin_role' => SiteSetting::get('linkedin_role', 'Senior Backend Developer'),
+            'linkedin_work_auth' => SiteSetting::get('linkedin_work_auth', 'Remote / B2B / Full-Time'),
+            'linkedin_work_auth_note' => SiteSetting::get('linkedin_work_auth_note', 'Open to worldwide contracts'),
             'careerStartDate' => $careerStartDate,
             'yearsExperience' => $computedYears,
             'cvDisplayMode' => SiteSetting::get('cvDisplayMode', 'both'),
@@ -74,6 +79,10 @@ class SettingsController extends Controller
             'specializedTitle' => SiteSetting::get('specializedTitle', 'Hardware I/O, C++ & Edge Engineering'),
             'specializedSubtitle' => SiteSetting::get('specializedSubtitle', 'Physical to Cloud'),
             'specializedCapabilities' => SiteSetting::get('specializedCapabilities', []),
+            'seo_title' => SiteSetting::get('seo_title', 'Warren Dalawampu — Senior Backend Developer & Systems Software Engineer'),
+            'seo_description' => SiteSetting::get('seo_description', 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.'),
+            'seo_keywords' => SiteSetting::get('seo_keywords', 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency'),
+            'og_image' => SiteSetting::get('og_image', ''),
         ];
 
         return Inertia::render('Admin/Settings', [
@@ -93,6 +102,11 @@ class SettingsController extends Controller
             'phone' => 'required|string|max:50',
             'github' => 'required|url|max:200',
             'linkedin' => 'nullable|url|max:200',
+            'linkedin_enabled' => 'nullable|boolean',
+            'linkedin_company' => 'nullable|string|max:150',
+            'linkedin_role' => 'nullable|string|max:150',
+            'linkedin_work_auth' => 'nullable|string|max:150',
+            'linkedin_work_auth_note' => 'nullable|string|max:200',
             'careerStartDate' => 'required|date',
             'cvDisplayMode' => 'required|in:both,topbar_only,hero_only,hidden',
             'activeCv' => 'required|string|max:100',
@@ -102,6 +116,11 @@ class SettingsController extends Controller
             'specializedCapabilities.*.title' => 'required|string|max:150',
             'specializedCapabilities.*.description' => 'required|string|max:1000',
             'specializedCapabilities.*.icon' => 'nullable|string|max:50',
+            'seo_title' => 'nullable|string|max:200',
+            'seo_description' => 'nullable|string|max:500',
+            'seo_keywords' => 'nullable|string|max:500',
+            'og_image' => 'nullable|string|max:500',
+            'og_image_file' => 'nullable|image|mimes:jpeg,png,webp,jpg|max:5120',
             'cv_file' => 'nullable|file|mimes:pdf|max:10240',
             'resume_file' => 'nullable|file|mimes:pdf|max:10240',
             'new_password' => 'nullable|string|min:6',
@@ -116,8 +135,24 @@ class SettingsController extends Controller
         }
         $validated['yearsExperience'] = $computedYears;
         $validated['specializedCapabilities'] = $request->input('specializedCapabilities', []);
+        if ($request->has('linkedin_enabled')) {
+            $val = $request->input('linkedin_enabled');
+            $validated['linkedin_enabled'] = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $val;
+        }
 
-        foreach (['name', 'title', 'statusBadge', 'location', 'bio', 'email', 'phone', 'github', 'linkedin', 'careerStartDate', 'yearsExperience', 'cvDisplayMode', 'activeCv', 'specializedTitle', 'specializedSubtitle', 'specializedCapabilities'] as $key) {
+        if ($request->hasFile('og_image_file')) {
+            $file = $request->file('og_image_file');
+            $filename = 'og-image-' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('seo', $filename, 'public');
+            $validated['og_image'] = '/storage/' . $path;
+        }
+
+        foreach ([
+            'name', 'title', 'statusBadge', 'location', 'bio', 'email', 'phone', 'github', 
+            'linkedin', 'linkedin_enabled', 'linkedin_company', 'linkedin_role', 'linkedin_work_auth', 'linkedin_work_auth_note',
+            'careerStartDate', 'yearsExperience', 'cvDisplayMode', 'activeCv', 'specializedTitle', 'specializedSubtitle', 'specializedCapabilities',
+            'seo_title', 'seo_description', 'seo_keywords', 'og_image'
+        ] as $key) {
             if (array_key_exists($key, $validated)) {
                 SiteSetting::set($key, $validated[$key]);
             }

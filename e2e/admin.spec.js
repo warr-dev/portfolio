@@ -36,6 +36,9 @@ test.describe('Admin Panel E2E', () => {
         await page.goto('/admin/settings');
         await expect(page.locator('h1')).toContainText('Site & Profile Settings');
 
+        // Switch to Core Profile & Bio tab
+        await page.click('button:has-text("Core Profile & Bio")');
+
         // Update status pill to dynamic value
         const updatedStatus = 'Available for Principal Architecture Roles';
         await page.fill('[data-testid="settings-status-badge"]', updatedStatus);
@@ -58,8 +61,9 @@ test.describe('Admin Panel E2E', () => {
         await page.click('button[type="submit"]');
         await expect(page).toHaveURL(/.*admin$/);
 
-        // Go to settings and verify Specialized Capabilities section is present
+        // Go to settings and switch to Specialized Capabilities tab
         await page.goto('/admin/settings');
+        await page.click('button:has-text("Specialized Capabilities")');
         await expect(page.locator('text=03 / Specialized Capabilities')).toBeVisible();
 
         // Check if there are existing entries, delete them to test hiding
@@ -79,6 +83,7 @@ test.describe('Admin Panel E2E', () => {
 
         // Return to admin, re-add an entry and save
         await page.goto('/admin/settings');
+        await page.click('button:has-text("Specialized Capabilities")');
         await page.click('button:has-text("Add Capability")');
         await page.fill('input[placeholder="e.g. Casino Terminal Hardware Integration"]', 'Casino Terminal Hardware Integration');
         await page.fill('textarea[placeholder="Explain technical systems, hardware drivers, low-level architecture, or edge protocols..."]', 'Wrote low-level C++ drivers interfacing physical bill acceptors, ticket validators, LED controllers, and thermal printers.');

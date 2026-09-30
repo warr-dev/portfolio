@@ -95,4 +95,39 @@ class PortfolioTest extends TestCase
             ->where('project.gallery.0.caption', 'Redis Architecture Bench')
         );
     }
+
+    public function test_sitemap_xml_generates_valid_xml_with_project_routes(): void
+    {
+        Project::create([
+            'title' => 'Sitemap Test Project',
+            'slug' => 'sitemap-test-project',
+            'badge' => 'Cloud',
+            'description' => 'Test project for XML sitemap verification.',
+            'tags' => ['Docker', 'AWS'],
+            'demo_status' => 'offline',
+            'github_status' => 'public',
+            'media_type' => 'none',
+            'featured' => true,
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/xml');
+        $this->assertStringContainsString('<?xml version="1.0" encoding="UTF-8"?>', $response->getContent());
+        $this->assertStringContainsString('<loc>' . url('/') . '</loc>', $response->getContent());
+        $this->assertStringContainsString('<loc>' . route('portfolio.project.show', 'sitemap-test-project') . '</loc>', $response->getContent());
+    }
+
+    public function test_robots_txt_returns_disallow_admin_and_sitemap_link(): void
+    {
+        $response = $this->get('/robots.txt');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
+        $this->assertStringContainsString('User-agent: *', $response->getContent());
+        $this->assertStringContainsString('Disallow: /admin', $response->getContent());
+        $this->assertStringContainsString('Sitemap: ' . url('/sitemap.xml'), $response->getContent());
+    }
 }

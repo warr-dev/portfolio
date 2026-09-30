@@ -28,7 +28,7 @@ class SiteSetting extends Model
      */
     public static function set(string $key, $value): void
     {
-        $val = is_array($value) ? json_encode($value) : $value;
+        $val = (is_array($value) || is_bool($value)) ? json_encode($value) : $value;
         static::updateOrCreate(['key' => $key], ['value' => $val]);
     }
 }

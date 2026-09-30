@@ -14,7 +14,7 @@ import Footer from '@/Components/Footer';
 
 export default function PortfolioIndex({ projects, experiences, skills, recruiterData }) {
     return (
-        <PortfolioLayout>
+        <PortfolioLayout recruiterData={recruiterData}>
             <Navbar recruiterData={recruiterData} />
 
             <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24 space-y-28">

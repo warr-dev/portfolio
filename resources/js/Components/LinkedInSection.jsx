@@ -8,7 +8,12 @@ const LinkedInIcon = ({ className = "w-4 h-4" }) => (
 );
 
 export default function LinkedInSection({ recruiterData }) {
-    if (!recruiterData?.linkedin) return null;
+    if (!recruiterData?.linkedin || recruiterData?.linkedinEnabled === false) return null;
+
+    const company = recruiterData.linkedinCompany || 'NTT Limited Philippines';
+    const role = recruiterData.linkedinRole || 'Senior Backend Developer';
+    const workAuth = recruiterData.linkedinWorkAuth || 'Remote / B2B / Full-Time';
+    const workAuthNote = recruiterData.linkedinWorkAuthNote || 'Open to worldwide contracts';
 
     return (
         <section id="linkedin" className="space-y-6">
@@ -78,14 +83,14 @@ export default function LinkedInSection({ recruiterData }) {
 
                     <div className="bg-[#141516] p-3.5 rounded-lg border border-[#23252a] space-y-1">
                         <span className="text-[10px] font-mono text-[#62666d] uppercase">Current Engagement</span>
-                        <p className="font-medium text-[#f7f8f8]">NTT Limited Philippines</p>
-                        <span className="text-[10px] text-[#8a8f98] block">Senior Backend Developer</span>
+                        <p className="font-medium text-[#f7f8f8]">{company}</p>
+                        <span className="text-[10px] text-[#8a8f98] block">{role}</span>
                     </div>
 
                     <div className="bg-[#141516] p-3.5 rounded-lg border border-[#23252a] space-y-1">
                         <span className="text-[10px] font-mono text-[#62666d] uppercase">Work Authorization</span>
-                        <p className="font-medium text-[#f7f8f8]">Remote / B2B / Full-Time</p>
-                        <span className="text-[10px] text-[#8a8f98] block">Open to worldwide contracts</span>
+                        <p className="font-medium text-[#f7f8f8]">{workAuth}</p>
+                        <span className="text-[10px] text-[#8a8f98] block">{workAuthNote}</span>
                     </div>
                 </div>
             </div>

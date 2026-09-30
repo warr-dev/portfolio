@@ -22,7 +22,9 @@ import {
     Lock,
     Layers,
     Edit2,
-    X
+    X,
+    Globe,
+    Image as ImageIcon
 } from 'lucide-react';
 
 const ICON_OPTIONS = [
@@ -47,12 +49,22 @@ export default function Settings({ settings }) {
         phone: settings.phone || '',
         github: settings.github || '',
         linkedin: settings.linkedin || '',
+        linkedin_enabled: settings.linkedin_enabled !== undefined ? settings.linkedin_enabled : true,
+        linkedin_company: settings.linkedin_company || 'NTT Limited Philippines',
+        linkedin_role: settings.linkedin_role || 'Senior Backend Developer',
+        linkedin_work_auth: settings.linkedin_work_auth || 'Remote / B2B / Full-Time',
+        linkedin_work_auth_note: settings.linkedin_work_auth_note || 'Open to worldwide contracts',
         careerStartDate: settings.careerStartDate || '2019-07-01',
         cvDisplayMode: settings.cvDisplayMode || 'both',
         activeCv: settings.activeCv || 'comprehensive',
         specializedTitle: settings.specializedTitle || 'Hardware I/O, C++ & Edge Engineering',
         specializedSubtitle: settings.specializedSubtitle || 'Physical to Cloud',
         specializedCapabilities: Array.isArray(settings.specializedCapabilities) ? settings.specializedCapabilities : [],
+        seo_title: settings.seo_title || '',
+        seo_description: settings.seo_description || '',
+        seo_keywords: settings.seo_keywords || '',
+        og_image: settings.og_image || '',
+        og_image_file: null,
         cv_file: null,
         resume_file: null,
         new_password: '',
@@ -224,6 +236,7 @@ export default function Settings({ settings }) {
         { id: 'profile', label: 'Core Profile & Bio', icon: User },
         { id: 'contact', label: 'Contact & Socials', icon: Mail },
         { id: 'capabilities', label: 'Specialized Capabilities', icon: Layers, badge: data.specializedCapabilities?.length > 0 ? `${data.specializedCapabilities.length}` : null },
+        { id: 'seo', label: 'SEO & Social Graph', icon: Globe },
         { id: 'security', label: 'Security & Auth', icon: Lock },
     ];
 
@@ -371,7 +384,7 @@ export default function Settings({ settings }) {
                             <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2] border-b border-[#23252a] pb-2">
                                 02 / Contact & Socials
                             </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono text-[#8a8f98]">Email</label>
                                     <input
@@ -404,16 +417,91 @@ export default function Settings({ settings }) {
                                         required
                                     />
                                 </div>
+                            </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-mono text-[#0a66c2]">LinkedIn Profile URL</label>
-                                    <input
-                                        type="url"
-                                        value={data.linkedin}
-                                        onChange={(e) => setData('linkedin', e.target.value)}
-                                        placeholder="https://linkedin.com/in/warr-dev"
-                                        className="w-full bg-[#141516] border border-[#23252a] focus:border-[#0a66c2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
-                                    />
+                            {/* LinkedIn Section Detailed Configuration */}
+                            <div className="bg-[#141516] border border-[#23252a] rounded-lg p-4 sm:p-5 space-y-4">
+                                <div className="flex items-center justify-between border-b border-[#23252a] pb-3">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold text-[#f7f8f8]">LinkedIn Profile & Network Card</span>
+                                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0a66c2]/15 text-[#0a66c2] border border-[#0a66c2]/30">
+                                                Configurable Section
+                                            </span>
+                                        </div>
+                                        <span className="text-[11px] text-[#8a8f98] block mt-0.5">
+                                            Customize the copy, current engagement, and work authorization displayed in the dedicated LinkedIn section.
+                                        </span>
+                                    </div>
+                                    <label className="flex items-center gap-2 cursor-pointer text-xs font-mono text-[#8a8f98] hover:text-[#f7f8f8]">
+                                        <input
+                                            type="checkbox"
+                                            checked={data.linkedin_enabled}
+                                            onChange={(e) => setData('linkedin_enabled', e.target.checked)}
+                                            className="w-4 h-4 rounded border-[#23252a] bg-[#0f1011] text-[#0a66c2] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                                        />
+                                        <span>Show LinkedIn Section</span>
+                                    </label>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5 sm:col-span-2">
+                                        <label className="text-xs font-mono text-[#0a66c2]">LinkedIn Profile URL</label>
+                                        <input
+                                            type="url"
+                                            value={data.linkedin}
+                                            onChange={(e) => setData('linkedin', e.target.value)}
+                                            placeholder="https://linkedin.com/in/warr-dev"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#0a66c2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                        <span className="text-[10px] font-mono text-[#62666d] block">
+                                            URL used for the "Connect on LinkedIn" and "View Profile" actions.
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Current Engagement (Company)</label>
+                                        <input
+                                            type="text"
+                                            value={data.linkedin_company}
+                                            onChange={(e) => setData('linkedin_company', e.target.value)}
+                                            placeholder="NTT Limited Philippines"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Current Role / Subtitle</label>
+                                        <input
+                                            type="text"
+                                            value={data.linkedin_role}
+                                            onChange={(e) => setData('linkedin_role', e.target.value)}
+                                            placeholder="Senior Backend Developer"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Work Authorization</label>
+                                        <input
+                                            type="text"
+                                            value={data.linkedin_work_auth}
+                                            onChange={(e) => setData('linkedin_work_auth', e.target.value)}
+                                            placeholder="Remote / B2B / Full-Time"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Work Authorization Note</label>
+                                        <input
+                                            type="text"
+                                            value={data.linkedin_work_auth_note}
+                                            onChange={(e) => setData('linkedin_work_auth_note', e.target.value)}
+                                            placeholder="Open to worldwide contracts"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -850,11 +938,106 @@ export default function Settings({ settings }) {
                         </div>
                     )}
 
-                    {/* Submodule 05: Security & Credentials */}
+                    {/* Submodule 05: SEO & Social Graph */}
+                    {activeTab === 'seo' && (
+                        <div className="space-y-5 animate-in fade-in duration-200">
+                            <div>
+                                <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2] border-b border-[#23252a] pb-2">
+                                    05 / SEO & Social Graph Meta Tags
+                                </h2>
+                                <span className="text-[11px] text-[#8a8f98] block mt-1">
+                                    Configure search engine indexing, OpenGraph cards for LinkedIn/Slack/Twitter, and JSON-LD structured schemas.
+                                </span>
+                            </div>
+
+                            <div className="bg-[#141516] border border-[#23252a] rounded-lg p-5 space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono text-[#8a8f98]">Global Page Title (&lt;title&gt; and og:title)</label>
+                                    <input
+                                        type="text"
+                                        value={data.seo_title}
+                                        onChange={(e) => setData('seo_title', e.target.value)}
+                                        placeholder="Warren Dalawampu — Senior Backend Developer & Systems Software Engineer"
+                                        className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                    />
+                                    <span className="text-[10px] font-mono text-[#62666d] block">
+                                        Recommended length: 50–60 characters for optimal Google SERP presentation.
+                                    </span>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono text-[#8a8f98]">Meta Description (meta description and og:description)</label>
+                                    <textarea
+                                        rows={3}
+                                        value={data.seo_description}
+                                        onChange={(e) => setData('seo_description', e.target.value)}
+                                        placeholder="Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems."
+                                        className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors resize-none"
+                                    />
+                                    <span className="text-[10px] font-mono text-[#62666d] block">
+                                        Recommended length: 140–160 characters. Displayed on search results and social share snippets.
+                                    </span>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono text-[#8a8f98]">Meta Keywords (comma-separated)</label>
+                                    <input
+                                        type="text"
+                                        value={data.seo_keywords}
+                                        onChange={(e) => setData('seo_keywords', e.target.value)}
+                                        placeholder="Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems"
+                                        className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                    />
+                                </div>
+
+                                {/* OpenGraph & Social Image */}
+                                <div className="border-t border-[#23252a] pt-4 space-y-3">
+                                    <label className="text-xs font-semibold text-[#f7f8f8] block">
+                                        Social Sharing Image (og:image / Twitter Card Banner)
+                                    </label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                                        <div className="space-y-2">
+                                            <input
+                                                type="url"
+                                                value={data.og_image}
+                                                onChange={(e) => setData('og_image', e.target.value)}
+                                                placeholder="https://example.com/social-preview.png"
+                                                className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                            />
+                                            <span className="text-[10px] font-mono text-[#62666d] block">
+                                                Or upload a direct banner image asset (1200x630px recommended):
+                                            </span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => setData('og_image_file', e.target.files[0])}
+                                                className="w-full text-xs text-[#8a8f98] file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[11px] file:font-mono file:bg-[#1f2024] file:text-[#d0d6e0] hover:file:bg-[#282a30] cursor-pointer"
+                                            />
+                                        </div>
+
+                                        {data.og_image && (
+                                            <div className="rounded-lg border border-[#23252a] bg-[#0f1011] p-2 flex flex-col items-center justify-center overflow-hidden">
+                                                <img 
+                                                    src={data.og_image} 
+                                                    alt="OpenGraph Preview" 
+                                                    className="w-full h-32 object-cover rounded-md"
+                                                />
+                                                <span className="text-[10px] font-mono text-[#62666d] mt-1 truncate max-w-full">
+                                                    Current Preview: {data.og_image}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Submodule 06: Security & Credentials */}
                     {activeTab === 'security' && (
                         <div className="space-y-4 animate-in fade-in duration-200">
                             <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2] border-b border-[#23252a] pb-2">
-                                05 / Security & Credentials
+                                06 / Security & Credentials
                             </h2>
                             <div className="space-y-1.5 max-w-sm">
                                 <label className="text-xs font-mono text-[#8a8f98]">Change Admin Password (leave blank to keep)</label>
