@@ -4,16 +4,25 @@ This runbook documents how to run automated verification across the backend and 
 
 ## 1. Backend PHPUnit Feature Tests
 
-Tests are located in `tests/Feature/PortfolioTest.php`.
+Tests are located in:
+- `tests/Feature/PortfolioTest.php` (Public portfolio and inquiry submissions)
+- `tests/Feature/AdminTest.php` (Administrative panel authentication, settings, CRUD)
+- `tests/Feature/Api/ProductionManageTest.php` (Production management API, auth, health, logs, artisan, and maintenance)
 
-### What is tested:
-- **`test_portfolio_page_loads_successfully_with_inertia_props`**: Asserts HTTP 200, checks Inertia component `Portfolio/Index`, and asserts presence of `projects`, `experiences`, `skills`, and `recruiterData`.
-- **`test_contact_form_validates_required_fields`**: Asserts validation error keys when sending empty payload.
-- **`test_contact_form_submits_successfully_and_saves_to_database`**: Submits valid contact payload, asserts redirect with flash success, and checks `contact_messages` table in SQLite.
+### What is tested in `ProductionManageTest`:
+- **`test_unauthenticated_request_is_rejected`**: Ensures missing Bearer token returns 401 Unauthorized.
+- **`test_invalid_token_is_rejected`**: Validates non-matching token rejection.
+- **`test_authenticated_health_check_returns_system_metrics`**: Confirms 200 OK with PHP, Laravel, DB, and disk metrics.
+- **`test_whitelisted_artisan_command_executes_successfully`**: Runs `about` command and verifies output structure.
+- **`test_non_whitelisted_artisan_command_is_forbidden`**: Confirms destructive or non-whitelisted commands (`migrate:fresh`) return 403 Forbidden.
+- **`test_logs_endpoint_returns_recent_log_content`**: Reads and asserts tailing of `storage/logs/laravel.log`.
+- **`test_maintenance_mode_toggle_down_and_up`**: Toggles application maintenance mode (`down` with secret, and `up`).
 
 ### Execution Command:
 ```bash
 php artisan test
+# Or target specifically:
+php artisan test --filter=ProductionManageTest
 ```
 
 ---

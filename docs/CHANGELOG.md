@@ -2,6 +2,19 @@
 
 All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be documented in this file.
 
+## [Unreleased] - 2026-11-08
+
+### Added
+- **Production Management REST API (`routes/api.php`, `ProductionManageController.php`, `EnsureManageTokenIsValid.php`)**:
+  - **Secure Token-Based API Authentication**: Created `EnsureManageTokenIsValid` middleware validating `Authorization: Bearer <token>` against `config('services.manage.token')` / `MANAGE_API_KEY` using constant-time `hash_equals` comparison. Aliased as `manage.auth`.
+  - **Maintenance Mode Bypass**: Configured `$middleware->preventRequestsDuringMaintenance(except: ['api/manage/*'])` in `bootstrap/app.php` so health inspections, log analysis, and `up` commands remain accessible even when production is down.
+  - **System Health Diagnostics (`GET /api/manage/health`)**: Reports real-time PHP/Laravel versions, environment mode, SQLite database connectivity status, free disk space in MB, and maintenance status.
+  - **Artisan Command Execution (`POST /api/manage/artisan`)**: Executes strictly whitelisted administrative Artisan operations (`about`, `optimize:clear`, `config:cache`, `config:clear`, `route:cache`, `route:clear`, `view:cache`, `view:clear`, `migrate:status`, `storage:link`) and rejects non-whitelisted commands with 403 Forbidden.
+  - **Application Error Log Tailing (`GET /api/manage/logs`)**: Tails the most recent lines (configurable via `lines` query param, capped at 500) of `storage/logs/laravel.log`.
+  - **Maintenance Mode Management (`POST /api/manage/maintenance`)**: Programmatically toggles `artisan down` (with optional bypass secret) and `artisan up`.
+  - **CLI Management Helper Script (`scripts/prod-manage.sh`)**: Executable bash utility automating health checks, cache warming, log tailing, and maintenance operations from the terminal or AI agent.
+  - **Automated Feature Test Suite (`tests/Feature/Api/ProductionManageTest.php`)**: 7 feature tests verifying authentication rejections, metric responses, command whitelisting, log reading, and maintenance toggling (all 27 tests and 168 assertions passing).
+
 ## [Unreleased] - 2026-09-30
 
 ### Added

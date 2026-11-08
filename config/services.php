@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'manage' => [
+        'token' => env('MANAGE_API_KEY'),
+    ],
+
 ];

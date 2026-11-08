@@ -60,3 +60,88 @@
 | `GET` | `/admin/inbox` | `InboxController@index` | View recruiter inquiry messages |
 | `POST` | `/admin/inbox/{message}/read` | `InboxController@markAsRead` | Mark inquiry as read |
 | `DELETE` | `/admin/inbox/{message}` | `InboxController@destroy` | Delete inquiry |
+
+---
+
+## 3. Production Management API (`/api/manage/*`)
+
+Protected by `manage.auth` middleware (`Authorization: Bearer <MANAGE_API_KEY>`) and rate-limited via `throttle:60,1`. Excluded from maintenance mode blocking.
+
+### `GET /api/manage/health`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@health`
+- **Description**: Returns system metrics, PHP/Laravel versions, database connectivity, and maintenance state.
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "ok",
+    "php_version": "8.3.x",
+    "laravel_version": "13.17.x",
+    "app_env": "production",
+    "maintenance_mode": false,
+    "db_connected": true,
+    "disk_free_mb": 45230,
+    "cache_driver": "database"
+  }
+  ```
+
+### `POST /api/manage/artisan`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@artisan`
+- **Description**: Executes whitelisted artisan commands (`about`, `optimize:clear`, `config:cache`, `config:clear`, `route:cache`, `route:clear`, `view:cache`, `view:clear`, `migrate:status`, `storage:link`).
+- **Request Payload**:
+  ```json
+  {
+    "command": "config:cache"
+  }
+  ```
+- **Response `200 OK`**:
+  ```json
+  {
+    "command": "config:cache",
+    "output": "Configuration cache cleared successfully.\nConfiguration cached successfully.\n"
+  }
+  ```
+- **Response `403 Forbidden`** (if command is not whitelisted):
+  ```json
+  {
+    "error": "Command not allowed",
+    "allowed_commands": ["about", "optimize:clear", "config:cache", "..."]
+  }
+  ```
+
+### `GET /api/manage/logs`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@logs`
+- **Description**: Tails recent lines of `storage/logs/laravel.log`. Query parameter `lines` defaults to 50 (max 500).
+- **Query Params**: `?lines=50`
+- **Response `200 OK`**:
+  ```json
+  {
+    "lines": 50,
+    "content": "[2026-11-08 14:00:00] production.ERROR: ..."
+  }
+  ```
+
+### `POST /api/manage/maintenance`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@maintenance`
+- **Description**: Toggles Laravel maintenance mode (`down` or `up`).
+- **Request Payload (Down)**:
+  ```json
+  {
+    "action": "down",
+    "secret": "optional-bypass-token"
+  }
+  ```
+- **Request Payload (Up)**:
+  ```json
+  {
+    "action": "up"
+  }
+  ```
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "ok",
+    "maintenance_mode": false,
+    "output": "Application is now live."
+  }
+  ```
+

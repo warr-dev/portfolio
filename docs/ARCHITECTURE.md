@@ -56,3 +56,11 @@ PortfolioLayout.jsx
   - `ExperienceController`: Full CRUD for career milestones with multiline bullet points and tech tags.
   - `SkillController`: Full CRUD for skill groupings, proficiency tiers, and tool arrays.
   - `InboxController`: Inquiry viewer with unread indicators, mark-as-read triggers, and deletion actions.
+
+## 6. Production Management Architecture (`/api/manage`)
+- **Authentication**: Stateless Bearer token verification via `EnsureManageTokenIsValid` middleware (`manage.auth`), validated against `config('services.manage.token')` / `MANAGE_API_KEY`.
+- **Throttling**: 60 requests per minute (`throttle:60,1`).
+- **Maintenance Bypass**: Explicitly exempted in `bootstrap/app.php` (`preventRequestsDuringMaintenance(except: ['api/manage/*'])`) allowing remote monitoring and `up` recovery when production is down.
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController` with whitelisted Artisan runner, log tailer, and health diagnostics.
+- **CLI Client**: `scripts/prod-manage.sh` for fast terminal and AI-agent interactions.
+
