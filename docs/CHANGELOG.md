@@ -5,6 +5,8 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-11-09
 
 ### Fixed
+- **Projects Table Responsive Horizontal Scrollbar (`Projects/Index.jsx`)**:
+  - **Screen Clamping & Clipping Fix**: Wrapped the table in an `overflow-x-auto custom-scrollbar` container with a `min-w-[720px]` table width guarantee. This allows smaller screens and narrower browser windows to smoothly scroll horizontally with styled dark scrollbars without clipping the `Links` or `Actions` action columns.
 - **Career Milestone Modal Form Submission & Custom Scrollbar (`Experience/Index.jsx`)**:
   - **303 Redirect / No Message / Modal Not Closing**: Fixed a bug where `put()` and `post()` from `useForm` were called with an extra `{ data: payload }` envelope wrapping the data instead of passing `payload` directly to `router.put()` / `router.post()`. This caused Laravel's validation rules (`role`, `company`, `period`, `bullet_points`) to fail silently into validation errors on `$request->validate()`, returning a 303 redirect with session validation errors that went unrendered and prevented `onSuccess` from firing and closing the modal.
   - **Inline Validation Feedback**: Added explicit error text rendering (`{errors.role}`, `{errors.company}`, `{errors.period}`, `{errors.bullet_points}`) so validation feedback is immediately visible.
@@ -21,6 +23,16 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
   - **Checkbox State Fidelity**: Updated `Settings.jsx` checkboxes to use truthy parsing so checkboxes accurately reflect database state.
 
 ### Added
+- **Project REST Management API (`routes/api.php`, `ProductionManageController.php`, `ProductionManageTest.php`, `API_REFERENCE.md`)**:
+  - Implemented secure API endpoints for project synchronization protected by `manage.auth` (`Authorization: Bearer <MANAGE_API_KEY>`):
+    - `GET /api/manage/projects`: Lists all showcased projects with count and attributes.
+    - `POST /api/manage/projects`: Creates or updates a showcased project directly via JSON payload with automatic slugging and sort order defaults.
+    - `DELETE /api/manage/projects/{project}`: Removes a project via API.
+  - Added feature test suite `ProductionManageTest::test_can_manage_projects_via_api`.
+- **ePaluto On-Demand Home Cook Bento Marketplace Showcase (`2026_11_09_101000_seed_epaluto_project.php`, `DatabaseSeeder.php`, `public/screenshots/epaluto.png`)**:
+  - Added new featured showcase project for [`https://github.com/warr-dev/ePaluto`](https://github.com/warr-dev/ePaluto).
+  - Highlights full-stack SvelteKit 2 + Svelte 5 Runes architecture, PostgreSQL 15 connection pooling, Firebase Admin + signed JWT dual-mode auth, community chef menu voting polls, and Playwright E2E testing.
+  - Generated and bundled high-res 1280x800 preview assets (`public/screenshots/epaluto.png` and `public/screenshots/epaluto.webp`).
 - **Unified Branding Across Admin Console & Login (`AdminLayout.jsx`, `Login.jsx`, `HandleInertiaRequests.php`)**:
   - Replaced hardcoded text (`warren.admin`) with dynamic brand tokens (`logoTextPrimary` / `logoTextSecondary`), custom logo icon images, and monogram letters (`logoIconText`).
   - Synced global favicon controls (`<link rel="icon">`) to all admin views.

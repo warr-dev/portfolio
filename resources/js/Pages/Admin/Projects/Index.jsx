@@ -291,19 +291,20 @@ export default function ProjectsIndex({ projects }) {
 
             {/* Projects Table */}
             <div className="bg-[#0f1011] border border-[#23252a] rounded-xl overflow-hidden shadow-sm">
-                <table className="w-full text-left text-xs">
-                    <thead className="bg-[#141516] border-b border-[#23252a] font-mono text-[#8a8f98]">
-                        <tr>
-                            <th className="p-3.5 w-16 text-center">Order</th>
-                            <th className="p-3.5">Cover & Title</th>
-                            <th className="p-3.5">Organization</th>
-                            <th className="p-3.5">Tags</th>
-                            <th className="p-3.5 w-24 text-center">Status</th>
-                            <th className="p-3.5 w-28 text-center">Links</th>
-                            <th className="p-3.5 w-24 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#23252a]">
+                <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-left text-xs min-w-[720px]">
+                        <thead className="bg-[#141516] border-b border-[#23252a] font-mono text-[#8a8f98]">
+                            <tr>
+                                <th className="p-3.5 w-16 text-center shrink-0">Order</th>
+                                <th className="p-3.5 min-w-[200px]">Cover & Title</th>
+                                <th className="p-3.5">Organization</th>
+                                <th className="p-3.5 min-w-[150px]">Tags</th>
+                                <th className="p-3.5 w-24 text-center shrink-0">Status</th>
+                                <th className="p-3.5 w-28 text-center shrink-0">Links</th>
+                                <th className="p-3.5 w-24 text-right shrink-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#23252a]">
                         {projects.map((project, idx) => (
                             <tr key={project.id} className={`hover:bg-[#141516]/50 transition-colors ${!project.featured ? 'opacity-60 bg-[#141516]/20' : ''}`}>
                                 {/* Order Controls */}
@@ -497,6 +498,7 @@ export default function ProjectsIndex({ projects }) {
                     </tbody>
                 </table>
             </div>
+        </div>
 
             {/* Modal with Fixed Header and Scrollable Body */}
             {isModalOpen && (

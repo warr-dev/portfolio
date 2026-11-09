@@ -2,12 +2,15 @@
 
 namespace Tests\Feature\Api;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class ProductionManageTest extends TestCase
 {
+    use RefreshDatabase;
+
     private string $testToken = 'test-manage-secret-token-12345';
 
     protected function setUp(): void
@@ -129,5 +132,52 @@ class ProductionManageTest extends TestCase
             'maintenance_mode' => false,
         ]);
         $this->assertFalse(app()->isDownForMaintenance());
+    }
+
+    public function test_can_manage_projects_via_api(): void
+    {
+        $payload = [
+            'title' => 'API Generated Project',
+            'slug' => 'api-generated-project',
+            'badge' => 'API Test',
+            'organization' => 'WarrDev Labs',
+            'description' => 'Created via management REST API.',
+            'tags' => ['REST', 'Laravel'],
+            'demo_url' => 'https://example.com',
+            'github_url' => 'https://github.com/warr-dev/api-test',
+            'featured' => true,
+        ];
+
+        // 1. Create Project
+        $postRes = $this->withHeader('Authorization', 'Bearer '.$this->testToken)
+            ->postJson('/api/manage/projects', $payload);
+
+        $postRes->assertStatus(200);
+        $postRes->assertJson([
+            'status' => 'ok',
+            'message' => 'Project saved successfully',
+            'project' => [
+                'slug' => 'api-generated-project',
+            ],
+        ]);
+
+        $projectId = $postRes->json('project.id');
+
+        // 2. List Projects
+        $listRes = $this->withHeader('Authorization', 'Bearer '.$this->testToken)
+            ->getJson('/api/manage/projects');
+
+        $listRes->assertStatus(200);
+        $this->assertGreaterThanOrEqual(1, $listRes->json('count'));
+
+        // 3. Delete Project
+        $delRes = $this->withHeader('Authorization', 'Bearer '.$this->testToken)
+            ->deleteJson("/api/manage/projects/{$projectId}");
+
+        $delRes->assertStatus(200);
+        $delRes->assertJson([
+            'status' => 'ok',
+            'message' => 'Project deleted successfully',
+        ]);
     }
 }

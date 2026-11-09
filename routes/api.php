@@ -22,4 +22,9 @@ Route::prefix('manage')
         Route::get('/logs', [ProductionManageController::class, 'logs']);
         Route::post('/artisan', [ProductionManageController::class, 'artisan']);
         Route::post('/maintenance', [ProductionManageController::class, 'maintenance']);
+
+        // Project CRUD API Endpoints
+        Route::get('/projects', [ProductionManageController::class, 'getProjects']);
+        Route::post('/projects', [ProductionManageController::class, 'storeProject']);
+        Route::delete('/projects/{project}', [ProductionManageController::class, 'destroyProject']);
     });

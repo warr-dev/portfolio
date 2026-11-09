@@ -145,3 +145,58 @@ Protected by `manage.auth` middleware (`Authorization: Bearer <MANAGE_API_KEY>`)
   }
   ```
 
+---
+
+### `GET /api/manage/projects`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@getProjects`
+- **Description**: Lists all showcased projects via API.
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "ok",
+    "count": 7,
+    "projects": [...]
+  }
+  ```
+
+---
+
+### `POST /api/manage/projects`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@storeProject`
+- **Description**: Creates or updates a showcased project directly via JSON.
+- **Request Payload**:
+  ```json
+  {
+    "title": "ePaluto On-Demand Home Cook Marketplace",
+    "slug": "epaluto-home-cook-marketplace",
+    "badge": "Full-Stack SvelteKit",
+    "organization": "WarrDev Open Source",
+    "description": "Hyper-local home-cooked bento delivery and neighborhood meal marketplace.",
+    "tags": ["SvelteKit 2", "Svelte 5 Runes", "PostgreSQL 15", "Tailwind v4"],
+    "github_url": "https://github.com/warr-dev/ePaluto",
+    "featured": true,
+    "sort_order": 4
+  }
+  ```
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "ok",
+    "message": "Project saved successfully",
+    "project": { ... }
+  }
+  ```
+
+---
+
+### `DELETE /api/manage/projects/{project}`
+- **Controller**: `App\Http\Controllers\Api\ProductionManageController@destroyProject`
+- **Description**: Deletes a project by ID or slug via API.
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "ok",
+    "message": "Project deleted successfully"
+  }
+  ```
+

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ProductionManageController extends Controller
@@ -136,6 +138,85 @@ class ProductionManageController extends Controller
             'status' => 'ok',
             'maintenance_mode' => app()->isDownForMaintenance(),
             'output' => trim(Artisan::output()),
+        ]);
+    }
+
+    /**
+     * List projects via the management API.
+     */
+    public function getProjects(): JsonResponse
+    {
+        $projects = Project::orderBy('sort_order', 'asc')->get();
+
+        return response()->json([
+            'status' => 'ok',
+            'count' => $projects->count(),
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
+     * Create or update a project via the management API.
+     */
+    public function storeProject(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'nullable|integer|exists:projects,id',
+            'title' => 'required|string|max:150',
+            'slug' => 'nullable|string|max:150',
+            'badge' => 'nullable|string|max:50',
+            'organization' => 'nullable|string|max:100',
+            'description' => 'required|string|max:2000',
+            'tags' => 'required|array',
+            'tags.*' => 'string|max:50',
+            'demo_url' => 'nullable|url|max:255',
+            'github_url' => 'nullable|url|max:255',
+            'demo_status' => 'nullable|string|in:live,offline,internal,decommissioned',
+            'github_status' => 'nullable|string|in:public,private,nda,archived',
+            'media_type' => 'nullable|string|in:none,image,video,youtube',
+            'media_url' => 'nullable|string|max:1000',
+            'cover_image' => 'nullable|string|max:1000',
+            'gallery' => 'nullable|array',
+            'content' => 'nullable|string|max:20000',
+            'featured' => 'nullable|boolean',
+            'sort_order' => 'nullable|integer',
+            'extra_info' => 'nullable|array',
+        ]);
+
+        $slug = $validated['slug'] ?? Str::slug($validated['title']);
+        $validated['demo_status'] = $validated['demo_status'] ?? 'live';
+        $validated['github_status'] = $validated['github_status'] ?? 'public';
+        $validated['media_type'] = $validated['media_type'] ?? 'none';
+        $validated['featured'] = $validated['featured'] ?? true;
+        $validated['sort_order'] = $validated['sort_order'] ?? (Project::max('sort_order') + 1);
+
+        if (! empty($validated['id'])) {
+            $project = Project::findOrFail($validated['id']);
+            $project->update($validated);
+        } else {
+            $project = Project::updateOrCreate(
+                ['slug' => $slug],
+                $validated
+            );
+        }
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Project saved successfully',
+            'project' => $project,
+        ], 200);
+    }
+
+    /**
+     * Delete a project via the management API.
+     */
+    public function destroyProject(Project $project): JsonResponse
+    {
+        $project->delete();
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Project deleted successfully',
         ]);
     }
 }

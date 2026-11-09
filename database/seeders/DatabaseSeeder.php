@@ -53,6 +53,18 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 3,
             ],
             [
+                'title' => 'ePaluto On-Demand Home Cook Marketplace',
+                'slug' => 'epaluto-home-cook-marketplace',
+                'badge' => 'Full-Stack SvelteKit',
+                'organization' => 'WarrDev Open Source',
+                'description' => 'Hyper-local home-cooked bento delivery and neighborhood meal marketplace. Connects verified home chefs with local customers, featuring chef menu scheduling, community meal voting polls, and dual-mode auth.',
+                'tags' => ['SvelteKit 2', 'Svelte 5 Runes', 'PostgreSQL 15', 'Tailwind v4', 'Firebase Admin', 'Docker', 'Playwright'],
+                'demo_url' => null,
+                'github_url' => 'https://github.com/warr-dev/ePaluto',
+                'featured' => true,
+                'sort_order' => 4,
+            ],
+            [
                 'title' => 'Trash2Cash Recycling Marketplace',
                 'slug' => 'trash2cash-recycling-marketplace',
                 'badge' => 'Full-Stack Platform',
@@ -62,7 +74,7 @@ class DatabaseSeeder extends Seeder
                 'demo_url' => null,
                 'github_url' => 'https://github.com/warr-dev',
                 'featured' => true,
-                'sort_order' => 4,
+                'sort_order' => 5,
             ],
             [
                 'title' => 'KiosKo Cloud Fleet Management Platform',
@@ -74,7 +86,7 @@ class DatabaseSeeder extends Seeder
                 'demo_url' => 'https://kiosko.cloud/',
                 'github_url' => 'https://github.com/warr-dev',
                 'featured' => true,
-                'sort_order' => 5,
+                'sort_order' => 6,
             ],
             [
                 'title' => 'Palitayo Barter & Trade Marketplace',
@@ -86,7 +98,7 @@ class DatabaseSeeder extends Seeder
                 'demo_url' => 'https://palitayo.online/',
                 'github_url' => 'https://github.com/warr-dev',
                 'featured' => true,
-                'sort_order' => 6,
+                'sort_order' => 7,
             ],
         ];
 
