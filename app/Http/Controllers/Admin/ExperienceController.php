@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Experience;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -12,7 +13,7 @@ class ExperienceController extends Controller
 {
     public function index(): Response
     {
-        $allSkills = \App\Models\Skill::all()
+        $allSkills = Skill::all()
             ->pluck('items')
             ->flatten(1)
             ->map(function ($item) {

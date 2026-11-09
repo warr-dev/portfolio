@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Models\ContactMessage;
 use App\Models\Project;
 use App\Models\SiteSetting;
+use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminTest extends TestCase
@@ -103,6 +106,65 @@ class AdminTest extends TestCase
         $this->assertStringContainsString('Years', SiteSetting::get('yearsExperience'));
     }
 
+    public function test_admin_can_update_hero_section_settings_and_layout(): void
+    {
+        $payload = [
+            'name' => 'Warren Dalawampu',
+            'title' => 'Senior Backend Developer & DevOps Engineer',
+            'statusBadge' => 'Open to Senior Roles',
+            'location' => 'Mindoro, Philippines',
+            'bio' => 'Sample bio text for hero test.',
+            'email' => 'warrdev08@gmail.com',
+            'phone' => '+63 956 164 5935',
+            'github' => 'https://github.com/warr-dev',
+            'careerStartDate' => '2019-07-01',
+            'cvDisplayMode' => 'both',
+            'activeCv' => 'comprehensive',
+            'hero_name' => 'Warren Dalawampu M.S.',
+            'hero_title' => 'Lead Infrastructure & Cloud Architect',
+            'hero_subtitle' => 'High-Concurrency Systems & Kubernetes Orchestration',
+            'hero_caption' => 'Engineered autonomous microservices, IoT devices, and cloud fleet systems.',
+            'hero_status_badge' => 'Open to Executive & Principal Tech Roles',
+            'hero_location' => 'Calapan City, Oriental Mindoro, Philippines',
+            'hero_layout' => 'layout4',
+            'hero_design_accent' => 'cyan',
+            'hero_actions' => [
+                [
+                    'id' => 1,
+                    'type' => 'button',
+                    'label' => 'Download Executive CV',
+                    'url' => '/Warren_Dalawampu_Resume.pdf',
+                    'variant' => 'primary',
+                    'icon' => 'Download',
+                    'download' => true,
+                    'is_external' => false,
+                ],
+                [
+                    'id' => 2,
+                    'type' => 'link',
+                    'label' => 'View Source Code',
+                    'url' => 'https://github.com/warr-dev',
+                    'variant' => 'ghost',
+                    'icon' => 'ExternalLink',
+                    'download' => false,
+                    'is_external' => true,
+                ],
+            ],
+        ];
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings', $payload);
+
+        $response->assertSessionHas('success');
+        $this->assertEquals('Warren Dalawampu M.S.', SiteSetting::get('hero_name'));
+        $this->assertEquals('Lead Infrastructure & Cloud Architect', SiteSetting::get('hero_title'));
+        $this->assertEquals('High-Concurrency Systems & Kubernetes Orchestration', SiteSetting::get('hero_subtitle'));
+        $this->assertEquals('Engineered autonomous microservices, IoT devices, and cloud fleet systems.', SiteSetting::get('hero_caption'));
+        $this->assertEquals('layout4', SiteSetting::get('hero_layout'));
+        $this->assertEquals('cyan', SiteSetting::get('hero_design_accent'));
+        $this->assertCount(2, SiteSetting::get('hero_actions'));
+        $this->assertEquals('Download Executive CV', SiteSetting::get('hero_actions')[0]['label']);
+    }
+
     public function test_admin_can_create_and_delete_project(): void
     {
         $projectPayload = [
@@ -138,9 +200,9 @@ class AdminTest extends TestCase
 
     public function test_admin_can_upload_project_media_file(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
-        $file = \Illuminate\Http\UploadedFile::fake()->image('screenshot.png', 800, 600);
+        $file = UploadedFile::fake()->image('screenshot.png', 800, 600);
 
         $payload = [
             'title' => 'Project With Uploaded Media',
@@ -164,15 +226,15 @@ class AdminTest extends TestCase
         $this->assertStringStartsWith('/storage/projects/', $project->media_url);
 
         $storedPath = str_replace('/storage/', '', $project->media_url);
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($storedPath);
+        Storage::disk('public')->assertExists($storedPath);
     }
 
     public function test_admin_can_upload_project_cover_and_gallery_files(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
-        $cover = \Illuminate\Http\UploadedFile::fake()->image('cover.jpg', 1200, 630);
-        $galleryImg = \Illuminate\Http\UploadedFile::fake()->image('diagram.png', 1000, 700);
+        $cover = UploadedFile::fake()->image('cover.jpg', 1200, 630);
+        $galleryImg = UploadedFile::fake()->image('diagram.png', 1000, 700);
 
         $payload = [
             'title' => 'Project With Cover And Gallery',
@@ -290,7 +352,7 @@ class AdminTest extends TestCase
         $createResponse = $this->actingAs($this->admin)->post('/admin/skills', $payload);
         $createResponse->assertSessionHas('success');
 
-        $skill = \App\Models\Skill::where('category', 'Cloud & Virtualization')->first();
+        $skill = Skill::where('category', 'Cloud & Virtualization')->first();
         $this->assertNotNull($skill);
         $this->assertCount(2, $skill->items);
         $this->assertEquals('Kubernetes', $skill->items[0]['name']);
@@ -319,9 +381,9 @@ class AdminTest extends TestCase
 
     public function test_admin_can_upload_and_add_new_resume_to_list(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
-        $pdf = \Illuminate\Http\UploadedFile::fake()->create('custom_backend_cv.pdf', 500, 'application/pdf');
+        $pdf = UploadedFile::fake()->create('custom_backend_cv.pdf', 500, 'application/pdf');
 
         $payload = [
             'label' => 'Embedded Systems & C++ CV',
@@ -401,7 +463,7 @@ class AdminTest extends TestCase
 
     public function test_admin_can_update_existing_resume(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
         $resumes = [
             [
@@ -414,7 +476,7 @@ class AdminTest extends TestCase
         ];
         SiteSetting::set('resumes', $resumes);
 
-        $newPdf = \Illuminate\Http\UploadedFile::fake()->create('replacement.pdf', 300, 'application/pdf');
+        $newPdf = UploadedFile::fake()->create('replacement.pdf', 300, 'application/pdf');
 
         $updatePayload = [
             'label' => 'Updated Custom Label',
@@ -432,5 +494,3 @@ class AdminTest extends TestCase
         $this->assertEquals('replacement.pdf', $updatedList[0]['filename']);
     }
 }
-
-

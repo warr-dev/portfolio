@@ -7,6 +7,7 @@ use App\Models\Experience;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use App\Models\Skill;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,8 +29,8 @@ class PortfolioController extends Controller
 
         $careerStartDate = SiteSetting::get('careerStartDate', '2019-07-01');
         try {
-            $diffYears = (int) floor(\Carbon\Carbon::parse($careerStartDate)->floatDiffInYears(\Carbon\Carbon::now()));
-            $computedYears = max(1, $diffYears) . '+ Years';
+            $diffYears = (int) floor(Carbon::parse($careerStartDate)->floatDiffInYears(Carbon::now()));
+            $computedYears = max(1, $diffYears).'+ Years';
         } catch (\Exception $e) {
             $computedYears = '6+ Years';
         }
@@ -62,16 +63,71 @@ class PortfolioController extends Controller
         $activeCvLabel = $selectedResume['label'] ?? 'Comprehensive CV (PDF)';
         $activeCvFilename = $selectedResume['filename'] ?? 'Warren_Dalawampu_CV_2026.pdf';
 
+        $defaultHeroActions = [
+            [
+                'id' => 1,
+                'type' => 'button',
+                'label' => 'Download '.($selectedResume['label'] ?? 'Curriculum Vitae (PDF)'),
+                'url' => $activeCvUrl,
+                'variant' => 'primary',
+                'icon' => 'Download',
+                'download' => true,
+                'is_external' => false,
+            ],
+            [
+                'id' => 2,
+                'type' => 'button',
+                'label' => 'Explore Featured Projects',
+                'url' => '#projects',
+                'variant' => 'secondary',
+                'icon' => 'ArrowDown',
+                'download' => false,
+                'is_external' => false,
+            ],
+            [
+                'id' => 3,
+                'type' => 'link',
+                'label' => 'github.com/warr-dev',
+                'url' => SiteSetting::get('github', 'https://github.com/warr-dev'),
+                'variant' => 'ghost',
+                'icon' => 'ExternalLink',
+                'download' => false,
+                'is_external' => true,
+            ],
+            [
+                'id' => 4,
+                'type' => 'link',
+                'label' => 'LinkedIn Profile',
+                'url' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warrdev'),
+                'variant' => 'ghost',
+                'icon' => 'ExternalLink',
+                'download' => false,
+                'is_external' => true,
+            ],
+        ];
+
+        $name = SiteSetting::get('hero_name', SiteSetting::get('name', 'Warren Dalawampu'));
+        $title = SiteSetting::get('hero_title', SiteSetting::get('title', 'Senior Backend Developer & DevOps / Infrastructure Engineer'));
+        $subtitle = SiteSetting::get('hero_subtitle', 'Distributed Systems, High Concurrency & Edge Hardware Integrations');
+        $caption = SiteSetting::get('hero_caption', SiteSetting::get('bio', '6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, payment gateways, and Linux/Docker/Kubernetes infrastructure across Laravel, Node.js, and cloud environments.'));
+        $statusBadge = SiteSetting::get('hero_status_badge', SiteSetting::get('statusBadge', 'Open to Senior Backend & DevOps / Infrastructure Roles'));
+        $location = SiteSetting::get('hero_location', SiteSetting::get('location', 'Sta Maria, Naujan, Oriental Mindoro, Philippines'));
+
         $recruiterData = [
-            'name' => SiteSetting::get('name', 'Warren Dalawampu'),
-            'title' => SiteSetting::get('title', 'Senior Backend Developer & Systems Software Engineer'),
-            'statusBadge' => SiteSetting::get('statusBadge', 'Open to Senior Backend & Distributed Systems Roles'),
-            'location' => SiteSetting::get('location', 'Pasig City, Philippines (Remote Worldwide)'),
-            'bio' => SiteSetting::get('bio', '6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, and payment gateways across Laravel, Node.js, Linux infrastructure, and Docker.'),
+            'name' => $name,
+            'title' => $title,
+            'subtitle' => $subtitle,
+            'caption' => $caption,
+            'statusBadge' => $statusBadge,
+            'location' => $location,
+            'heroLayout' => SiteSetting::get('hero_layout', 'layout4'),
+            'heroDesignAccent' => SiteSetting::get('hero_design_accent', 'indigo'),
+            'heroActions' => SiteSetting::get('hero_actions', $defaultHeroActions),
+            'bio' => $caption,
             'email' => SiteSetting::get('email', 'warrdev08@gmail.com'),
             'phone' => SiteSetting::get('phone', '+63 956 164 5935'),
             'github' => SiteSetting::get('github', 'https://github.com/warr-dev'),
-            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warr-dev'),
+            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warrdev'),
             'linkedinEnabled' => (bool) SiteSetting::get('linkedin_enabled', true),
             'linkedinCompany' => SiteSetting::get('linkedin_company', 'NTT Limited Philippines'),
             'linkedinRole' => SiteSetting::get('linkedin_role', 'Senior Backend Developer'),
@@ -89,7 +145,7 @@ class PortfolioController extends Controller
             'specializedTitle' => SiteSetting::get('specializedTitle', 'Hardware I/O, C++ & Edge Engineering'),
             'specializedSubtitle' => SiteSetting::get('specializedSubtitle', 'Physical to Cloud'),
             'specializedCapabilities' => SiteSetting::get('specializedCapabilities', []),
-            'seoTitle' => SiteSetting::get('seo_title', 'Warren Dalawampu — Senior Backend Developer & Systems Software Engineer'),
+            'seoTitle' => SiteSetting::get('seo_title', 'Warren Dalawampu — Senior Backend Developer & DevOps / Infrastructure Engineer'),
             'seoDescription' => SiteSetting::get('seo_description', 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.'),
             'seoKeywords' => SiteSetting::get('seo_keywords', 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency'),
             'ogImage' => SiteSetting::get('og_image', ''),
@@ -97,7 +153,7 @@ class PortfolioController extends Controller
                 [
                     'degree' => 'Master of Science in Information Technology (MSIT)',
                     'institution' => 'Batangas State University (Alangilan Campus)',
-                    'period' => '2019 — 2021',
+                    'period' => '2019 — 2022',
                 ],
                 [
                     'degree' => 'Bachelor of Science in Information Technology (BSIT)',
@@ -143,8 +199,8 @@ class PortfolioController extends Controller
     {
         $careerStartDate = SiteSetting::get('careerStartDate', '2019-07-01');
         try {
-            $diffYears = (int) floor(\Carbon\Carbon::parse($careerStartDate)->floatDiffInYears(\Carbon\Carbon::now()));
-            $computedYears = max(1, $diffYears) . '+ Years';
+            $diffYears = (int) floor(Carbon::parse($careerStartDate)->floatDiffInYears(Carbon::now()));
+            $computedYears = max(1, $diffYears).'+ Years';
         } catch (\Exception $e) {
             $computedYears = '6+ Years';
         }
@@ -155,12 +211,12 @@ class PortfolioController extends Controller
 
         $recruiterData = [
             'name' => SiteSetting::get('name', 'Warren Dalawampu'),
-            'title' => SiteSetting::get('title', 'Senior Backend Developer & Systems Software Engineer'),
-            'statusBadge' => SiteSetting::get('statusBadge', 'Open to Senior Backend & Distributed Systems Roles'),
+            'title' => SiteSetting::get('title', 'Senior Backend Developer & DevOps / Infrastructure Engineer'),
+            'statusBadge' => SiteSetting::get('statusBadge', 'Open to Senior Backend & DevOps / Infrastructure Roles'),
             'location' => SiteSetting::get('location', 'Pasig City, Philippines (Remote Worldwide)'),
             'email' => SiteSetting::get('email', 'warrdev08@gmail.com'),
             'github' => SiteSetting::get('github', 'https://github.com/warr-dev'),
-            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warr-dev'),
+            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warrdev'),
             'yearsExperience' => $computedYears,
             'cvDisplayMode' => SiteSetting::get('cvDisplayMode', 'both'),
             'activeCv' => $activeCv,
@@ -195,14 +251,14 @@ class PortfolioController extends Controller
         $baseUrl = url('/');
         $projects = Project::orderBy('updated_at', 'desc')->get();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
         // Homepage
         $latestUpdate = Project::max('updated_at') ?: now()->toAtomString();
         $xml .= "  <url>\n";
         $xml .= "    <loc>{$baseUrl}</loc>\n";
-        $xml .= "    <lastmod>" . \Carbon\Carbon::parse($latestUpdate)->toAtomString() . "</lastmod>\n";
+        $xml .= '    <lastmod>'.Carbon::parse($latestUpdate)->toAtomString()."</lastmod>\n";
         $xml .= "    <changefreq>weekly</changefreq>\n";
         $xml .= "    <priority>1.0</priority>\n";
         $xml .= "  </url>\n";
@@ -210,8 +266,8 @@ class PortfolioController extends Controller
         // Projects
         foreach ($projects as $proj) {
             $xml .= "  <url>\n";
-            $xml .= "    <loc>" . route('portfolio.project.show', $proj->slug) . "</loc>\n";
-            $xml .= "    <lastmod>" . $proj->updated_at->toAtomString() . "</lastmod>\n";
+            $xml .= '    <loc>'.route('portfolio.project.show', $proj->slug)."</loc>\n";
+            $xml .= '    <lastmod>'.$proj->updated_at->toAtomString()."</lastmod>\n";
             $xml .= "    <changefreq>monthly</changefreq>\n";
             $xml .= "    <priority>0.8</priority>\n";
             $xml .= "  </url>\n";

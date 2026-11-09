@@ -15,11 +15,11 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Load environment variables if available
 if [[ -f "$PROJECT_ROOT/.env" ]]; then
-    ENV_URL=$(grep -E '^APP_URL=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | tr -d '"'\'' ' || true)
+    ENV_PROD_URL=$(grep -E '^PROD_URL=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | tr -d '"'\'' ' || true)
     ENV_KEY=$(grep -E '^MANAGE_API_KEY=' "$PROJECT_ROOT/.env" | cut -d '=' -f2- | tr -d '"'\'' ' || true)
 fi
 
-BASE_URL="${PROD_URL:-${ENV_URL:-https://warrdev.site}}"
+BASE_URL="${PROD_URL:-${ENV_PROD_URL:-https://warrdev.site}}"
 API_KEY="${MANAGE_API_KEY:-${ENV_KEY:-}}"
 
 if [[ -z "$API_KEY" ]]; then

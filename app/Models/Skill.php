@@ -18,7 +18,7 @@ class Skill extends Model
     public function getItemsAttribute($value): array
     {
         $decoded = is_string($value) ? json_decode($value, true) : $value;
-        if (!is_array($decoded)) {
+        if (! is_array($decoded)) {
             return [];
         }
 
@@ -32,6 +32,7 @@ class Skill extends Model
                     'level' => isset($item['level']) ? (int) $item['level'] : 5,
                 ];
             }
+
             return ['name' => (string) $item, 'level' => 5];
         }, $decoded);
     }

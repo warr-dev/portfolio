@@ -2,6 +2,34 @@
 
 All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be documented in this file.
 
+## [Unreleased] - 2026-11-09
+
+### Added
+- **Fully Updatable Hero Section & Multi-Layout Architecture (`Hero.jsx`, `Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `2026_11_09_081000_seed_hero_section_settings.php`)**:
+  - **Dynamic Profile Copy**: Made author `name`, primary `title`, domain `subtitle`, descriptive `caption`, live `status_badge`, and `location` completely updatable via database settings without external REST API dependencies.
+  - **Configurable Hero Actions**: Built interactive button and link manager supporting customizable labels, target URLs, style variants (`primary` glow fill, `secondary` dark fill, `outline` glow border, `ghost` text link), download triggers, external link targets, and dynamic icons (`Download`, `ExternalLink`, `ArrowDown`, `Mail`, `Github`, `Terminal`, `Globe`, `FileText`, `Sparkles`).
+  - **4 Selectable Presentation Layouts**:
+    - `layout1`: **Minimalist Linear** — clean left-aligned typography, status pills, and action button row.
+    - `layout2`: **Centered Impact** — symmetrical centered presentation with ambient radial glow backdrop.
+    - `layout3`: **Split Terminal Showcase** — 2-column layout with interactive live cluster telemetry shell, server health, and uptime.
+    - `layout4`: **Bento Modern Showcase** *(Recommended)* — high-contrast Bento card with verified engineer badge, dynamic gradient headline, action hub, and bottom 4-metric statistics rail.
+  - **Design Accent Themes**: Selectable color themes across `Linear Indigo`, `DevOps Emerald`, `Cyberpunk Cyan`, `Ultra Violet`, and `Warm Amber`.
+  - **Admin Settings Submodule 00**: Integrated visual layout selector cards, accent color swatch picker, action item builder with add/delete controls, and real-time live hero preview.
+- **Global Agent Skill Distillation (`portfolio-sync`)**:
+  - Packaged entire portfolio sync and showcase capture workflow into global skill at `~/.gemini/config/skills/portfolio-sync/`.
+  - Bundled standalone Playwright screenshot & WebP optimization CLI script (`scripts/capture_showcase.py`).
+  - Documented strict zero-push and no-API-update safety policies in `SKILL.md`.
+- **Featured Live Projects & Automated Screenshots (`KiosKo Cloud` & `Palitayo`)**:
+  - **KiosKo Cloud Fleet Management Platform (`https://kiosko.cloud/`)**: Added showcase card featuring autonomous vendo fleet orchestration, headless BYOD architecture, and real-time remote telemetry. Captured automated 1280x800 screenshot and high-density WebP in `public/screenshots/kiosko-cloud.png`.
+  - **Palitayo Barter & Trade Marketplace (`https://palitayo.online/`)**: Added showcase card featuring item-for-item cashless barter auctions, item vault, and trade escrow workflows. Captured automated 1280x800 screenshot and high-density WebP in `public/screenshots/palitayo-online.png`.
+- **LinkedIn Profile & DevOps Engineering Sync (`2026_11_09_072500_sync_linkedin_profile_updates.php`, `PortfolioController.php`, `DatabaseSeeder.php`)**:
+  - **Title & Bio Pivot**: Updated primary professional title to *Senior Backend Developer & DevOps / Infrastructure Engineer* and status badge to *Open to Senior Backend & DevOps / Infrastructure Roles*, highlighting high-concurrency systems, C++ hardware, Linux, Docker, and Kubernetes expertise.
+  - **NTT Limited Technical Deep-Dive**: Expanded career milestones to detail the layer-2 MAC-address terminal recognition for walk-in players, custom serial touchscreen driver authoring on Ubuntu, and packaging platform games for Malta Gaming OS.
+  - **DevOps & Cloud Infrastructure Skills**: Promoted **Kubernetes**, **Terraform**, and **CI/CD** pipelines in the proficiency matrix. Added **ESP32 / BLE** to hardware integrations.
+  - **Education Graduation Year**: Updated Master of Science in Information Technology (MSIT) period from 2019–2021 to 2019–2022.
+  - **LinkedIn Canonical URL**: Aligned fallback and placeholder references to [`https://linkedin.com/in/warrdev`](https://linkedin.com/in/warrdev).
+  - **Resume Asset Sync**: Synchronized updated LinkedIn-exported PDF to `public/Warren_Dalawampu_Resume.pdf` and `public/Warren_Dalawampu_LinkedIn_Resume.pdf`.
+
 ## [Unreleased] - 2026-11-08
 
 ### Added
@@ -13,6 +41,7 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
   - **Application Error Log Tailing (`GET /api/manage/logs`)**: Tails the most recent lines (configurable via `lines` query param, capped at 500) of `storage/logs/laravel.log`.
   - **Maintenance Mode Management (`POST /api/manage/maintenance`)**: Programmatically toggles `artisan down` (with optional bypass secret) and `artisan up`.
   - **CLI Management Helper Script (`scripts/prod-manage.sh`)**: Executable bash utility automating health checks, cache warming, log tailing, and maintenance operations from the terminal or AI agent.
+  - **Comprehensive Production Operations Documentation (`docs/PRODUCTION_MANAGEMENT.md`)**: Full operational runbook detailing architecture, security guardrails, whitelisted commands, and troubleshooting procedures.
   - **Automated Feature Test Suite (`tests/Feature/Api/ProductionManageTest.php`)**: 7 feature tests verifying authentication rejections, metric responses, command whitelisting, log reading, and maintenance toggling (all 27 tests and 168 assertions passing).
 
 ## [Unreleased] - 2026-09-30

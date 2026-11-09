@@ -148,6 +148,31 @@ The link is created at `portfolio/public/storage`, which is automatically access
 
 ## 5. Troubleshooting & Maintenance
 
+### Remote Operations via Management API (Recommended)
+Instead of manual SSH logins, you can perform health checks, cache operations, log inspection, and maintenance toggles using the automated CLI helper:
+
+```bash
+# Check production health & real-time telemetry
+./scripts/prod-manage.sh health
+
+# Clear & warm caches remotely
+./scripts/prod-manage.sh artisan optimize:clear
+./scripts/prod-manage.sh artisan config:cache
+./scripts/prod-manage.sh artisan route:cache
+
+# Tail latest production error logs
+./scripts/prod-manage.sh logs 50
+
+# Toggle maintenance mode
+./scripts/prod-manage.sh maintenance down [bypass-secret]
+./scripts/prod-manage.sh maintenance up
+```
+For full details on authentication, security policies, and endpoints, see [Production Management Guide](PRODUCTION_MANAGEMENT.md).
+
+---
+
+### Manual Fallback via SSH
+
 ### Creating an Admin User
 Run the interactive artisan command to create an administrative user:
 ```bash

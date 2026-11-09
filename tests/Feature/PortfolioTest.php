@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\ContactMessage;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -25,6 +24,11 @@ class PortfolioTest extends TestCase
             ->has('skills')
             ->has('recruiterData')
             ->where('recruiterData.name', 'Warren Dalawampu')
+            ->has('recruiterData.subtitle')
+            ->has('recruiterData.caption')
+            ->has('recruiterData.heroLayout')
+            ->has('recruiterData.heroDesignAccent')
+            ->has('recruiterData.heroActions')
         );
     }
 
@@ -116,8 +120,8 @@ class PortfolioTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/xml');
         $this->assertStringContainsString('<?xml version="1.0" encoding="UTF-8"?>', $response->getContent());
-        $this->assertStringContainsString('<loc>' . url('/') . '</loc>', $response->getContent());
-        $this->assertStringContainsString('<loc>' . route('portfolio.project.show', 'sitemap-test-project') . '</loc>', $response->getContent());
+        $this->assertStringContainsString('<loc>'.url('/').'</loc>', $response->getContent());
+        $this->assertStringContainsString('<loc>'.route('portfolio.project.show', 'sitemap-test-project').'</loc>', $response->getContent());
     }
 
     public function test_robots_txt_returns_disallow_admin_and_sitemap_link(): void
@@ -128,6 +132,6 @@ class PortfolioTest extends TestCase
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
         $this->assertStringContainsString('User-agent: *', $response->getContent());
         $this->assertStringContainsString('Disallow: /admin', $response->getContent());
-        $this->assertStringContainsString('Sitemap: ' . url('/sitemap.xml'), $response->getContent());
+        $this->assertStringContainsString('Sitemap: '.url('/sitemap.xml'), $response->getContent());
     }
 }

@@ -50,6 +50,7 @@ class CreateUser extends Command
             foreach ($validator->errors()->all() as $error) {
                 $this->line(" - {$error}");
             }
+
             return self::FAILURE;
         }
 

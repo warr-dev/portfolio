@@ -4,24 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-
-use Carbon\Carbon;
 
 class SettingsController extends Controller
 {
     public function index(): Response
     {
         $careerStartDate = SiteSetting::get('careerStartDate', '2019-07-01');
-        
+
         // Calculate dynamic years of experience based on start date
         try {
             $diffYears = (int) floor(Carbon::parse($careerStartDate)->floatDiffInYears(Carbon::now()));
-            $computedYears = max(1, $diffYears) . '+ Years';
+            $computedYears = max(1, $diffYears).'+ Years';
         } catch (\Exception $e) {
             $computedYears = '6+ Years';
         }
@@ -56,14 +55,64 @@ class SettingsController extends Controller
 
         $settings = [
             'name' => SiteSetting::get('name', 'Warren Dalawampu'),
-            'title' => SiteSetting::get('title', 'Senior Backend Developer & Systems Software Engineer'),
-            'statusBadge' => SiteSetting::get('statusBadge', 'Open to Senior Backend & Distributed Systems Roles'),
+            'title' => SiteSetting::get('title', 'Senior Backend Developer & DevOps / Infrastructure Engineer'),
+            'statusBadge' => SiteSetting::get('statusBadge', 'Open to Senior Backend & DevOps / Infrastructure Roles'),
             'location' => SiteSetting::get('location', 'Pasig City, Philippines (Remote Worldwide)'),
-            'bio' => SiteSetting::get('bio', '6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, and payment gateways across Laravel, Node.js, Linux infrastructure, and Docker.'),
+            'bio' => SiteSetting::get('bio', '6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, payment gateways, and Linux/Docker/Kubernetes infrastructure across Laravel, Node.js, and cloud environments.'),
+            'hero_name' => SiteSetting::get('hero_name', SiteSetting::get('name', 'Warren Dalawampu')),
+            'hero_title' => SiteSetting::get('hero_title', SiteSetting::get('title', 'Senior Backend Developer & DevOps / Infrastructure Engineer')),
+            'hero_subtitle' => SiteSetting::get('hero_subtitle', 'Distributed Systems, High Concurrency & Edge Hardware Integrations'),
+            'hero_caption' => SiteSetting::get('hero_caption', SiteSetting::get('bio', '6+ years engineering high-concurrency gaming backends, localized OS-to-hardware casino engines, low-level C++ device drivers, payment gateways, and Linux/Docker/Kubernetes infrastructure across Laravel, Node.js, and cloud environments.')),
+            'hero_status_badge' => SiteSetting::get('hero_status_badge', SiteSetting::get('statusBadge', 'Open to Senior Backend & DevOps / Infrastructure Roles')),
+            'hero_location' => SiteSetting::get('hero_location', SiteSetting::get('location', 'Sta Maria, Naujan, Oriental Mindoro, Philippines')),
+            'hero_layout' => SiteSetting::get('hero_layout', 'layout4'),
+            'hero_design_accent' => SiteSetting::get('hero_design_accent', 'indigo'),
+            'hero_actions' => SiteSetting::get('hero_actions', [
+                [
+                    'id' => 1,
+                    'type' => 'button',
+                    'label' => 'Download '.($resumes[0]['label'] ?? 'Curriculum Vitae (PDF)'),
+                    'url' => $cvPdf,
+                    'variant' => 'primary',
+                    'icon' => 'Download',
+                    'download' => true,
+                    'is_external' => false,
+                ],
+                [
+                    'id' => 2,
+                    'type' => 'button',
+                    'label' => 'Explore Featured Projects',
+                    'url' => '#projects',
+                    'variant' => 'secondary',
+                    'icon' => 'ArrowDown',
+                    'download' => false,
+                    'is_external' => false,
+                ],
+                [
+                    'id' => 3,
+                    'type' => 'link',
+                    'label' => 'github.com/warr-dev',
+                    'url' => SiteSetting::get('github', 'https://github.com/warr-dev'),
+                    'variant' => 'ghost',
+                    'icon' => 'ExternalLink',
+                    'download' => false,
+                    'is_external' => true,
+                ],
+                [
+                    'id' => 4,
+                    'type' => 'link',
+                    'label' => 'LinkedIn Profile',
+                    'url' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warrdev'),
+                    'variant' => 'ghost',
+                    'icon' => 'ExternalLink',
+                    'download' => false,
+                    'is_external' => true,
+                ],
+            ]),
             'email' => SiteSetting::get('email', 'warrdev08@gmail.com'),
             'phone' => SiteSetting::get('phone', '+63 956 164 5935'),
             'github' => SiteSetting::get('github', 'https://github.com/warr-dev'),
-            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warr-dev'),
+            'linkedin' => SiteSetting::get('linkedin', 'https://linkedin.com/in/warrdev'),
             'linkedin_enabled' => (bool) SiteSetting::get('linkedin_enabled', true),
             'linkedin_company' => SiteSetting::get('linkedin_company', 'NTT Limited Philippines'),
             'linkedin_role' => SiteSetting::get('linkedin_role', 'Senior Backend Developer'),
@@ -124,17 +173,37 @@ class SettingsController extends Controller
             'cv_file' => 'nullable|file|mimes:pdf|max:10240',
             'resume_file' => 'nullable|file|mimes:pdf|max:10240',
             'new_password' => 'nullable|string|min:6',
+            'hero_name' => 'nullable|string|max:100',
+            'hero_title' => 'nullable|string|max:150',
+            'hero_subtitle' => 'nullable|string|max:200',
+            'hero_caption' => 'nullable|string|max:2500',
+            'hero_status_badge' => 'nullable|string|max:150',
+            'hero_location' => 'nullable|string|max:150',
+            'hero_layout' => 'nullable|string|in:layout1,layout2,layout3,layout4',
+            'hero_design_accent' => 'nullable|string|in:indigo,emerald,cyan,violet,amber',
+            'hero_actions' => 'nullable|array',
+            'hero_actions.*.id' => 'nullable',
+            'hero_actions.*.type' => 'required|string|in:button,link',
+            'hero_actions.*.label' => 'required|string|max:100',
+            'hero_actions.*.url' => 'required|string|max:300',
+            'hero_actions.*.variant' => 'nullable|string|max:50',
+            'hero_actions.*.icon' => 'nullable|string|max:50',
+            'hero_actions.*.download' => 'nullable|boolean',
+            'hero_actions.*.is_external' => 'nullable|boolean',
         ]);
 
         // Compute dynamic experience string
         try {
             $diffYears = (int) floor(Carbon::parse($validated['careerStartDate'])->floatDiffInYears(Carbon::now()));
-            $computedYears = max(1, $diffYears) . '+ Years';
+            $computedYears = max(1, $diffYears).'+ Years';
         } catch (\Exception $e) {
             $computedYears = '6+ Years';
         }
         $validated['yearsExperience'] = $computedYears;
         $validated['specializedCapabilities'] = $request->input('specializedCapabilities', []);
+        if ($request->has('hero_actions')) {
+            $validated['hero_actions'] = $request->input('hero_actions', []);
+        }
         if ($request->has('linkedin_enabled')) {
             $val = $request->input('linkedin_enabled');
             $validated['linkedin_enabled'] = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $val;
@@ -142,20 +211,38 @@ class SettingsController extends Controller
 
         if ($request->hasFile('og_image_file')) {
             $file = $request->file('og_image_file');
-            $filename = 'og-image-' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'og-image-'.time().'.'.$file->getClientOriginalExtension();
             $path = $file->storeAs('seo', $filename, 'public');
-            $validated['og_image'] = '/storage/' . $path;
+            $validated['og_image'] = '/storage/'.$path;
         }
 
         foreach ([
-            'name', 'title', 'statusBadge', 'location', 'bio', 'email', 'phone', 'github', 
+            'name', 'title', 'statusBadge', 'location', 'bio', 'email', 'phone', 'github',
             'linkedin', 'linkedin_enabled', 'linkedin_company', 'linkedin_role', 'linkedin_work_auth', 'linkedin_work_auth_note',
             'careerStartDate', 'yearsExperience', 'cvDisplayMode', 'activeCv', 'specializedTitle', 'specializedSubtitle', 'specializedCapabilities',
-            'seo_title', 'seo_description', 'seo_keywords', 'og_image'
+            'seo_title', 'seo_description', 'seo_keywords', 'og_image',
+            'hero_name', 'hero_title', 'hero_subtitle', 'hero_caption', 'hero_status_badge', 'hero_location', 'hero_layout', 'hero_design_accent', 'hero_actions',
         ] as $key) {
             if (array_key_exists($key, $validated)) {
                 SiteSetting::set($key, $validated[$key]);
             }
+        }
+
+        // Keep core profile and hero data in sync
+        if (! empty($validated['hero_name'])) {
+            SiteSetting::set('name', $validated['hero_name']);
+        }
+        if (! empty($validated['hero_title'])) {
+            SiteSetting::set('title', $validated['hero_title']);
+        }
+        if (! empty($validated['hero_caption'])) {
+            SiteSetting::set('bio', $validated['hero_caption']);
+        }
+        if (! empty($validated['hero_status_badge'])) {
+            SiteSetting::set('statusBadge', $validated['hero_status_badge']);
+        }
+        if (! empty($validated['hero_location'])) {
+            SiteSetting::set('location', $validated['hero_location']);
         }
 
         if ($request->hasFile('cv_file')) {
@@ -190,12 +277,12 @@ class SettingsController extends Controller
 
         $file = $request->file('file');
         $originalFilename = $file->getClientOriginalName();
-        $safeName = \Illuminate\Support\Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
-        $uniqueFilename = $safeName . '-' . time() . '.pdf';
+        $safeName = Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
+        $uniqueFilename = $safeName.'-'.time().'.pdf';
 
         // Store into public storage
         $path = $file->storeAs('resumes', $uniqueFilename, 'public');
-        $url = '/storage/' . $path;
+        $url = '/storage/'.$path;
 
         $defaultCvs = [
             [
@@ -216,7 +303,7 @@ class SettingsController extends Controller
 
         $resumes = SiteSetting::get('resumes', $defaultCvs);
 
-        $newId = 'resume_' . uniqid();
+        $newId = 'resume_'.uniqid();
         $newResume = [
             'id' => $newId,
             'label' => $validated['label'],
@@ -270,12 +357,12 @@ class SettingsController extends Controller
                 if ($request->hasFile('file')) {
                     $file = $request->file('file');
                     $originalFilename = $file->getClientOriginalName();
-                    $safeName = \Illuminate\Support\Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
-                    $uniqueFilename = $safeName . '-' . time() . '.pdf';
+                    $safeName = Str::slug(pathinfo($originalFilename, PATHINFO_FILENAME));
+                    $uniqueFilename = $safeName.'-'.time().'.pdf';
 
                     $path = $file->storeAs('resumes', $uniqueFilename, 'public');
                     $item['filename'] = $originalFilename;
-                    $item['url'] = '/storage/' . $path;
+                    $item['url'] = '/storage/'.$path;
                 }
 
                 $found = true;
@@ -323,11 +410,10 @@ class SettingsController extends Controller
         SiteSetting::set('resumes', $filtered);
 
         // If the deleted resume was active, set the first available as active
-        if ($activeCv === $id && !empty($filtered)) {
+        if ($activeCv === $id && ! empty($filtered)) {
             SiteSetting::set('activeCv', $filtered[0]['id']);
         }
 
         return redirect()->back()->with('success', 'Resume removed successfully.');
     }
 }
-

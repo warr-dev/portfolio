@@ -26,7 +26,7 @@ export default function RecruiterHub({ recruiterData }) {
                 <div className="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
                     <span className="text-[11px] font-mono text-[#62666d]">Experience</span>
                     <p className="text-xl font-semibold text-[#f7f8f8]">{recruiterData.yearsExperience}</p>
-                    <span className="text-[11px] text-[#8a8f98] block">Backend, IoT & Low-Level</span>
+                    <span className="text-[11px] text-[#8a8f98] block">DevOps, Backend & Systems</span>
                 </div>
                 <div className="bg-[#0f1011] border border-[#23252a] p-4 rounded-lg space-y-1">
                     <span className="text-[11px] font-mono text-[#62666d]">Current Role</span>
@@ -64,7 +64,7 @@ export default function RecruiterHub({ recruiterData }) {
                     <div className="space-y-2">
                         <span className="font-mono text-[#5e6ad2]">03 / Infrastructure & DevOps</span>
                         <p className="text-[#8a8f98]">
-                            Deep Linux background: self-hosted GitLab + Runners, WireGuard VPNs, Cloudflare Tunnels, Dockerized environments, Portainer, BookStack, automated Telegram notification bots, and automated GitHub webhook deployments.
+                            Deep Linux & cloud-native background: Linux administration, Docker, Kubernetes, Terraform, self-hosted GitLab + Runners, CI/CD pipelines, WireGuard VPNs, Cloudflare Tunnels, and automated webhook deployments.
                         </p>
                     </div>
                 </div>

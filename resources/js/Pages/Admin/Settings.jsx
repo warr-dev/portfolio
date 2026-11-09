@@ -24,8 +24,63 @@ import {
     Edit2,
     X,
     Globe,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Sparkles,
+    Download,
+    ExternalLink,
+    ArrowDown,
+    Palette,
+    Eye,
+    Layout
 } from 'lucide-react';
+
+const HERO_LAYOUT_OPTIONS = [
+    {
+        id: 'layout1',
+        title: 'Layout 1: Minimalist Linear',
+        desc: 'Left-aligned classic Linear aesthetic with sleek action bar & mono tag',
+        badge: 'Classic',
+    },
+    {
+        id: 'layout2',
+        title: 'Layout 2: Centered Impact',
+        desc: 'Symmetric centered presentation with ambient radial glow and prominent CTAs',
+        badge: 'Showcase',
+    },
+    {
+        id: 'layout3',
+        title: 'Layout 3: Split Terminal',
+        desc: 'Two-column grid with live mock devops shell telemetry, server health, and cursor',
+        badge: 'DevOps / CLI',
+    },
+    {
+        id: 'layout4',
+        title: 'Layout 4: Bento Modern Showcase',
+        desc: 'Premium bento card grid with status pills, verified badge, and integrated metrics',
+        badge: 'Recommended',
+    },
+];
+
+const HERO_ACCENT_OPTIONS = [
+    { id: 'indigo', label: 'Linear Indigo', color: '#5e6ad2', border: 'border-[#5e6ad2]' },
+    { id: 'emerald', label: 'DevOps Emerald', color: '#10b981', border: 'border-[#10b981]' },
+    { id: 'cyan', label: 'Cyberpunk Cyan', color: '#06b6d4', border: 'border-[#06b6d4]' },
+    { id: 'violet', label: 'Ultra Violet', color: '#8b5cf6', border: 'border-[#8b5cf6]' },
+    { id: 'amber', label: 'Warm Amber', color: '#f59e0b', border: 'border-[#f59e0b]' },
+];
+
+const HERO_ACTION_ICONS = [
+    { value: 'Download', label: 'Download (CV / File)' },
+    { value: 'ExternalLink', label: 'External Link' },
+    { value: 'ArrowDown', label: 'Arrow Down (Scroll)' },
+    { value: 'Mail', label: 'Mail (Contact)' },
+    { value: 'Github', label: 'GitHub' },
+    { value: 'Terminal', label: 'Terminal / CLI' },
+    { value: 'Globe', label: 'Globe / Web' },
+    { value: 'FileText', label: 'Document / PDF' },
+    { value: 'Sparkles', label: 'Sparkles' },
+    { value: 'None', label: 'No Icon' },
+];
 
 const ICON_OPTIONS = [
     { value: 'Cpu', label: 'CPU / Hardware', icon: Cpu },
@@ -45,6 +100,22 @@ export default function Settings({ settings }) {
         statusBadge: settings.statusBadge || '',
         location: settings.location || '',
         bio: settings.bio || '',
+        hero_name: settings.hero_name || settings.name || '',
+        hero_title: settings.hero_title || settings.title || '',
+        hero_subtitle: settings.hero_subtitle || 'Distributed Systems, High Concurrency & Edge Hardware Integrations',
+        hero_caption: settings.hero_caption || settings.bio || '',
+        hero_status_badge: settings.hero_status_badge || settings.statusBadge || 'Open to Senior Backend & DevOps / Infrastructure Roles',
+        hero_location: settings.hero_location || settings.location || 'Sta Maria, Naujan, Oriental Mindoro, Philippines',
+        hero_layout: settings.hero_layout || 'layout4',
+        hero_design_accent: settings.hero_design_accent || 'indigo',
+        hero_actions: Array.isArray(settings.hero_actions) && settings.hero_actions.length > 0
+            ? settings.hero_actions
+            : [
+                { id: 1, type: 'button', label: 'Download Curriculum Vitae (PDF)', url: '/Warren_Dalawampu_CV_2026.pdf', variant: 'primary', icon: 'Download', download: true, is_external: false },
+                { id: 2, type: 'button', label: 'Explore Featured Projects', url: '#projects', variant: 'secondary', icon: 'ArrowDown', download: false, is_external: false },
+                { id: 3, type: 'link', label: 'github.com/warr-dev', url: 'https://github.com/warr-dev', variant: 'ghost', icon: 'ExternalLink', download: false, is_external: true },
+                { id: 4, type: 'link', label: 'LinkedIn Profile', url: 'https://linkedin.com/in/warrdev', variant: 'ghost', icon: 'ExternalLink', download: false, is_external: true },
+            ],
         email: settings.email || '',
         phone: settings.phone || '',
         github: settings.github || '',
@@ -85,6 +156,37 @@ export default function Settings({ settings }) {
     };
 
     const dynamicExpPreview = calculateDynamicExperience(data.careerStartDate);
+
+    const addHeroAction = () => {
+        setData('hero_actions', [
+            ...data.hero_actions,
+            {
+                id: Date.now(),
+                type: 'button',
+                label: 'New Action',
+                url: '#projects',
+                variant: 'secondary',
+                icon: 'ExternalLink',
+                download: false,
+                is_external: false,
+            },
+        ]);
+    };
+
+    const removeHeroAction = (index) => {
+        const updated = [...data.hero_actions];
+        updated.splice(index, 1);
+        setData('hero_actions', updated);
+    };
+
+    const updateHeroAction = (index, field, value) => {
+        const updated = [...data.hero_actions];
+        updated[index] = {
+            ...updated[index],
+            [field]: value,
+        };
+        setData('hero_actions', updated);
+    };
 
     const addCapability = () => {
         setData('specializedCapabilities', [
@@ -229,9 +331,10 @@ export default function Settings({ settings }) {
         });
     };
 
-    const [activeTab, setActiveTab] = useState('cv'); // default to 'cv' or 'profile'
+    const [activeTab, setActiveTab] = useState('hero'); // default to 'hero'
 
     const SUBMODULE_TABS = [
+        { id: 'hero', label: 'Hero Section & Layout', icon: Sparkles, badge: (data.hero_layout || 'layout4').toUpperCase() },
         { id: 'cv', label: 'CV & Resume Manager', icon: FileText, badge: `${settings.availableCvs?.length || 0} Available` },
         { id: 'profile', label: 'Core Profile & Bio', icon: User },
         { id: 'contact', label: 'Contact & Socials', icon: Mail },
@@ -286,6 +389,423 @@ export default function Settings({ settings }) {
                 <div className="bg-[#0f1011] border border-[#23252a] rounded-xl p-6 sm:p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
                     
+                    {/* Submodule 00: Hero Section Design & Layout */}
+                    {activeTab === 'hero' && (
+                        <div className="space-y-8 animate-in fade-in duration-200">
+                            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#23252a] pb-3">
+                                <div>
+                                    <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2]">
+                                        00 / Hero Section Design, Content & Layout
+                                    </h2>
+                                    <p className="text-xs text-[#8a8f98] mt-0.5">
+                                        Customize your headline, subtitle, bio caption, interactive button actions, and select your preferred presentation layout.
+                                    </p>
+                                </div>
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#5e6ad2]/10 text-[#828fff] border border-[#5e6ad2]/30">
+                                    Current: {(data.hero_layout || 'layout4').toUpperCase()}
+                                </span>
+                            </div>
+
+                            {/* 1. Layout Selector */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-mono text-[#d0d6e0] flex items-center gap-1.5">
+                                    <Layout className="w-3.5 h-3.5 text-[#5e6ad2]" />
+                                    <span>Select Hero Presentation Layout</span>
+                                </label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    {HERO_LAYOUT_OPTIONS.map((layoutOpt) => {
+                                        const isSelected = (data.hero_layout || 'layout4') === layoutOpt.id;
+                                        return (
+                                            <button
+                                                key={layoutOpt.id}
+                                                type="button"
+                                                onClick={() => setData('hero_layout', layoutOpt.id)}
+                                                className={`text-left p-4 rounded-xl border transition-all relative flex flex-col justify-between ${
+                                                    isSelected
+                                                        ? 'bg-[#15161c] border-[#5e6ad2] shadow-[0_0_16px_rgba(94,106,210,0.25)] ring-1 ring-[#5e6ad2]/40'
+                                                        : 'bg-[#141516] border-[#23252a] hover:border-[#383a42] hover:bg-[#18191c]'
+                                                }`}
+                                            >
+                                                <div className="space-y-1.5">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-semibold text-[#f7f8f8]">
+                                                            {layoutOpt.title}
+                                                        </span>
+                                                        <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                                                            layoutOpt.badge === 'Recommended'
+                                                                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                                                : 'bg-[#23252a] text-[#8a8f98]'
+                                                        }`}>
+                                                            {layoutOpt.badge}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[11px] text-[#8a8f98] leading-relaxed">
+                                                        {layoutOpt.desc}
+                                                    </p>
+                                                </div>
+
+                                                <div className="mt-3 pt-2 border-t border-[#23252a]/60 flex items-center justify-between text-[10px] font-mono">
+                                                    <span className={isSelected ? 'text-[#828fff] font-bold' : 'text-[#62666d]'}>
+                                                        {isSelected ? '● ACTIVE' : '○ SELECT'}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* 2. Design Accent Color Picker */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-mono text-[#d0d6e0] flex items-center gap-1.5">
+                                    <Palette className="w-3.5 h-3.5 text-[#5e6ad2]" />
+                                    <span>Design Color Accent & Glow</span>
+                                </label>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {HERO_ACCENT_OPTIONS.map((acc) => {
+                                        const isSelected = (data.hero_design_accent || 'indigo') === acc.id;
+                                        return (
+                                            <button
+                                                key={acc.id}
+                                                type="button"
+                                                onClick={() => setData('hero_design_accent', acc.id)}
+                                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all ${
+                                                    isSelected
+                                                        ? 'bg-[#15161c] border-[#f7f8f8] text-[#f7f8f8] shadow-md font-semibold'
+                                                        : 'bg-[#141516] border-[#23252a] text-[#8a8f98] hover:text-[#f7f8f8] hover:border-[#383a42]'
+                                                }`}
+                                            >
+                                                <span
+                                                    className="w-2.5 h-2.5 rounded-full shadow-sm"
+                                                    style={{ backgroundColor: acc.color }}
+                                                />
+                                                <span>{acc.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* 3. Hero Content Fields */}
+                            <div className="space-y-4">
+                                <h3 className="text-xs font-mono uppercase tracking-wider text-[#d0d6e0]">
+                                    Hero Content & Copy
+                                </h3>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Author / Display Name</label>
+                                        <input
+                                            type="text"
+                                            value={data.hero_name}
+                                            onChange={(e) => {
+                                                setData('hero_name', e.target.value);
+                                                setData('name', e.target.value);
+                                            }}
+                                            placeholder="e.g. Warren Dalawampu"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                            required
+                                        />
+                                        {errors.hero_name && <p className="text-[11px] text-rose-400 font-mono">{errors.hero_name}</p>}
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Primary Title / Headline</label>
+                                        <input
+                                            type="text"
+                                            value={data.hero_title}
+                                            onChange={(e) => {
+                                                setData('hero_title', e.target.value);
+                                                setData('title', e.target.value);
+                                            }}
+                                            placeholder="e.g. Senior Backend Developer & DevOps / Infrastructure Engineer"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                            required
+                                        />
+                                        {errors.hero_title && <p className="text-[11px] text-rose-400 font-mono">{errors.hero_title}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono text-[#8a8f98]">Subtitle / Domain Focus Tag</label>
+                                    <input
+                                        type="text"
+                                        value={data.hero_subtitle}
+                                        onChange={(e) => setData('hero_subtitle', e.target.value)}
+                                        placeholder="e.g. Distributed Systems, High Concurrency & Edge Hardware Integrations"
+                                        className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                    />
+                                    {errors.hero_subtitle && <p className="text-[11px] text-rose-400 font-mono">{errors.hero_subtitle}</p>}
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Caption / Bio Intro Summary</label>
+                                        <span className="text-[10px] font-mono text-[#62666d]">
+                                            {data.hero_caption?.length || 0} / 2500 chars
+                                        </span>
+                                    </div>
+                                    <textarea
+                                        rows={3}
+                                        value={data.hero_caption}
+                                        onChange={(e) => {
+                                            setData('hero_caption', e.target.value);
+                                            setData('bio', e.target.value);
+                                        }}
+                                        placeholder="Brief descriptive paragraph explaining your core focus, accomplishments, and tech stack."
+                                        className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors leading-relaxed"
+                                    />
+                                    {errors.hero_caption && <p className="text-[11px] text-rose-400 font-mono">{errors.hero_caption}</p>}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Status Badge</label>
+                                        <input
+                                            type="text"
+                                            value={data.hero_status_badge}
+                                            onChange={(e) => {
+                                                setData('hero_status_badge', e.target.value);
+                                                setData('statusBadge', e.target.value);
+                                            }}
+                                            placeholder="e.g. Open to Senior Backend & DevOps / Infrastructure Roles"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Location</label>
+                                        <input
+                                            type="text"
+                                            value={data.hero_location}
+                                            onChange={(e) => {
+                                                setData('hero_location', e.target.value);
+                                                setData('location', e.target.value);
+                                            }}
+                                            placeholder="e.g. Sta Maria, Naujan, Oriental Mindoro, Philippines"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4. Hero Actions (Buttons & Links) Builder */}
+                            <div className="space-y-4 pt-2">
+                                <div className="flex items-center justify-between border-b border-[#23252a] pb-2">
+                                    <div>
+                                        <h3 className="text-xs font-mono uppercase tracking-wider text-[#d0d6e0]">
+                                            Hero Actions (Buttons & Links)
+                                        </h3>
+                                        <p className="text-[11px] text-[#8a8f98]">
+                                            Configure primary and secondary CTA buttons, file download triggers, or external profile links.
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={addHeroAction}
+                                        className="bg-[#141516] hover:bg-[#1c1d22] border border-[#23252a] hover:border-[#5e6ad2] text-[#f7f8f8] text-xs font-mono px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 active:scale-95"
+                                    >
+                                        <Plus className="w-3.5 h-3.5 text-[#5e6ad2]" />
+                                        <span>Add Action</span>
+                                    </button>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {data.hero_actions?.map((action, index) => (
+                                        <div
+                                            key={action.id || index}
+                                            className="bg-[#141516] border border-[#23252a] rounded-xl p-4 space-y-3 transition-all hover:border-[#34353f]"
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1e2025] text-[#8a8f98]">
+                                                        #{index + 1}
+                                                    </span>
+                                                    <span className="text-xs font-semibold text-[#f7f8f8]">
+                                                        {action.label || 'Unnamed Action'}
+                                                    </span>
+                                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase ${
+                                                        action.type === 'button' 
+                                                            ? 'bg-[#5e6ad2]/20 text-[#828fff]' 
+                                                            : 'bg-[#23252a] text-[#8a8f98]'
+                                                    }`}>
+                                                        {action.type}
+                                                    </span>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeHeroAction(index)}
+                                                    className="text-[#8a8f98] hover:text-rose-400 p-1 rounded hover:bg-[#1f2024] transition-colors"
+                                                    title="Delete Action"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-mono text-[#8a8f98]">Type</label>
+                                                    <select
+                                                        value={action.type}
+                                                        onChange={(e) => updateHeroAction(index, 'type', e.target.value)}
+                                                        className="w-full bg-[#0f1011] border border-[#23252a] rounded-md px-2.5 py-1.5 text-xs text-[#f7f8f8] focus:outline-none"
+                                                    >
+                                                        <option value="button">Interactive Button</option>
+                                                        <option value="link">Text / External Link</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-mono text-[#8a8f98]">Action Label</label>
+                                                    <input
+                                                        type="text"
+                                                        value={action.label}
+                                                        onChange={(e) => updateHeroAction(index, 'label', e.target.value)}
+                                                        placeholder="e.g. Download CV"
+                                                        className="w-full bg-[#0f1011] border border-[#23252a] rounded-md px-2.5 py-1.5 text-xs text-[#f7f8f8] focus:outline-none"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-mono text-[#8a8f98]">Target URL / Path</label>
+                                                    <input
+                                                        type="text"
+                                                        value={action.url}
+                                                        onChange={(e) => updateHeroAction(index, 'url', e.target.value)}
+                                                        placeholder="e.g. /cv.pdf, #projects, https://..."
+                                                        className="w-full bg-[#0f1011] border border-[#23252a] rounded-md px-2.5 py-1.5 text-xs text-[#f7f8f8] focus:outline-none font-mono"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-mono text-[#8a8f98]">Style Variant</label>
+                                                    <select
+                                                        value={action.variant || 'secondary'}
+                                                        onChange={(e) => updateHeroAction(index, 'variant', e.target.value)}
+                                                        className="w-full bg-[#0f1011] border border-[#23252a] rounded-md px-2.5 py-1.5 text-xs text-[#f7f8f8] focus:outline-none"
+                                                    >
+                                                        <option value="primary">Primary (Glow Fill)</option>
+                                                        <option value="secondary">Secondary (Dark Fill)</option>
+                                                        <option value="outline">Outline (Border Glow)</option>
+                                                        <option value="ghost">Ghost (Subtle Link)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-mono text-[#8a8f98]">Icon</label>
+                                                    <select
+                                                        value={action.icon || 'None'}
+                                                        onChange={(e) => updateHeroAction(index, 'icon', e.target.value)}
+                                                        className="w-full bg-[#0f1011] border border-[#23252a] rounded-md px-2.5 py-1.5 text-xs text-[#f7f8f8] focus:outline-none"
+                                                    >
+                                                        {HERO_ACTION_ICONS.map((ico) => (
+                                                            <option key={ico.value} value={ico.value}>{ico.label}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 pt-4">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`action-download-${index}`}
+                                                        checked={Boolean(action.download)}
+                                                        onChange={(e) => updateHeroAction(index, 'download', e.target.checked)}
+                                                        className="rounded bg-[#0f1011] border-[#23252a] text-[#5e6ad2] focus:ring-0"
+                                                    />
+                                                    <label htmlFor={`action-download-${index}`} className="text-xs text-[#d0d6e0] font-mono">
+                                                        Trigger File Download
+                                                    </label>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 pt-4">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`action-external-${index}`}
+                                                        checked={Boolean(action.is_external)}
+                                                        onChange={(e) => updateHeroAction(index, 'is_external', e.target.checked)}
+                                                        className="rounded bg-[#0f1011] border-[#23252a] text-[#5e6ad2] focus:ring-0"
+                                                    />
+                                                    <label htmlFor={`action-external-${index}`} className="text-xs text-[#d0d6e0] font-mono">
+                                                        Open In New Tab
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {(!data.hero_actions || data.hero_actions.length === 0) && (
+                                        <div className="text-center py-6 border border-dashed border-[#23252a] rounded-xl text-xs text-[#8a8f98] font-mono">
+                                            No hero actions configured. Click "Add Action" above.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* 5. Live Preview Card */}
+                            <div className="space-y-3 pt-4 border-t border-[#23252a]">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-xs font-mono text-[#d0d6e0] flex items-center gap-1.5">
+                                        <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                                        <span>Live Hero Settings Preview</span>
+                                    </label>
+                                    <span className="text-[10px] font-mono text-[#8a8f98]">
+                                        Previewing: {data.hero_layout?.toUpperCase() || 'LAYOUT4'} with {data.hero_design_accent?.toUpperCase() || 'INDIGO'} accent
+                                    </span>
+                                </div>
+
+                                <div className="p-6 rounded-2xl bg-[#090a0c] border border-[#23252a] space-y-4">
+                                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                                        <span className="px-2.5 py-0.5 rounded-full bg-[#141516] border border-[#23252a] text-[#d0d6e0] flex items-center gap-1.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            {data.hero_status_badge || 'Status badge'}
+                                        </span>
+                                        <span className="px-2.5 py-0.5 rounded-full bg-[#141516] border border-[#23252a] text-[#8a8f98]">
+                                            📍 {data.hero_location || 'Location'}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <h4 className="text-2xl sm:text-3xl font-bold text-[#f7f8f8]">
+                                            {data.hero_name || 'Your Name'}
+                                        </h4>
+                                        <p className="text-base sm:text-lg font-medium text-[#828fff]">
+                                            {data.hero_title || 'Your Professional Title'}
+                                        </p>
+                                        {data.hero_subtitle && (
+                                            <p className="text-xs font-mono text-[#8a8f98]">
+                                                &gt; [ {data.hero_subtitle} ]
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <p className="text-xs sm:text-sm text-[#8a8f98] leading-relaxed max-w-2xl">
+                                        {data.hero_caption || 'Hero bio caption text will render here.'}
+                                    </p>
+
+                                    <div className="flex flex-wrap items-center gap-2 pt-2">
+                                        {data.hero_actions?.map((act, i) => (
+                                            <span
+                                                key={i}
+                                                className={`text-xs px-3 py-1.5 rounded-md font-medium inline-flex items-center gap-1.5 ${
+                                                    act.variant === 'primary'
+                                                        ? 'bg-[#5e6ad2] text-white shadow-md'
+                                                        : 'bg-[#141516] border border-[#23252a] text-[#d0d6e0]'
+                                                }`}
+                                            >
+                                                {act.label}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Submodule 01: Core Profile Data */}
                     {activeTab === 'profile' && (
                         <div className="space-y-4 animate-in fade-in duration-200">
@@ -451,7 +971,7 @@ export default function Settings({ settings }) {
                                             type="url"
                                             value={data.linkedin}
                                             onChange={(e) => setData('linkedin', e.target.value)}
-                                            placeholder="https://linkedin.com/in/warr-dev"
+                                            placeholder="https://linkedin.com/in/warrdev"
                                             className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#0a66c2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
                                         />
                                         <span className="text-[10px] font-mono text-[#62666d] block">

@@ -37,6 +37,7 @@ class SkillController extends Controller
                     'level' => isset($item['level']) ? max(1, min(5, (int) $item['level'])) : 5,
                 ];
             }
+
             return ['name' => (string) $item, 'level' => 5];
         }, array_filter($validated['items']));
 
@@ -65,6 +66,7 @@ class SkillController extends Controller
                     'level' => isset($item['level']) ? max(1, min(5, (int) $item['level'])) : 5,
                 ];
             }
+
             return ['name' => (string) $item, 'level' => 5];
         }, array_filter($validated['items']));
 

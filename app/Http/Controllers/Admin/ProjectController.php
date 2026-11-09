@@ -49,7 +49,7 @@ class ProjectController extends Controller
             if (is_string($validated['extra_info'])) {
                 $decoded = json_decode($validated['extra_info'], true);
                 $validated['extra_info'] = is_array($decoded) ? $decoded : null;
-            } elseif (!is_array($validated['extra_info'])) {
+            } elseif (! is_array($validated['extra_info'])) {
                 $validated['extra_info'] = null;
             }
         }
@@ -93,7 +93,7 @@ class ProjectController extends Controller
             }
         }
         unset($validated['gallery_files']);
-        $validated['gallery'] = !empty($galleryItems) ? $galleryItems : null;
+        $validated['gallery'] = ! empty($galleryItems) ? $galleryItems : null;
 
         $slug = Str::slug($validated['title']);
         $uniqueSlug = $slug;
@@ -139,7 +139,7 @@ class ProjectController extends Controller
             if (is_string($validated['extra_info'])) {
                 $decoded = json_decode($validated['extra_info'], true);
                 $validated['extra_info'] = is_array($decoded) ? $decoded : null;
-            } elseif (!is_array($validated['extra_info'])) {
+            } elseif (! is_array($validated['extra_info'])) {
                 $validated['extra_info'] = null;
             }
         }
@@ -183,7 +183,7 @@ class ProjectController extends Controller
             }
         }
         unset($validated['gallery_files']);
-        $validated['gallery'] = !empty($galleryItems) ? $galleryItems : null;
+        $validated['gallery'] = ! empty($galleryItems) ? $galleryItems : null;
 
         $project->update($validated);
 

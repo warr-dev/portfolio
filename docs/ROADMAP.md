@@ -29,6 +29,9 @@ Task tracking is synchronized with **Vikunja Project #34 (Portfolio)** at `http:
 | **#236** | `[P2]` / `~  ` | **Completed** | Dynamic XML Sitemap & robots.txt Generator (`/sitemap.xml`, `/robots.txt`) |
 | **#237** | `[P2]` / `~  ` | **Completed** | SEO Meta Tags & OG Image Control in Admin Settings (`/admin/settings`) |
 | **#352** | `[P1]` / `!  ` | **Completed** | Production Management API (`/api/manage/*` for health, artisan, logs & maintenance) |
+| **#354** | `[P1]` / `!  ` | **Completed** | Sync LinkedIn Profile, DevOps Skills & Experience Details |
+| **#357** | `[P1]` / `!  ` | **Completed** | Featured Projects Addition: KiosKo Cloud & Palitayo Online with Live Screenshots |
+| **#358** | `[P1]` / `!  ` | **Completed** | Updatable Hero Section (Name, Title, Subtitle, Caption, Actions & Layout 4 Bento) |
 | **#238** | `[P1]` / `!  ` | **Todo** | Featured Works Showcase & Case Study Hub |
 | **#239** | `[P1]` / `!  ` | **Todo** | Frequently Asked Questions (FAQ) Accordion |
 | **#240** | `[P1]` / `!  ` | **Todo** | Client Feedback & Testimonials Carousel |

@@ -38,7 +38,7 @@ export default function PortfolioLayout({
                 },
                 'sameAs': [
                     recruiterData?.github || 'https://github.com/warr-dev',
-                    recruiterData?.linkedin || 'https://linkedin.com/in/warr-dev'
+                    recruiterData?.linkedin || 'https://linkedin.com/in/warrdev'
                 ].filter(Boolean)
             },
             {
