@@ -136,6 +136,15 @@ export default function Settings({ settings }) {
         seo_keywords: settings.seo_keywords || '',
         og_image: settings.og_image || '',
         og_image_file: null,
+        logo_text_primary: settings.logo_text_primary || 'warr',
+        logo_text_secondary: settings.logo_text_secondary || 'dev',
+        logo_icon_text: settings.logo_icon_text || 'W',
+        logo_icon_url: settings.logo_icon_url || '',
+        logo_icon_file: null,
+        favicon: settings.favicon || '/favicon.svg',
+        favicon_file: null,
+        hero_badge_secondary: settings.hero_badge_secondary || '',
+        hero_badge_secondary_enabled: settings.hero_badge_secondary_enabled !== undefined ? Boolean(settings.hero_badge_secondary_enabled) : false,
         cv_file: null,
         resume_file: null,
         new_password: '',
@@ -335,6 +344,7 @@ export default function Settings({ settings }) {
 
     const SUBMODULE_TABS = [
         { id: 'hero', label: 'Hero Section & Layout', icon: Sparkles, badge: (data.hero_layout || 'layout4').toUpperCase() },
+        { id: 'branding', label: 'Branding & Favicon', icon: Palette, badge: `${data.logo_text_primary || 'warr'}.${data.logo_text_secondary || 'dev'}` },
         { id: 'cv', label: 'CV & Resume Manager', icon: FileText, badge: `${settings.availableCvs?.length || 0} Available` },
         { id: 'profile', label: 'Core Profile & Bio', icon: User },
         { id: 'contact', label: 'Contact & Socials', icon: Mail },
@@ -342,6 +352,8 @@ export default function Settings({ settings }) {
         { id: 'seo', label: 'SEO & Social Graph', icon: Globe },
         { id: 'security', label: 'Security & Auth', icon: Lock },
     ];
+
+    const isTruthy = (val) => val === true || val === 'true' || val === 1 || val === '1';
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -587,6 +599,32 @@ export default function Settings({ settings }) {
                                         />
                                     </div>
                                 </div>
+
+                                <div className="p-3.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Secondary Trust Badge (Layout 4)</label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={data.hero_badge_secondary_enabled}
+                                                onChange={(e) => setData('hero_badge_secondary_enabled', e.target.checked)}
+                                                className="rounded bg-[#0f1011] border-[#23252a] text-[#5e6ad2] focus:ring-0"
+                                            />
+                                            <span className="text-[11px] font-mono text-[#d0d6e0]">Show Trust Badge</span>
+                                        </label>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={data.hero_badge_secondary}
+                                        disabled={!data.hero_badge_secondary_enabled}
+                                        onChange={(e) => setData('hero_badge_secondary', e.target.value)}
+                                        placeholder="e.g. Verified Engineer · 2026 Ready"
+                                        className="w-full bg-[#0f1011] disabled:opacity-30 border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors font-mono"
+                                    />
+                                    <p className="text-[10px] font-mono text-[#62666d]">
+                                        Disabled by default. Unchecked means no "Verified Engineer" or secondary badge appears in Hero Layout 4.
+                                    </p>
+                                </div>
                             </div>
 
                             {/* 4. Hero Actions (Buttons & Links) Builder */}
@@ -713,11 +751,11 @@ export default function Settings({ settings }) {
                                                     <input
                                                         type="checkbox"
                                                         id={`action-download-${index}`}
-                                                        checked={Boolean(action.download)}
+                                                        checked={isTruthy(action.download)}
                                                         onChange={(e) => updateHeroAction(index, 'download', e.target.checked)}
                                                         className="rounded bg-[#0f1011] border-[#23252a] text-[#5e6ad2] focus:ring-0"
                                                     />
-                                                    <label htmlFor={`action-download-${index}`} className="text-xs text-[#d0d6e0] font-mono">
+                                                    <label htmlFor={`action-download-${index}`} className="text-xs text-[#d0d6e0] font-mono cursor-pointer">
                                                         Trigger File Download
                                                     </label>
                                                 </div>
@@ -726,11 +764,11 @@ export default function Settings({ settings }) {
                                                     <input
                                                         type="checkbox"
                                                         id={`action-external-${index}`}
-                                                        checked={Boolean(action.is_external)}
+                                                        checked={isTruthy(action.is_external)}
                                                         onChange={(e) => updateHeroAction(index, 'is_external', e.target.checked)}
                                                         className="rounded bg-[#0f1011] border-[#23252a] text-[#5e6ad2] focus:ring-0"
                                                     />
-                                                    <label htmlFor={`action-external-${index}`} className="text-xs text-[#d0d6e0] font-mono">
+                                                    <label htmlFor={`action-external-${index}`} className="text-xs text-[#d0d6e0] font-mono cursor-pointer">
                                                         Open In New Tab
                                                     </label>
                                                 </div>
@@ -800,6 +838,162 @@ export default function Settings({ settings }) {
                                                 {act.label}
                                             </span>
                                         ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Submodule Branding & Favicon */}
+                    {activeTab === 'branding' && (
+                        <div className="space-y-8 animate-in fade-in duration-200">
+                            <div className="border-b border-[#23252a] pb-3">
+                                <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2]">
+                                    Branding, Logo & Favicon Controls
+                                </h2>
+                                <p className="text-xs text-[#8a8f98] mt-0.5">
+                                    Control your navbar text branding, monogram icon, custom logo image, and browser favicon.
+                                </p>
+                            </div>
+
+                            {/* Live Navbar Logo Brand Preview */}
+                            <div className="p-4 rounded-xl bg-[#0b0c0e] border border-[#23252a] space-y-2">
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8a8f98]">
+                                    Live Navbar Brand Preview
+                                </span>
+                                <div className="flex items-center gap-3 pt-1">
+                                    {data.logo_icon_url ? (
+                                        <img
+                                            src={data.logo_icon_url}
+                                            alt="Logo Icon"
+                                            className="w-8 h-8 rounded-md object-contain border border-[#34343a]"
+                                        />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-sm font-semibold text-[#5e6ad2]">
+                                            {data.logo_icon_text || 'W'}
+                                        </div>
+                                    )}
+                                    <span className="font-semibold text-base font-mono tracking-tight">
+                                        <span className="text-[#5e6ad2]">{data.logo_text_primary || 'warr'}</span>
+                                        <span className="text-[#8a8f98]">{data.logo_text_secondary || 'dev'}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Logo Text Inputs */}
+                            <div className="space-y-4">
+                                <h3 className="text-xs font-mono uppercase tracking-wider text-[#d0d6e0]">
+                                    1. Text Logo Branding
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">
+                                            Primary Logo Text <span className="text-[#5e6ad2]">(Primary Accent Color)</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.logo_text_primary}
+                                            onChange={(e) => setData('logo_text_primary', e.target.value)}
+                                            placeholder="e.g. warr"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none font-mono"
+                                            required
+                                        />
+                                        <span className="text-[10px] font-mono text-[#62666d]">Rendered in neon indigo/accent</span>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">
+                                            Secondary Logo Text <span className="text-[#8a8f98]">(Neutral / Secondary Color)</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.logo_text_secondary}
+                                            onChange={(e) => setData('logo_text_secondary', e.target.value)}
+                                            placeholder="e.g. dev"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none font-mono"
+                                            required
+                                        />
+                                        <span className="text-[10px] font-mono text-[#62666d]">Rendered in secondary muted text</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Monogram & Logo Icon */}
+                            <div className="space-y-4 pt-2">
+                                <h3 className="text-xs font-mono uppercase tracking-wider text-[#d0d6e0]">
+                                    2. Monogram & Logo Icon
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Monogram Letter / Icon Text</label>
+                                        <input
+                                            type="text"
+                                            maxLength={3}
+                                            value={data.logo_icon_text}
+                                            onChange={(e) => setData('logo_icon_text', e.target.value)}
+                                            placeholder="W"
+                                            className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none font-mono text-center text-sm font-bold"
+                                        />
+                                        <span className="text-[10px] font-mono text-[#62666d]">Single or 2-letter monogram box</span>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Custom Logo Image (Optional Upload)</label>
+                                        <input
+                                            type="file"
+                                            accept="image/png,image/svg+xml,image/webp,image/jpeg"
+                                            onChange={(e) => setData('logo_icon_file', e.target.files[0])}
+                                            className="w-full text-xs text-[#8a8f98] file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-mono file:bg-[#1a1b1e] file:text-[#d0d6e0] hover:file:bg-[#23252a] cursor-pointer"
+                                        />
+                                        {data.logo_icon_url && (
+                                            <p className="text-[10px] font-mono text-[#62666d] truncate">
+                                                Active Image: {data.logo_icon_url}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Favicon Control */}
+                            <div className="space-y-4 pt-2 border-t border-[#23252a]">
+                                <h3 className="text-xs font-mono uppercase tracking-wider text-[#d0d6e0] flex items-center gap-2">
+                                    <Globe className="w-3.5 h-3.5 text-[#5e6ad2]" />
+                                    <span>3. Browser Favicon Control</span>
+                                </h3>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                                    <div className="sm:col-span-3 flex flex-col items-center justify-center p-4 rounded-xl bg-[#141516] border border-[#23252a] text-center space-y-2">
+                                        <div className="w-12 h-12 rounded-lg bg-[#0f1011] border border-[#34343a] flex items-center justify-center overflow-hidden">
+                                            {data.favicon ? (
+                                                <img src={data.favicon} alt="Favicon Preview" className="w-8 h-8 object-contain" />
+                                            ) : (
+                                                <span className="font-mono text-xs text-[#8a8f98]">No icon</span>
+                                            )}
+                                        </div>
+                                        <span className="text-[10px] font-mono text-[#8a8f98]">Active Favicon</span>
+                                    </div>
+
+                                    <div className="sm:col-span-9 space-y-3">
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-mono text-[#8a8f98]">Favicon File Upload (.ico, .svg, .png)</label>
+                                            <input
+                                                type="file"
+                                                accept=".ico,.svg,image/png,image/x-icon,image/svg+xml"
+                                                onChange={(e) => setData('favicon_file', e.target.files[0])}
+                                                className="w-full text-xs text-[#8a8f98] file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-mono file:bg-[#1a1b1e] file:text-[#d0d6e0] hover:file:bg-[#23252a] cursor-pointer"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-mono text-[#8a8f98]">Or Custom Favicon Path / URL</label>
+                                            <input
+                                                type="text"
+                                                value={data.favicon}
+                                                onChange={(e) => setData('favicon', e.target.value)}
+                                                placeholder="/favicon.svg"
+                                                className="w-full bg-[#141516] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none font-mono"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -29,6 +29,10 @@ class PortfolioTest extends TestCase
             ->has('recruiterData.heroLayout')
             ->has('recruiterData.heroDesignAccent')
             ->has('recruiterData.heroActions')
+            ->where('recruiterData.logoTextPrimary', 'warr')
+            ->where('recruiterData.logoTextSecondary', 'dev')
+            ->where('recruiterData.logoIconText', 'W')
+            ->has('recruiterData.favicon')
         );
     }
 

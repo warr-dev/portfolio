@@ -4,7 +4,20 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 
 ## [Unreleased] - 2026-11-09
 
+### Fixed
+- **Hero Actions Boolean Serialization & Download / New Tab Bugfix (`SettingsController.php`, `Hero.jsx`, `Settings.jsx`)**:
+  - **Root-Cause Discovery**: Fixed an issue where Inertia `forceFormData: true` serialized nested checkbox booleans to string literals (`"true"` / `"false"`), causing Laravel's strict nested `boolean` validation rule to reject requests with `The hero_actions.0.download field must be true or false`, silently aborting saves on production `warrdev.site`.
+  - **Pre-Validation Boolean Normalization**: Added pre-normalization in `SettingsController::update` converting incoming FormData booleans using `filter_var(..., FILTER_VALIDATE_BOOLEAN)` without PHP reference pointers.
+  - **Direct Download & New Tab Attributes**: Enhanced `Hero.jsx` `ActionItem` to extract the target filename directly into `download={downloadFilename}` (forcing browser file-save dialogs instead of inline preview) and bind `target="_blank"` with `rel="noopener noreferrer"` when `is_external` is enabled.
+  - **Checkbox State Fidelity**: Updated `Settings.jsx` checkboxes to use truthy parsing so checkboxes accurately reflect database state.
+
 ### Added
+- **Logo Branding, Favicon Control & Dynamic Monogram Seeder (`Navbar.jsx`, `Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `2026_11_09_083500_seed_branding_and_favicon_settings.php`)**:
+  - **Dynamic Text Branding**: Replaced hardcoded logo with configurable primary and secondary text tokens defaulting to **`warr`** in primary accent glow (`#5e6ad2`) and **`dev`** in neutral secondary text (`#8a8f98`).
+  - **Monogram & Logo Image Support**: Added configurable icon text (default `'W'`) and custom uploaded logo image asset support in the Navbar and Admin headers.
+  - **Favicon Control**: Implemented dynamic browser favicon injection (`<link rel="icon">`) via `public/favicon.svg` and `public/favicon.ico` with admin controls for file uploads or custom URLs.
+  - **Hero Secondary Trust Badge Control**: Replaced the hardcoded Layout 4 "Verified Engineer" chip with an admin toggle (`hero_badge_secondary_enabled`, default `false`) and custom text input (`hero_badge_secondary`).
+  - **Admin Settings Submodule Branding**: Added dedicated management interface with live Navbar brand preview, favicon image preview, and file upload handlers.
 - **Fully Updatable Hero Section & Multi-Layout Architecture (`Hero.jsx`, `Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `2026_11_09_081000_seed_hero_section_settings.php`)**:
   - **Dynamic Profile Copy**: Made author `name`, primary `title`, domain `subtitle`, descriptive `caption`, live `status_badge`, and `location` completely updatable via database settings without external REST API dependencies.
   - **Configurable Hero Actions**: Built interactive button and link manager supporting customizable labels, target URLs, style variants (`primary` glow fill, `secondary` dark fill, `outline` glow border, `ghost` text link), download triggers, external link targets, and dynamic icons (`Download`, `ExternalLink`, `ArrowDown`, `Mail`, `Github`, `Terminal`, `Globe`, `FileText`, `Sparkles`).

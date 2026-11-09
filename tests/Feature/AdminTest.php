@@ -136,8 +136,8 @@ class AdminTest extends TestCase
                     'url' => '/Warren_Dalawampu_Resume.pdf',
                     'variant' => 'primary',
                     'icon' => 'Download',
-                    'download' => true,
-                    'is_external' => false,
+                    'download' => 'true',
+                    'is_external' => 'false',
                 ],
                 [
                     'id' => 2,
@@ -146,8 +146,8 @@ class AdminTest extends TestCase
                     'url' => 'https://github.com/warr-dev',
                     'variant' => 'ghost',
                     'icon' => 'ExternalLink',
-                    'download' => false,
-                    'is_external' => true,
+                    'download' => 'false',
+                    'is_external' => 'true',
                 ],
             ],
         ];
@@ -163,6 +163,43 @@ class AdminTest extends TestCase
         $this->assertEquals('cyan', SiteSetting::get('hero_design_accent'));
         $this->assertCount(2, SiteSetting::get('hero_actions'));
         $this->assertEquals('Download Executive CV', SiteSetting::get('hero_actions')[0]['label']);
+        $this->assertTrue(SiteSetting::get('hero_actions')[0]['download']);
+        $this->assertFalse(SiteSetting::get('hero_actions')[0]['is_external']);
+        $this->assertFalse(SiteSetting::get('hero_actions')[1]['download']);
+        $this->assertTrue(SiteSetting::get('hero_actions')[1]['is_external']);
+    }
+
+    public function test_admin_can_update_branding_and_favicon_settings(): void
+    {
+        $payload = [
+            'name' => 'Warren Dalawampu',
+            'title' => 'Senior Backend Developer',
+            'statusBadge' => 'Open to Senior Roles',
+            'location' => 'Mindoro, Philippines',
+            'bio' => 'Sample bio text for branding test.',
+            'email' => 'warrdev08@gmail.com',
+            'phone' => '+63 956 164 5935',
+            'github' => 'https://github.com/warr-dev',
+            'careerStartDate' => '2019-07-01',
+            'cvDisplayMode' => 'both',
+            'activeCv' => 'comprehensive',
+            'logo_text_primary' => 'warr',
+            'logo_text_secondary' => 'dev',
+            'logo_icon_text' => 'W',
+            'favicon' => '/favicon.svg',
+            'hero_badge_secondary' => 'Core Systems Engineer',
+            'hero_badge_secondary_enabled' => true,
+        ];
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings', $payload);
+
+        $response->assertSessionHas('success');
+        $this->assertEquals('warr', SiteSetting::get('logo_text_primary'));
+        $this->assertEquals('dev', SiteSetting::get('logo_text_secondary'));
+        $this->assertEquals('W', SiteSetting::get('logo_icon_text'));
+        $this->assertEquals('/favicon.svg', SiteSetting::get('favicon'));
+        $this->assertEquals('Core Systems Engineer', SiteSetting::get('hero_badge_secondary'));
+        $this->assertTrue(SiteSetting::get('hero_badge_secondary_enabled'));
     }
 
     public function test_admin_can_create_and_delete_project(): void

@@ -131,6 +131,9 @@ function ActionItem({ action, accentStyle }) {
     const isButton = action.type === 'button';
     const variant = action.variant || (isButton ? 'primary' : 'ghost');
 
+    const isDownload = Boolean(action.download === true || action.download === 'true' || action.download === 1 || action.download === '1');
+    const isExternal = Boolean(action.is_external === true || action.is_external === 'true' || action.is_external === 1 || action.is_external === '1');
+
     let baseClass = "inline-flex items-center gap-2 rounded-md text-xs font-medium transition-all active:scale-95";
 
     if (variant === 'primary') {
@@ -146,12 +149,17 @@ function ActionItem({ action, accentStyle }) {
 
     const iconElement = renderActionIcon(action.icon, "w-3.5 h-3.5");
 
+    // Extract filename from URL if downloading (e.g. Warren_Dalawampu_CV_2026.pdf)
+    const downloadFilename = isDownload && action.url 
+        ? (action.url.split('/').pop().split('?')[0] || true) 
+        : undefined;
+
     return (
         <a
             href={action.url}
-            target={action.is_external ? "_blank" : undefined}
-            rel={action.is_external ? "noreferrer" : undefined}
-            download={action.download ? true : undefined}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+            download={downloadFilename}
             className={baseClass}
         >
             {iconElement}
@@ -407,10 +415,12 @@ export default function Hero({ recruiterData }) {
                             </div>
                         </div>
 
-                        <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141516] border border-[#23252a] text-[11px] font-mono text-[#8a8f98]">
-                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>Verified Engineer · 2026 Ready</span>
-                        </div>
+                        {recruiterData?.heroBadgeSecondaryEnabled && recruiterData?.heroBadgeSecondary && (
+                            <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141516] border border-[#23252a] text-[11px] font-mono text-[#8a8f98]">
+                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>{recruiterData.heroBadgeSecondary}</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Main Title & Bio */}

@@ -63,6 +63,8 @@ export default function PortfolioLayout({
                 <meta name="keywords" content={metaKeywords} />
                 <meta name="author" content={recruiterData?.name || "Warren Dalawampu"} />
                 <link rel="canonical" href={currentUrl} />
+                <link rel="icon" type="image/svg+xml" href={recruiterData?.favicon || '/favicon.svg'} />
+                <link rel="alternate icon" href="/favicon.ico" />
 
                 {/* OpenGraph / Facebook */}
                 <meta property="og:type" content="website" />

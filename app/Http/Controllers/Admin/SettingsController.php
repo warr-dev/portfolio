@@ -132,6 +132,13 @@ class SettingsController extends Controller
             'seo_description' => SiteSetting::get('seo_description', 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.'),
             'seo_keywords' => SiteSetting::get('seo_keywords', 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency'),
             'og_image' => SiteSetting::get('og_image', ''),
+            'logo_text_primary' => SiteSetting::get('logo_text_primary', 'warr'),
+            'logo_text_secondary' => SiteSetting::get('logo_text_secondary', 'dev'),
+            'logo_icon_text' => SiteSetting::get('logo_icon_text', 'W'),
+            'logo_icon_url' => SiteSetting::get('logo_icon_url', ''),
+            'favicon' => SiteSetting::get('favicon', '/favicon.svg'),
+            'hero_badge_secondary' => SiteSetting::get('hero_badge_secondary', ''),
+            'hero_badge_secondary_enabled' => (bool) SiteSetting::get('hero_badge_secondary_enabled', false),
         ];
 
         return Inertia::render('Admin/Settings', [
@@ -141,6 +148,37 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
+        // Pre-normalize booleans from FormData (where JS booleans become strings "true"/"false")
+        if ($request->has('hero_actions')) {
+            $actions = $request->input('hero_actions');
+            if (is_array($actions)) {
+                $cleanedActions = [];
+                foreach ($actions as $act) {
+                    $cleanedActions[] = [
+                        'id' => $act['id'] ?? null,
+                        'type' => $act['type'] ?? 'button',
+                        'label' => $act['label'] ?? '',
+                        'url' => $act['url'] ?? '#',
+                        'variant' => $act['variant'] ?? 'secondary',
+                        'icon' => $act['icon'] ?? 'None',
+                        'download' => filter_var($act['download'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                        'is_external' => filter_var($act['is_external'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    ];
+                }
+                $request->merge(['hero_actions' => $cleanedActions]);
+            }
+        }
+        if ($request->has('hero_badge_secondary_enabled')) {
+            $request->merge([
+                'hero_badge_secondary_enabled' => filter_var($request->input('hero_badge_secondary_enabled'), FILTER_VALIDATE_BOOLEAN),
+            ]);
+        }
+        if ($request->has('linkedin_enabled')) {
+            $request->merge([
+                'linkedin_enabled' => filter_var($request->input('linkedin_enabled'), FILTER_VALIDATE_BOOLEAN),
+            ]);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'title' => 'required|string|max:150',
@@ -190,6 +228,15 @@ class SettingsController extends Controller
             'hero_actions.*.icon' => 'nullable|string|max:50',
             'hero_actions.*.download' => 'nullable|boolean',
             'hero_actions.*.is_external' => 'nullable|boolean',
+            'logo_text_primary' => 'nullable|string|max:50',
+            'logo_text_secondary' => 'nullable|string|max:50',
+            'logo_icon_text' => 'nullable|string|max:10',
+            'logo_icon_url' => 'nullable|string|max:500',
+            'logo_icon_file' => 'nullable|image|mimes:jpeg,png,webp,svg,jpg|max:5120',
+            'favicon' => 'nullable|string|max:500',
+            'favicon_file' => 'nullable|file|mimes:ico,svg,png,webp|max:5120',
+            'hero_badge_secondary' => 'nullable|string|max:150',
+            'hero_badge_secondary_enabled' => 'nullable|boolean',
         ]);
 
         // Compute dynamic experience string
@@ -208,6 +255,10 @@ class SettingsController extends Controller
             $val = $request->input('linkedin_enabled');
             $validated['linkedin_enabled'] = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $val;
         }
+        if ($request->has('hero_badge_secondary_enabled')) {
+            $val = $request->input('hero_badge_secondary_enabled');
+            $validated['hero_badge_secondary_enabled'] = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $val;
+        }
 
         if ($request->hasFile('og_image_file')) {
             $file = $request->file('og_image_file');
@@ -216,12 +267,28 @@ class SettingsController extends Controller
             $validated['og_image'] = '/storage/'.$path;
         }
 
+        if ($request->hasFile('logo_icon_file')) {
+            $file = $request->file('logo_icon_file');
+            $filename = 'logo-icon-'.time().'.'.$file->getClientOriginalExtension();
+            $path = $file->storeAs('branding', $filename, 'public');
+            $validated['logo_icon_url'] = '/storage/'.$path;
+        }
+
+        if ($request->hasFile('favicon_file')) {
+            $file = $request->file('favicon_file');
+            $ext = $file->getClientOriginalExtension();
+            $filename = 'favicon-'.time().'.'.$ext;
+            $path = $file->storeAs('branding', $filename, 'public');
+            $validated['favicon'] = '/storage/'.$path;
+        }
+
         foreach ([
             'name', 'title', 'statusBadge', 'location', 'bio', 'email', 'phone', 'github',
             'linkedin', 'linkedin_enabled', 'linkedin_company', 'linkedin_role', 'linkedin_work_auth', 'linkedin_work_auth_note',
             'careerStartDate', 'yearsExperience', 'cvDisplayMode', 'activeCv', 'specializedTitle', 'specializedSubtitle', 'specializedCapabilities',
             'seo_title', 'seo_description', 'seo_keywords', 'og_image',
             'hero_name', 'hero_title', 'hero_subtitle', 'hero_caption', 'hero_status_badge', 'hero_location', 'hero_layout', 'hero_design_accent', 'hero_actions',
+            'logo_text_primary', 'logo_text_secondary', 'logo_icon_text', 'logo_icon_url', 'favicon', 'hero_badge_secondary', 'hero_badge_secondary_enabled',
         ] as $key) {
             if (array_key_exists($key, $validated)) {
                 SiteSetting::set($key, $validated[$key]);

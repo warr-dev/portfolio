@@ -77,13 +77,26 @@ export default function Navbar({ recruiterData }) {
     return (
         <header className="sticky top-4 z-50 flex flex-col items-center px-4 w-full">
             <nav className="w-full max-w-4xl bg-[#0f1011]/90 backdrop-blur-md border border-[#23252a] rounded-full px-4 sm:px-5 py-2.5 flex items-center justify-between shadow-2xl transition-all">
-                {/* Monogram Logo */}
+                {/* Monogram / Brand Logo */}
                 <a href="#" className="flex items-center gap-2 group">
-                    <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2] group-hover:border-[#5e6ad2] transition-colors">
-                        W
-                    </div>
-                    <span className="font-medium text-sm text-[#f7f8f8] tracking-tight">
-                        warren<span className="text-[#8a8f98]">.dev</span>
+                    {recruiterData?.logoIconUrl ? (
+                        <img 
+                            src={recruiterData.logoIconUrl} 
+                            alt={recruiterData?.logoTextPrimary || 'Logo'} 
+                            className="w-7 h-7 rounded-md object-contain border border-[#34343a] group-hover:border-[#5e6ad2] transition-colors" 
+                        />
+                    ) : (
+                        <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2] group-hover:border-[#5e6ad2] transition-colors">
+                            {recruiterData?.logoIconText || 'W'}
+                        </div>
+                    )}
+                    <span className="font-semibold text-sm tracking-tight font-mono">
+                        <span className="text-[#5e6ad2] group-hover:text-[#828fff] transition-colors">
+                            {recruiterData?.logoTextPrimary || 'warr'}
+                        </span>
+                        <span className="text-[#8a8f98] group-hover:text-[#d0d6e0] transition-colors">
+                            {recruiterData?.logoTextSecondary || 'dev'}
+                        </span>
                     </span>
                 </a>
 
