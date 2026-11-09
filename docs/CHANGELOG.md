@@ -5,6 +5,15 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-11-09
 
 ### Fixed
+- **Career Milestone Modal Form Submission & Custom Scrollbar (`Experience/Index.jsx`)**:
+  - **303 Redirect / No Message / Modal Not Closing**: Fixed a bug where `put()` and `post()` from `useForm` were called with an extra `{ data: payload }` envelope wrapping the data instead of passing `payload` directly to `router.put()` / `router.post()`. This caused Laravel's validation rules (`role`, `company`, `period`, `bullet_points`) to fail silently into validation errors on `$request->validate()`, returning a 303 redirect with session validation errors that went unrendered and prevented `onSuccess` from firing and closing the modal.
+  - **Inline Validation Feedback**: Added explicit error text rendering (`{errors.role}`, `{errors.company}`, `{errors.period}`, `{errors.bullet_points}`) so validation feedback is immediately visible.
+  - **Fixed Header/Footer Architecture & Clean Dark Scrollbar**: Upgraded the Milestone modal to the fixed header/footer flex column architecture, applying `.custom-scrollbar` with subtle dark thumb/track styling to eliminate ugly default browser scrollbars.
+- **Public & Admin Favicon Override Resolution (`PortfolioLayout.jsx`, `AdminLayout.jsx`, `public/favicon.ico`)**:
+  - **Root Cause Identified**: Discovered a conflicting hardcoded lightning bolt emoji SVG data URI (`<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,...⚡..." />`) located at the bottom of the `<Head>` block inside [`PortfolioLayout.jsx`](file:///home/war/projects/portfolio/resources/js/Layouts/PortfolioLayout.jsx). When Inertia rendered the public portfolio page, this lower tag overrode the dynamic favicon and `public/favicon.svg`. Because [`AdminLayout.jsx`](file:///home/war/projects/portfolio/resources/js/Layouts/AdminLayout.jsx) did not render `PortfolioLayout`, it did not contain this override and correctly displayed the configured SVG favicon, causing the symptom where favicon was only observed on the admin side.
+  - **Removed Hardcoded SVG Data URI**: Cleaned out the conflicting emoji data URI so [`PortfolioLayout.jsx`](file:///home/war/projects/portfolio/resources/js/Layouts/PortfolioLayout.jsx) cleanly binds the user-configured `recruiterData.favicon` (falling back to `/favicon.svg`).
+  - **Replaced 0-byte `favicon.ico`**: Generated a valid multi-resolution standard icon file at `public/favicon.ico` (replacing the empty 0-byte file) to ensure full legacy browser and tab compatibility.
+  - **Admin `<Head>` Consistency**: Added explicit `<Head><title>...</title></Head>` tag inside [`AdminLayout.jsx`](file:///home/war/projects/portfolio/resources/js/Layouts/AdminLayout.jsx) for consistent title and icon management across the admin dashboard.
 - **Hero Actions Boolean Serialization & Download / New Tab Bugfix (`SettingsController.php`, `Hero.jsx`, `Settings.jsx`)**:
   - **Root-Cause Discovery**: Fixed an issue where Inertia `forceFormData: true` serialized nested checkbox booleans to string literals (`"true"` / `"false"`), causing Laravel's strict nested `boolean` validation rule to reject requests with `The hero_actions.0.download field must be true or false`, silently aborting saves on production `warrdev.site`.
   - **Pre-Validation Boolean Normalization**: Added pre-normalization in `SettingsController::update` converting incoming FormData booleans using `filter_var(..., FILTER_VALIDATE_BOOLEAN)` without PHP reference pointers.
@@ -12,6 +21,15 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
   - **Checkbox State Fidelity**: Updated `Settings.jsx` checkboxes to use truthy parsing so checkboxes accurately reflect database state.
 
 ### Added
+- **Unified Branding Across Admin Console & Login (`AdminLayout.jsx`, `Login.jsx`, `HandleInertiaRequests.php`)**:
+  - Replaced hardcoded text (`warren.admin`) with dynamic brand tokens (`logoTextPrimary` / `logoTextSecondary`), custom logo icon images, and monogram letters (`logoIconText`).
+  - Synced global favicon controls (`<link rel="icon">`) to all admin views.
+- **Projects Reordering & Visibility Controls (`ProjectController.php`, `Projects/Index.jsx`, `web.php`, `AdminTest.php`)**:
+  - **Reorder Engine**: Added interactive up/down arrow controls and `/admin/projects/reorder` endpoint to order projects.
+  - **Visibility Controls**: Added 1-click eye toggle (`featured: true/false`) with clear visual cues and dimmed row styling for hidden projects.
+  - **Streamlined Link Bar**: Replaced verbose text tags with clean clickable icons with tooltips (`BookOpen` for Case Study, `GithubIcon` for repository, `ExternalLink` for demo).
+  - **Fixed Modal Header & Footer**: Redesigned the project edit/create modal into a clean flex column layout where the header and footer remain pinned in place while only the form content scrolls.
+  - **Short UI Copy**: Replaced lengthy verbose descriptive strings with concise labels across all fields and previews.
 - **Logo Branding, Favicon Control & Dynamic Monogram Seeder (`Navbar.jsx`, `Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `2026_11_09_083500_seed_branding_and_favicon_settings.php`)**:
   - **Dynamic Text Branding**: Replaced hardcoded logo with configurable primary and secondary text tokens defaulting to **`warr`** in primary accent glow (`#5e6ad2`) and **`dev`** in neutral secondary text (`#8a8f98`).
   - **Monogram & Logo Image Support**: Added configurable icon text (default `'W'`) and custom uploaded logo image asset support in the Navbar and Admin headers.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { 
     LayoutDashboard, 
     Settings, 
@@ -17,7 +17,13 @@ import {
 export default function AdminLayout({ title, children }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const { url } = usePage();
-    const { auth, flash } = usePage().props;
+    const { auth, flash, branding } = usePage().props;
+
+    const logoTextPrimary = branding?.logoTextPrimary || 'warr';
+    const logoTextSecondary = branding?.logoTextSecondary || 'dev';
+    const logoIconText = branding?.logoIconText || 'W';
+    const logoIconUrl = branding?.logoIconUrl || null;
+    const favicon = branding?.favicon || '/favicon.svg';
 
     const navItems = [
         { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
@@ -37,6 +43,11 @@ export default function AdminLayout({ title, children }) {
 
     return (
         <div className="min-h-screen bg-[#010102] text-[#f7f8f8] font-sans antialiased flex flex-col md:flex-row selection:bg-[#5e6ad2] selection:text-white">
+            <Head>
+                <title>{title ? `${title} | Admin Console` : 'Admin Console'}</title>
+                <link rel="icon" type="image/svg+xml" href={favicon} />
+                <link rel="alternate icon" href="/favicon.ico" />
+            </Head>
             
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex w-64 bg-[#0f1011] border-r border-[#23252a] flex-col justify-between shrink-0 sticky top-0 h-screen">
@@ -44,11 +55,25 @@ export default function AdminLayout({ title, children }) {
                     {/* Brand */}
                     <div className="flex items-center justify-between">
                         <Link href="/admin" className="flex items-center gap-2 group">
-                            <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2] group-hover:border-[#5e6ad2] transition-colors">
-                                W
-                            </div>
-                            <span className="font-medium text-sm text-[#f7f8f8] tracking-tight">
-                                warren<span className="text-[#8a8f98]">.admin</span>
+                            {logoIconUrl ? (
+                                <img
+                                    src={logoIconUrl}
+                                    alt="Logo"
+                                    className="w-7 h-7 rounded-md object-contain border border-[#34343a] group-hover:border-[#5e6ad2] transition-colors"
+                                />
+                            ) : (
+                                <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2] group-hover:border-[#5e6ad2] transition-colors">
+                                    {logoIconText}
+                                </div>
+                            )}
+                            <span className="font-semibold text-sm tracking-tight font-mono">
+                                <span className="text-[#5e6ad2] group-hover:text-[#828fff] transition-colors">
+                                    {logoTextPrimary}
+                                </span>
+                                <span className="text-[#8a8f98] group-hover:text-[#d0d6e0] transition-colors">
+                                    {logoTextSecondary}
+                                </span>
+                                <span className="text-xs text-[#5e6ad2] font-mono ml-1 opacity-70">.admin</span>
                             </span>
                         </Link>
                         <a
@@ -105,11 +130,25 @@ export default function AdminLayout({ title, children }) {
             {/* Mobile Header Bar with Hamburger */}
             <div className="md:hidden sticky top-0 z-40 bg-[#0f1011]/95 backdrop-blur-md border-b border-[#23252a] px-4 h-14 flex items-center justify-between">
                 <Link href="/admin" className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2]">
-                        W
-                    </div>
-                    <span className="font-medium text-sm text-[#f7f8f8] tracking-tight">
-                        warren<span className="text-[#8a8f98]">.admin</span>
+                    {logoIconUrl ? (
+                        <img
+                            src={logoIconUrl}
+                            alt="Logo"
+                            className="w-7 h-7 rounded-md object-contain border border-[#34343a]"
+                        />
+                    ) : (
+                        <div className="w-7 h-7 rounded-md bg-[#141516] border border-[#34343a] flex items-center justify-center font-mono text-xs font-semibold text-[#5e6ad2]">
+                            {logoIconText}
+                        </div>
+                    )}
+                    <span className="font-semibold text-sm tracking-tight font-mono">
+                        <span className="text-[#5e6ad2]">
+                            {logoTextPrimary}
+                        </span>
+                        <span className="text-[#8a8f98]">
+                            {logoTextSecondary}
+                        </span>
+                        <span className="text-xs text-[#5e6ad2] font-mono ml-1 opacity-70">.admin</span>
                     </span>
                 </Link>
 

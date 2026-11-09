@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,13 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                 ] : null,
+            ],
+            'branding' => [
+                'logoTextPrimary' => SiteSetting::get('logo_text_primary', 'warr'),
+                'logoTextSecondary' => SiteSetting::get('logo_text_secondary', 'dev'),
+                'logoIconText' => SiteSetting::get('logo_icon_text', 'W'),
+                'logoIconUrl' => SiteSetting::get('logo_icon_url', null),
+                'favicon' => SiteSetting::get('favicon', '/favicon.svg'),
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

@@ -190,6 +190,21 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Project updated successfully.');
     }
 
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'orders' => 'required|array',
+            'orders.*.id' => 'required|exists:projects,id',
+            'orders.*.sort_order' => 'required|integer',
+        ]);
+
+        foreach ($validated['orders'] as $item) {
+            Project::where('id', $item['id'])->update(['sort_order' => $item['sort_order']]);
+        }
+
+        return redirect()->back()->with('success', 'Project order updated successfully.');
+    }
+
     public function destroy(Project $project)
     {
         $project->delete();

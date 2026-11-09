@@ -530,4 +530,59 @@ class AdminTest extends TestCase
         $this->assertEquals('Updated Custom Type', $updatedList[0]['type']);
         $this->assertEquals('replacement.pdf', $updatedList[0]['filename']);
     }
+
+    public function test_admin_can_reorder_projects_and_toggle_visibility(): void
+    {
+        $projectA = Project::create([
+            'title' => 'Project Alpha',
+            'slug' => 'project-alpha',
+            'badge' => 'Alpha',
+            'description' => 'First project for reorder testing.',
+            'tags' => ['PHP'],
+            'demo_status' => 'live',
+            'github_status' => 'public',
+            'media_type' => 'none',
+            'featured' => true,
+            'sort_order' => 1,
+        ]);
+
+        $projectB = Project::create([
+            'title' => 'Project Beta',
+            'slug' => 'project-beta',
+            'badge' => 'Beta',
+            'description' => 'Second project for reorder testing.',
+            'tags' => ['Go'],
+            'demo_status' => 'live',
+            'github_status' => 'public',
+            'media_type' => 'none',
+            'featured' => true,
+            'sort_order' => 2,
+        ]);
+
+        // Test reorder endpoint
+        $reorderResponse = $this->actingAs($this->admin)->post('/admin/projects/reorder', [
+            'orders' => [
+                ['id' => $projectA->id, 'sort_order' => 2],
+                ['id' => $projectB->id, 'sort_order' => 1],
+            ],
+        ]);
+        $reorderResponse->assertSessionHas('success');
+
+        $this->assertEquals(2, $projectA->fresh()->sort_order);
+        $this->assertEquals(1, $projectB->fresh()->sort_order);
+
+        // Test toggle visibility
+        $visibilityResponse = $this->actingAs($this->admin)->put("/admin/projects/{$projectA->id}", [
+            'title' => $projectA->title,
+            'description' => $projectA->description,
+            'tags' => $projectA->tags,
+            'demo_status' => $projectA->demo_status,
+            'github_status' => $projectA->github_status,
+            'media_type' => $projectA->media_type,
+            'featured' => false,
+        ]);
+        $visibilityResponse->assertSessionHas('success');
+
+        $this->assertFalse($projectA->fresh()->featured);
+    }
 }

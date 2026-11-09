@@ -1,8 +1,15 @@
 import React from 'react';
-import { useForm, Head } from '@inertiajs/react';
+import { useForm, Head, usePage } from '@inertiajs/react';
 import { Lock, Mail, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function Login() {
+    const { branding } = usePage().props;
+    const logoTextPrimary = branding?.logoTextPrimary || 'warr';
+    const logoTextSecondary = branding?.logoTextSecondary || 'dev';
+    const logoIconText = branding?.logoIconText || 'W';
+    const logoIconUrl = branding?.logoIconUrl || null;
+    const favicon = branding?.favicon || '/favicon.svg';
+
     const { data, setData, post, processing, errors } = useForm({
         email: 'warrdev08@gmail.com',
         password: '',
@@ -16,17 +23,33 @@ export default function Login() {
 
     return (
         <div className="min-h-screen bg-[#010102] text-[#f7f8f8] flex items-center justify-center p-4 relative selection:bg-[#5e6ad2] selection:text-white font-sans antialiased">
-            <Head title="Admin Login" />
+            <Head>
+                <title>Admin Login</title>
+                <link rel="icon" type="image/svg+xml" href={favicon} />
+                <link rel="alternate icon" href="/favicon.ico" />
+            </Head>
 
             <div className="fixed inset-0 grid-pattern opacity-40 pointer-events-none" />
             <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[350px] glow-accent pointer-events-none" />
 
             <div className="relative z-10 w-full max-w-sm space-y-6">
                 <div className="text-center space-y-2">
-                    <div className="w-10 h-10 rounded-lg bg-[#0f1011] border border-[#23252a] mx-auto flex items-center justify-center font-mono text-sm font-semibold text-[#5e6ad2]">
-                        W
-                    </div>
-                    <h1 className="text-xl font-semibold tracking-tight text-[#f7f8f8]">Administrative Terminal</h1>
+                    {logoIconUrl ? (
+                        <img
+                            src={logoIconUrl}
+                            alt="Logo"
+                            className="w-10 h-10 rounded-lg object-contain mx-auto border border-[#23252a]"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-lg bg-[#0f1011] border border-[#23252a] mx-auto flex items-center justify-center font-mono text-sm font-semibold text-[#5e6ad2]">
+                            {logoIconText}
+                        </div>
+                    )}
+                    <h1 className="text-xl font-semibold tracking-tight font-mono">
+                        <span className="text-[#5e6ad2]">{logoTextPrimary}</span>
+                        <span className="text-[#8a8f98]">{logoTextSecondary}</span>
+                        <span className="text-xs text-[#5e6ad2] font-mono ml-1 opacity-70">.admin</span>
+                    </h1>
                     <p className="text-xs text-[#8a8f98]">Sign in to manage portfolio contents & settings</p>
                 </div>
 
