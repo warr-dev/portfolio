@@ -82,12 +82,19 @@ export default function SkillsSection({ skills = [], categorizedSkills = null, i
 
     // Use backend-provided categorized skills or fallback default
     const experienceCategories = (Array.isArray(categorizedSkills) && categorizedSkills.length > 0)
-        ? categorizedSkills.map((cat, idx) => ({
-              ...DEFAULT_CATEGORIZED_SKILLS[idx],
-              ...cat,
-              icon: idx === 0 ? CheckCircle2 : idx === 1 ? Boxes : Cpu,
-              accent: idx === 0 ? 'emerald' : idx === 1 ? 'sky' : 'purple',
-          }))
+        ? categorizedSkills.map((cat, idx) => {
+              const defaultTier = DEFAULT_CATEGORIZED_SKILLS[idx] || {};
+              const accent = cat.accent || defaultTier.accent || (idx === 0 ? 'emerald' : idx === 1 ? 'sky' : (idx === 2 ? 'purple' : 'amber'));
+              const icon = cat.icon || defaultTier.icon || (idx === 0 ? CheckCircle2 : idx === 1 ? Boxes : (idx === 2 ? Cpu : Layers));
+              return {
+                  ...defaultTier,
+                  ...cat,
+                  id: cat.id || `tier-${idx}`,
+                  accent,
+                  icon,
+                  items: Array.isArray(cat.items) ? cat.items : [],
+              };
+          })
         : DEFAULT_CATEGORIZED_SKILLS;
 
     const accentStyles = {
@@ -114,6 +121,30 @@ export default function SkillsSection({ skills = [], categorizedSkills = null, i
             icon: 'text-purple-400',
             dot: 'bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.5)]',
             itemHover: 'hover:border-purple-500/35 hover:bg-[#151218]',
+        },
+        amber: {
+            border: 'border-[#23252a] hover:border-amber-500/40',
+            topLine: 'from-amber-500/80 via-amber-400/40 to-transparent',
+            badge: 'bg-amber-500/10 text-amber-400 border-amber-500/25',
+            icon: 'text-amber-400',
+            dot: 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]',
+            itemHover: 'hover:border-amber-500/35 hover:bg-[#181510]',
+        },
+        rose: {
+            border: 'border-[#23252a] hover:border-rose-500/40',
+            topLine: 'from-rose-500/80 via-rose-400/40 to-transparent',
+            badge: 'bg-rose-500/10 text-rose-400 border-rose-500/25',
+            icon: 'text-rose-400',
+            dot: 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.5)]',
+            itemHover: 'hover:border-rose-500/35 hover:bg-[#181112]',
+        },
+        indigo: {
+            border: 'border-[#23252a] hover:border-indigo-500/40',
+            topLine: 'from-indigo-500/80 via-indigo-400/40 to-transparent',
+            badge: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/25',
+            icon: 'text-indigo-400',
+            dot: 'bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.5)]',
+            itemHover: 'hover:border-indigo-500/35 hover:bg-[#12131b]',
         },
     };
 

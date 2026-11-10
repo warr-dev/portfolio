@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PortfolioController;
 use App\Models\SiteSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -143,6 +144,7 @@ class SettingsController extends Controller
             'hero_badge_secondary' => SiteSetting::get('hero_badge_secondary', ''),
             'hero_badge_secondary_enabled' => (bool) SiteSetting::get('hero_badge_secondary_enabled', false),
             'skills_view_mode' => SiteSetting::get('skills_view_mode', 'categorized'),
+            'categorized_skills' => SiteSetting::get('categorized_skills', PortfolioController::defaultCategorizedSkills()),
         ];
 
         return Inertia::render('Admin/Settings', [
@@ -245,6 +247,7 @@ class SettingsController extends Controller
             'hero_badge_secondary' => 'nullable|string|max:150',
             'hero_badge_secondary_enabled' => 'nullable|boolean',
             'skills_view_mode' => 'nullable|string|in:categorized,stars',
+            'categorized_skills' => 'nullable|array',
         ]);
 
         // Compute dynamic experience string
@@ -297,7 +300,7 @@ class SettingsController extends Controller
             'seo_title', 'seo_description', 'seo_keywords', 'og_image', 'canonical_url', 'meta_robots', 'robots_txt',
             'hero_name', 'hero_title', 'hero_subtitle', 'hero_caption', 'hero_status_badge', 'hero_location', 'hero_layout', 'hero_design_accent', 'hero_actions',
             'logo_text_primary', 'logo_text_secondary', 'logo_icon_text', 'logo_icon_url', 'favicon', 'hero_badge_secondary', 'hero_badge_secondary_enabled',
-            'skills_view_mode',
+            'skills_view_mode', 'categorized_skills',
         ] as $key) {
             if (array_key_exists($key, $validated)) {
                 SiteSetting::set($key, $validated[$key]);

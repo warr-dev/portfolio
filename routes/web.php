@@ -53,6 +53,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Skills Resource
         Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
         Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
+        Route::post('/skills/categorized', [SkillController::class, 'updateCategorized'])->name('skills.update-categorized');
+        Route::post('/skills/categorized/reset', [SkillController::class, 'resetCategorized'])->name('skills.reset-categorized');
+        Route::post('/skills/view-mode', [SkillController::class, 'updateViewMode'])->name('skills.update-view-mode');
         Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('skills.update');
         Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('skills.destroy');
 

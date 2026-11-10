@@ -1705,6 +1705,19 @@ export default function Settings({ settings }) {
                                         </button>
                                     ))}
                                 </div>
+
+                                <div className="pt-3 border-t border-[#1f2024] flex items-center justify-between">
+                                    <div className="text-[11px] text-[#8a8f98]">
+                                        Need to add skills, edit experience tiers, or change proficiency stars?
+                                    </div>
+                                    <a
+                                        href="/admin/skills"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141516] hover:bg-[#1a1c20] text-[#00ffcc] border border-[#23252a] hover:border-[#00ffcc]/40 text-xs font-mono transition-all shadow-sm"
+                                    >
+                                        <Layers className="w-3.5 h-3.5" />
+                                        <span>Skills Arsenal Control Center →</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     )}

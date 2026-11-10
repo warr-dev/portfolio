@@ -5,6 +5,16 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-11-10
 
 ### Added
+- **Full Admin Control Center for Categorized Technical Arsenal & Skills Presentation (`SkillController.php`, `Admin/Skills/Index.jsx`, `Settings.jsx`, `routes/web.php`, `SkillAdminTest.php`)**:
+  - **Comprehensive Admin Management for Categorized Arsenal**: Empowered the Admin panel (`/admin/skills`) with interactive visual management for the categorized experience tiers:
+    - **Tier Level Editing**: Ability to edit Category Title, Subtitle, Badge Label, Accent theme (`emerald`, `sky`, `purple`, `amber`, `rose`, `indigo`), and operational context/credibility descriptions.
+    - **Skill Chips Manager**: Interactive chips with instant `✕` removal and an inline tag input with Enter/comma keybinds and batch comma-separated paste support.
+    - **Tier Reordering & Dynamic Addition**: Move tiers up/down, add new custom experience tiers dynamically, and delete tiers with confirmation guards.
+    - **One-Click Default Reset**: Added `Reset to 3 Credible Defaults` button invoking `POST /admin/skills/categorized/reset` to safely restore original production (PHP/Laravel), infrastructure (K8s/Terraform), and hardware (C++/Serial) tiers.
+  - **Dual-Mode Administration & View Switcher**: Admin can toggle the public default view mode between `[Categorized by Experience]` and `[Star Ratings]` with 1-click (`POST /admin/skills/view-mode`), immediately updating public portfolio visitors.
+  - **Direct Settings Cross-Link**: Integrated quick access in Admin Settings Submodule 04 (`Settings.jsx`) directing admins directly to the new Arsenal Control Center.
+  - **Dynamic Theme Accents on Public Portfolio (`SkillsSection.jsx`)**: Enhanced `SkillsSection.jsx` to dynamically support any number of tiers and custom accent palettes (`emerald`, `sky`, `purple`, `amber`, `rose`, `indigo`) without overriding admin configurations.
+  - **Automated Verification Suite (`SkillAdminTest.php`)**: Added 5 new PHPUnit feature tests (38/38 tests passing, 304 assertions) verifying guest route protection, admin index rendering, categorized tier updates, default resets, and public portfolio reflections.
 - **Admin Control for SEO, Robots.txt & Crawler Directives (`Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `PortfolioLayout.jsx`, `2026_11_10_023000_seed_seo_and_crawler_settings.php`)**:
   - **Dynamic `/robots.txt` Engine**: Upgraded `PortfolioController::robots()` to read custom rules stored in `SiteSetting::get('robots_txt')`. Automatically detects and replaces `{sitemap_url}` tokens with the dynamically configured canonical XML sitemap link.
   - **Full Robots.txt Code Editor & One-Click Presets in Admin**:
