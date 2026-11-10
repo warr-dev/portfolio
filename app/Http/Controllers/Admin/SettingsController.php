@@ -139,6 +139,7 @@ class SettingsController extends Controller
             'favicon' => SiteSetting::get('favicon', '/favicon.svg'),
             'hero_badge_secondary' => SiteSetting::get('hero_badge_secondary', ''),
             'hero_badge_secondary_enabled' => (bool) SiteSetting::get('hero_badge_secondary_enabled', false),
+            'skills_view_mode' => SiteSetting::get('skills_view_mode', 'categorized'),
         ];
 
         return Inertia::render('Admin/Settings', [
@@ -237,6 +238,7 @@ class SettingsController extends Controller
             'favicon_file' => 'nullable|file|mimes:ico,svg,png,webp|max:5120',
             'hero_badge_secondary' => 'nullable|string|max:150',
             'hero_badge_secondary_enabled' => 'nullable|boolean',
+            'skills_view_mode' => 'nullable|string|in:categorized,stars',
         ]);
 
         // Compute dynamic experience string
@@ -289,6 +291,7 @@ class SettingsController extends Controller
             'seo_title', 'seo_description', 'seo_keywords', 'og_image',
             'hero_name', 'hero_title', 'hero_subtitle', 'hero_caption', 'hero_status_badge', 'hero_location', 'hero_layout', 'hero_design_accent', 'hero_actions',
             'logo_text_primary', 'logo_text_secondary', 'logo_icon_text', 'logo_icon_url', 'favicon', 'hero_badge_secondary', 'hero_badge_secondary_enabled',
+            'skills_view_mode',
         ] as $key) {
             if (array_key_exists($key, $validated)) {
                 SiteSetting::set($key, $validated[$key]);

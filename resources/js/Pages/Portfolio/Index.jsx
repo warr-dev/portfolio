@@ -12,7 +12,7 @@ import LinkedInSection from '@/Components/LinkedInSection';
 import ContactSection from '@/Components/ContactSection';
 import Footer from '@/Components/Footer';
 
-export default function PortfolioIndex({ projects, experiences, skills, recruiterData }) {
+export default function PortfolioIndex({ projects, experiences, skills, categorizedSkills, skillsViewMode, recruiterData }) {
     return (
         <PortfolioLayout recruiterData={recruiterData}>
             <Navbar recruiterData={recruiterData} />
@@ -23,7 +23,11 @@ export default function PortfolioIndex({ projects, experiences, skills, recruite
                 <ExperienceSection experiences={experiences} />
                 <ProjectsSection projects={projects} />
                 <HardwareSection recruiterData={recruiterData} />
-                <SkillsSection skills={skills} />
+                <SkillsSection
+                    skills={skills}
+                    categorizedSkills={categorizedSkills || recruiterData?.categorizedSkills}
+                    initialViewMode={skillsViewMode || recruiterData?.skillsViewMode || 'categorized'}
+                />
                 <EducationSection education={recruiterData.education} />
                 <LinkedInSection recruiterData={recruiterData} />
                 <ContactSection />

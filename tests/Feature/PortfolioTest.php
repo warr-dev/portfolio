@@ -22,6 +22,9 @@ class PortfolioTest extends TestCase
             ->has('projects')
             ->has('experiences')
             ->has('skills')
+            ->has('categorizedSkills')
+            ->has('skillsViewMode')
+            ->where('skillsViewMode', 'categorized')
             ->has('recruiterData')
             ->where('recruiterData.name', 'Warren Dalawampu')
             ->has('recruiterData.subtitle')
@@ -137,5 +140,22 @@ class PortfolioTest extends TestCase
         $this->assertStringContainsString('User-agent: *', $response->getContent());
         $this->assertStringContainsString('Disallow: /admin', $response->getContent());
         $this->assertStringContainsString('Sitemap: '.url('/sitemap.xml'), $response->getContent());
+    }
+
+    public function test_categorized_technical_arsenal_renders_credible_three_tiers(): void
+    {
+        $this->seed();
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Portfolio/Index')
+            ->has('categorizedSkills', 3)
+            ->where('categorizedSkills.0.category', 'Production experience')
+            ->where('categorizedSkills.1.category', 'Hands-on infrastructure projects')
+            ->where('categorizedSkills.2.category', 'Systems & hardware engineering')
+            ->where('skillsViewMode', 'categorized')
+        );
     }
 }

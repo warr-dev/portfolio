@@ -145,6 +145,7 @@ export default function Settings({ settings }) {
         favicon_file: null,
         hero_badge_secondary: settings.hero_badge_secondary || '',
         hero_badge_secondary_enabled: settings.hero_badge_secondary_enabled !== undefined ? Boolean(settings.hero_badge_secondary_enabled) : false,
+        skills_view_mode: settings.skills_view_mode || 'categorized',
         cv_file: null,
         resume_file: null,
         new_password: '',
@@ -1644,6 +1645,59 @@ export default function Settings({ settings }) {
                                             </div>
                                             <span className="text-[10px] font-mono text-[#8a8f98] block mt-1">
                                                 {option.desc}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Technical Arsenal Display Mode */}
+                            <div className="space-y-1.5 pt-4 border-t border-[#1a1c20]">
+                                <label className="text-xs font-mono text-[#f7f8f8]">
+                                    Technical Arsenal Default Presentation
+                                </label>
+                                <p className="text-[11px] text-[#8a8f98]">
+                                    Configure the default presentation style on the public portfolio. Visitors can also toggle between modes freely.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                    {[
+                                        {
+                                            value: 'categorized',
+                                            title: 'Categorized by Experience',
+                                            badge: 'Recommended',
+                                            desc: 'Grouped by verified real-world context (Production, Infrastructure Projects, Hardware). Replaces subjective stars.',
+                                        },
+                                        {
+                                            value: 'stars',
+                                            title: 'Star Ratings by Domain',
+                                            badge: 'Detailed',
+                                            desc: 'Classic domain breakdown (Backend, Databases, DevOps, etc.) with 1-5 star ratings.',
+                                        },
+                                    ].map((opt) => (
+                                        <button
+                                            type="button"
+                                            key={opt.value}
+                                            onClick={() => setData('skills_view_mode', opt.value)}
+                                            className={`p-3 rounded-lg border text-left transition-all cursor-pointer ${
+                                                data.skills_view_mode === opt.value
+                                                    ? 'bg-[#5e6ad2]/15 border-[#5e6ad2] text-[#f7f8f8]'
+                                                    : 'bg-[#0f1011] border-[#23252a] text-[#8a8f98] hover:border-[#383b42]'
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-medium block">{opt.title}</span>
+                                                <span
+                                                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                                                        data.skills_view_mode === opt.value
+                                                            ? 'bg-[#5e6ad2] text-white'
+                                                            : 'bg-[#1a1c20] text-[#7e8490]'
+                                                    }`}
+                                                >
+                                                    {opt.badge}
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-[#8a8f98] block mt-1">
+                                                {opt.desc}
                                             </span>
                                         </button>
                                     ))}

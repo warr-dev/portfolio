@@ -26,6 +26,8 @@ class PortfolioController extends Controller
         $experiences = Experience::orderBy('sort_order', 'asc')->get();
 
         $skills = Skill::orderBy('sort_order', 'asc')->get();
+        $skillsViewMode = SiteSetting::get('skills_view_mode', 'categorized');
+        $categorizedSkills = SiteSetting::get('categorized_skills', self::defaultCategorizedSkills());
 
         $careerStartDate = SiteSetting::get('careerStartDate', '2019-07-01');
         try {
@@ -171,12 +173,81 @@ class PortfolioController extends Controller
             ],
         ];
 
+        $recruiterData['skillsViewMode'] = $skillsViewMode;
+        $recruiterData['categorizedSkills'] = $categorizedSkills;
+
         return Inertia::render('Portfolio/Index', [
             'projects' => $projects,
             'experiences' => $experiences,
             'skills' => $skills,
+            'categorizedSkills' => $categorizedSkills,
+            'skillsViewMode' => $skillsViewMode,
             'recruiterData' => $recruiterData,
         ]);
+    }
+
+    /**
+     * Default credible categorized technical arsenal grouped by real-world context.
+     */
+    public static function defaultCategorizedSkills(): array
+    {
+        return [
+            [
+                'id' => 'production-experience',
+                'category' => 'Production experience',
+                'subtitle' => 'Commercial & enterprise systems delivered over 6+ years in production',
+                'badge' => 'Commercial Production',
+                'badge_color' => 'emerald',
+                'description' => 'Architected and maintained in high-concurrency production environments handling real users, revenue transactions, and strict uptime SLAs.',
+                'items' => [
+                    'PHP',
+                    'Laravel',
+                    'Node.js',
+                    'MySQL',
+                    'MongoDB',
+                    'Linux',
+                    'Docker',
+                    'Git',
+                    'REST APIs',
+                    'CI/CD',
+                ],
+            ],
+            [
+                'id' => 'infrastructure-projects',
+                'category' => 'Hands-on infrastructure projects',
+                'subtitle' => 'Bare-metal homelab clusters, multi-node runtimes & automated IaC',
+                'badge' => 'Infrastructure & Homelab',
+                'badge_color' => 'sky',
+                'description' => 'Deployed and managed in bare-metal cluster labs and staging projects. Kept under project experience for genuine technical credibility.',
+                'items' => [
+                    'Kubernetes',
+                    'Terraform',
+                    'Ansible',
+                    'GCP',
+                    'Calico',
+                    'containerd',
+                    'GitLab CI',
+                    'WireGuard',
+                ],
+            ],
+            [
+                'id' => 'systems-hardware',
+                'category' => 'Systems & hardware engineering',
+                'subtitle' => 'Physical I/O device drivers, serial protocols & embedded microcontrollers',
+                'badge' => 'Hardware & Low-Level',
+                'badge_color' => 'violet',
+                'description' => 'Engineered for physical gaming machines, cash/ticket acceptor peripherals, thermal printers, and real-time serial protocols.',
+                'items' => [
+                    'C++',
+                    'Ubuntu',
+                    'Serial Communication',
+                    'WebSockets',
+                    'ESP32',
+                    'Raspberry Pi',
+                    'Hardware Drivers',
+                ],
+            ],
+        ];
     }
 
     /**

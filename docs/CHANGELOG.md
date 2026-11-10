@@ -2,7 +2,18 @@
 
 All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be documented in this file.
 
-## [Unreleased] - 2026-11-09
+## [Unreleased] - 2026-11-10
+
+### Added
+- **Categorized Technical Arsenal & Interactive View Switcher (`SkillsSection.jsx`, `PortfolioController.php`, `Settings.jsx`, `PortfolioTest.php`)**:
+  - **Credible 3-Tier Experience Categorization**: Replaced subjective 5-star ratings with three experience-grounded categories reflecting real-world operational contexts:
+    1. **Production Experience**: PHP, Laravel, Node.js, MySQL, MongoDB, Linux, Docker, Git, REST APIs, CI/CD (`Commercial / 6+ Yrs` badge).
+    2. **Hands-on Infrastructure Projects**: Kubernetes, Terraform, Ansible, GCP, Calico, containerd, GitLab CI, WireGuard (`Infrastructure & Homelab` badge).
+    3. **Systems & Hardware Engineering**: C++, Ubuntu, Serial Communication, WebSockets, ESP32, Raspberry Pi, Hardware Drivers (`Hardware & Low-Level` badge).
+  - **Interactive Mode Switcher**: Added a cyberpunk Linear-styled segmented control in the section header allowing visitors to toggle in real time between `[Categorized by Experience]` (default) and `[Star Ratings by Domain]`, persisting preferences via `localStorage`.
+  - **Credibility Standard Callout**: Integrated a transparent notice explaining technical boundaries (keeping Kubernetes and Terraform under project clusters rather than inflated enterprise claims for genuine credibility).
+  - **Admin Settings Management**: Added `skills_view_mode` configuration in `SiteSetting`, `PortfolioController`, and Admin Settings Submodule 04, allowing operators to choose the public default mode.
+  - **Automated Verification**: Added `test_categorized_technical_arsenal_renders_credible_three_tiers` to PHPUnit suite (32/32 tests passing, Pint verified).
 
 ### Fixed
 - **Projects Table Responsive Horizontal Scrollbar (`Projects/Index.jsx`)**:
