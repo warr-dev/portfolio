@@ -15,7 +15,9 @@ export default function PortfolioLayout({
     const metaDescription = description || recruiterData?.seoDescription || 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.';
     const metaKeywords = keywords || recruiterData?.seoKeywords || 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency';
     const metaOgImage = ogImage || recruiterData?.ogImage || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
-    const currentUrl = typeof window !== 'undefined' ? (canonicalUrl || window.location.href) : (canonicalUrl || 'https://warren.dev');
+    const baseSiteUrl = recruiterData?.canonicalUrl || 'https://warrdev.site';
+    const currentUrl = typeof window !== 'undefined' ? (canonicalUrl || window.location.href) : (canonicalUrl || baseSiteUrl);
+    const metaRobotsDirective = recruiterData?.metaRobots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
     // Default Person & WebSite JSON-LD Schema
     const defaultJsonLd = {
@@ -23,11 +25,11 @@ export default function PortfolioLayout({
         '@graph': [
             {
                 '@type': 'Person',
-                '@id': 'https://warren.dev/#person',
+                '@id': `${baseSiteUrl}/#person`,
                 'name': recruiterData?.name || 'Warren Dalawampu',
                 'jobTitle': recruiterData?.title || 'Senior Backend Developer & Systems Software Engineer',
                 'description': metaDescription,
-                'url': 'https://warren.dev',
+                'url': baseSiteUrl,
                 'image': metaOgImage,
                 'email': recruiterData?.email || 'warrdev08@gmail.com',
                 'telephone': recruiterData?.phone || '+63 956 164 5935',
@@ -43,11 +45,11 @@ export default function PortfolioLayout({
             },
             {
                 '@type': 'WebSite',
-                '@id': 'https://warren.dev/#website',
-                'url': 'https://warren.dev',
+                '@id': `${baseSiteUrl}/#website`,
+                'url': baseSiteUrl,
                 'name': 'Warren Dalawampu — Technical Portfolio & Architecture Case Studies',
                 'publisher': {
-                    '@id': 'https://warren.dev/#person'
+                    '@id': `${baseSiteUrl}/#person`
                 }
             }
         ]
@@ -82,7 +84,7 @@ export default function PortfolioLayout({
                 <meta name="twitter:image" content={metaOgImage} />
 
                 {/* Robots & Crawler Directives */}
-                <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+                <meta name="robots" content={metaRobotsDirective} />
 
                 {/* Structured Data (JSON-LD) */}
                 <script type="application/ld+json">

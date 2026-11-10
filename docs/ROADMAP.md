@@ -28,6 +28,7 @@ Task tracking is synchronized with **Vikunja Project #34 (Portfolio)** at `http:
 | **#235** | `[P1]` / `!  ` | **Completed** | Dynamic JSON-LD Structured Data Schema (Person, ProfilePage, SoftwareSourceCode) |
 | **#236** | `[P2]` / `~  ` | **Completed** | Dynamic XML Sitemap & robots.txt Generator (`/sitemap.xml`, `/robots.txt`) |
 | **#237** | `[P2]` / `~  ` | **Completed** | SEO Meta Tags & OG Image Control in Admin Settings (`/admin/settings`) |
+| **#360** | `[P1]` / `!  ` | **Completed** | Admin Control for SEO, Robots.txt & Crawler Directives (`/robots.txt`, `/sitemap.xml`) |
 | **#352** | `[P1]` / `!  ` | **Completed** | Production Management API (`/api/manage/*` for health, artisan, logs & maintenance) |
 | **#354** | `[P1]` / `!  ` | **Completed** | Sync LinkedIn Profile, DevOps Skills & Experience Details |
 | **#357** | `[P1]` / `!  ` | **Completed** | Featured Projects Addition: KiosKo Cloud & Palitayo Online with Live Screenshots |

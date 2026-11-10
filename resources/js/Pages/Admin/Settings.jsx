@@ -136,6 +136,9 @@ export default function Settings({ settings }) {
         seo_keywords: settings.seo_keywords || '',
         og_image: settings.og_image || '',
         og_image_file: null,
+        canonical_url: settings.canonical_url || 'https://warrdev.site',
+        meta_robots: settings.meta_robots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+        robots_txt: settings.robots_txt || "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: https://warrdev.site/sitemap.xml\n",
         logo_text_primary: settings.logo_text_primary || 'warr',
         logo_text_secondary: settings.logo_text_secondary || 'dev',
         logo_icon_text: settings.logo_icon_text || 'W',
@@ -350,7 +353,7 @@ export default function Settings({ settings }) {
         { id: 'profile', label: 'Core Profile & Bio', icon: User },
         { id: 'contact', label: 'Contact & Socials', icon: Mail },
         { id: 'capabilities', label: 'Specialized Capabilities', icon: Layers, badge: data.specializedCapabilities?.length > 0 ? `${data.specializedCapabilities.length}` : null },
-        { id: 'seo', label: 'SEO & Social Graph', icon: Globe },
+        { id: 'seo', label: 'SEO, Robots & Crawlers', icon: Globe, badge: data.meta_robots?.includes('noindex') ? 'NOINDEX' : 'INDEX' },
         { id: 'security', label: 'Security & Auth', icon: Lock },
     ];
 
@@ -1706,19 +1709,215 @@ export default function Settings({ settings }) {
                         </div>
                     )}
 
-                    {/* Submodule 05: SEO & Social Graph */}
+                    {/* Submodule 05: SEO, Robots & Crawlers */}
                     {activeTab === 'seo' && (
-                        <div className="space-y-5 animate-in fade-in duration-200">
-                            <div>
-                                <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2] border-b border-[#23252a] pb-2">
-                                    05 / SEO & Social Graph Meta Tags
-                                </h2>
-                                <span className="text-[11px] text-[#8a8f98] block mt-1">
-                                    Configure search engine indexing, OpenGraph cards for LinkedIn/Slack/Twitter, and JSON-LD structured schemas.
-                                </span>
+                        <div className="space-y-6 animate-in fade-in duration-200">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#23252a] pb-3">
+                                <div>
+                                    <h2 className="text-xs font-mono uppercase tracking-wider text-[#5e6ad2]">
+                                        05 / SEO, Robots & Crawler Directives
+                                    </h2>
+                                    <span className="text-[11px] text-[#8a8f98] block mt-1">
+                                        Configure search engine indexing, crawler access (/robots.txt), sitemap generation, OpenGraph social cards, and bot permissions.
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <a
+                                        href="/robots.txt"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono bg-[#141516] hover:bg-[#1f2024] border border-[#23252a] text-[#00ffcc] rounded transition-colors"
+                                    >
+                                        <ExternalLink className="w-3 h-3" />
+                                        /robots.txt
+                                    </a>
+                                    <a
+                                        href="/sitemap.xml"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono bg-[#141516] hover:bg-[#1f2024] border border-[#23252a] text-[#5e6ad2] rounded transition-colors"
+                                    >
+                                        <ExternalLink className="w-3 h-3" />
+                                        /sitemap.xml
+                                    </a>
+                                </div>
                             </div>
 
+                            {/* Section 1: Search Engine Indexing & Canonical Domain */}
                             <div className="bg-[#141516] border border-[#23252a] rounded-lg p-5 space-y-4">
+                                <div className="flex items-center justify-between border-b border-[#1f2024] pb-2.5">
+                                    <h3 className="text-xs font-semibold text-[#f7f8f8] flex items-center gap-2">
+                                        <Globe className="w-4 h-4 text-[#5e6ad2]" />
+                                        Search Engine Indexing & Canonical Domain
+                                    </h3>
+                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                                        data.meta_robots?.includes('noindex') 
+                                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+                                            : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                    }`}>
+                                        {data.meta_robots?.includes('noindex') ? 'NOINDEX (Blocked)' : 'INDEX (Search Active)'}
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-mono text-[#8a8f98]">Canonical Site URL (Domain Base)</label>
+                                        <input
+                                            type="url"
+                                            value={data.canonical_url}
+                                            onChange={(e) => setData('canonical_url', e.target.value)}
+                                            placeholder="https://warrdev.site"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors"
+                                        />
+                                        <span className="text-[10px] font-mono text-[#62666d] block">
+                                            Base URL used for &lt;link rel="canonical"&gt;, sitemap URLs, og:url, and JSON-LD structured schemas.
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-mono text-[#8a8f98]">Meta Robots Tag Directive</label>
+                                            <span className="text-[10px] font-mono text-[#62666d]">Presets below</span>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={data.meta_robots}
+                                            onChange={(e) => setData('meta_robots', e.target.value)}
+                                            placeholder="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+                                            className="w-full bg-[#0f1011] border border-[#23252a] focus:border-[#5e6ad2] rounded-md px-3.5 py-2 text-xs text-[#f7f8f8] focus:outline-none transition-colors font-mono"
+                                        />
+                                        <div className="flex flex-wrap gap-1.5 pt-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')}
+                                                className="px-2 py-0.5 text-[10px] font-mono bg-[#1f2024] hover:bg-[#282a30] text-[#d0d6e0] rounded border border-[#2a2c32] transition-colors"
+                                            >
+                                                Standard Public Index
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('meta_robots', 'index, follow')}
+                                                className="px-2 py-0.5 text-[10px] font-mono bg-[#1f2024] hover:bg-[#282a30] text-[#d0d6e0] rounded border border-[#2a2c32] transition-colors"
+                                            >
+                                                Simple Index
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('meta_robots', 'noindex, nofollow')}
+                                                className="px-2 py-0.5 text-[10px] font-mono bg-red-900/20 hover:bg-red-900/30 text-red-400 rounded border border-red-800/40 transition-colors"
+                                            >
+                                                Noindex & Nofollow (Private)
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('meta_robots', 'noindex, follow')}
+                                                className="px-2 py-0.5 text-[10px] font-mono bg-amber-900/20 hover:bg-amber-900/30 text-amber-400 rounded border border-amber-800/40 transition-colors"
+                                            >
+                                                Noindex, Follow Links
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section 2: Live robots.txt Editor */}
+                            <div className="bg-[#141516] border border-[#23252a] rounded-lg p-5 space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#1f2024] pb-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <Terminal className="w-4 h-4 text-[#00ffcc]" />
+                                        <h3 className="text-xs font-semibold text-[#f7f8f8]">
+                                            Robots.txt Content Editor
+                                        </h3>
+                                        <span className="text-[10px] font-mono text-[#8a8f98]">
+                                            (Served dynamically from /robots.txt)
+                                        </span>
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                        <button
+                                            type="button"
+                                            onClick={() => setData('robots_txt', `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: {sitemap_url}\n`)}
+                                            className="px-2 py-0.5 text-[10px] font-mono bg-[#1f2024] hover:bg-[#282a30] text-[#00ffcc] rounded border border-[#2a2c32] transition-colors"
+                                        >
+                                            Preset: Allow All (Standard)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setData('robots_txt', `User-agent: GPTBot\nDisallow: /\n\nUser-agent: CCBot\nDisallow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n\nUser-agent: Bytespider\nDisallow: /\n\nUser-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: {sitemap_url}\n`)}
+                                            className="px-2 py-0.5 text-[10px] font-mono bg-[#1f2024] hover:bg-[#282a30] text-purple-400 rounded border border-[#2a2c32] transition-colors"
+                                        >
+                                            Preset: Block AI Scrapers
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setData('robots_txt', `User-agent: *\nDisallow: /\n`)}
+                                            className="px-2 py-0.5 text-[10px] font-mono bg-red-900/20 hover:bg-red-900/30 text-red-400 rounded border border-red-800/40 transition-colors"
+                                        >
+                                            Preset: Disallow All
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (!data.robots_txt.includes('Sitemap:')) {
+                                                    setData('robots_txt', `${data.robots_txt.trim()}\n\nSitemap: {sitemap_url}\n`);
+                                                }
+                                            }}
+                                            className="px-2 py-0.5 text-[10px] font-mono bg-[#1f2024] hover:bg-[#282a30] text-[#5e6ad2] rounded border border-[#2a2c32] transition-colors"
+                                        >
+                                            + Sitemap Token
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <textarea
+                                        rows={8}
+                                        value={data.robots_txt}
+                                        onChange={(e) => setData('robots_txt', e.target.value)}
+                                        placeholder={`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: https://warrdev.site/sitemap.xml\n`}
+                                        className="w-full bg-[#090a0c] border border-[#23252a] focus:border-[#5e6ad2] rounded-md p-3.5 text-xs text-[#00ffcc] font-mono focus:outline-none transition-colors resize-y leading-relaxed"
+                                        spellCheck="false"
+                                    />
+                                    <div className="flex items-center justify-between text-[10px] font-mono text-[#62666d]">
+                                        <span>Use <code className="text-[#00ffcc] bg-[#141516] px-1 py-0.5 rounded">&#123;sitemap_url&#125;</code> to dynamically inject your XML sitemap URL.</span>
+                                        <span>Character count: {data.robots_txt?.length || 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section 3: Cloudflare & Hostinger Crawler Access Advisory */}
+                            <div className="bg-[#101216] border border-[#232a3b] rounded-lg p-4 space-y-2">
+                                <div className="flex items-start gap-2.5">
+                                    <AlertCircle className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+                                    <div className="space-y-1 text-xs">
+                                        <h4 className="font-semibold text-[#f7f8f8]">
+                                            Troubleshooting Crawler Access, Bot Inspection & Cache Misses
+                                        </h4>
+                                        <p className="text-[#8a8f98] leading-relaxed">
+                                            If website reader tools, automated bots, or SEO inspection suites report <span className="text-amber-300 font-mono">Cache miss</span> or <span className="text-amber-300 font-mono">Unable to inspect</span> on <span className="font-mono text-[#f7f8f8]">warrdev.site</span>:
+                                        </p>
+                                        <ul className="list-disc list-inside space-y-1 text-[#8a8f98] pl-1 pt-1 font-mono text-[11px]">
+                                            <li>
+                                                <strong className="text-[#f7f8f8]">Cloudflare Bot Fight Mode:</strong> In Cloudflare Dashboard → <span className="text-[#5e6ad2]">Security</span> → <span className="text-[#5e6ad2]">Bots</span>, verify if <span className="text-amber-300">Bot Fight Mode</span> is enabled. When enabled, Cloudflare challenges automated readers with JavaScript challenges, blocking website readers.
+                                            </li>
+                                            <li>
+                                                <strong className="text-[#f7f8f8]">SSL/TLS Encryption Mode:</strong> In Cloudflare → <span className="text-[#5e6ad2]">SSL/TLS</span>, ensure the mode is set to <span className="text-emerald-400">Full</span> or <span className="text-emerald-400">Full (Strict)</span> to prevent redirect loops.
+                                            </li>
+                                            <li>
+                                                <strong className="text-[#f7f8f8]">Custom Page Rules / WAF:</strong> Ensure your Cloudflare WAF does not block user-agents containing <span className="text-cyan-300">Googlebot</span>, <span className="text-cyan-300">Bingbot</span>, or <span className="text-cyan-300">curl</span> for public paths like <span className="text-[#00ffcc]">/robots.txt</span> and <span className="text-[#00ffcc]">/sitemap.xml</span>.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section 4: Page Meta & Social Graph (OpenGraph / Twitter) */}
+                            <div className="bg-[#141516] border border-[#23252a] rounded-lg p-5 space-y-4">
+                                <h3 className="text-xs font-semibold text-[#f7f8f8] border-b border-[#1f2024] pb-2.5 flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-purple-400" />
+                                    OpenGraph Cards & Social Meta Tags
+                                </h3>
+
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono text-[#8a8f98]">Global Page Title (&lt;title&gt; and og:title)</label>
                                     <input

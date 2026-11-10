@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -124,10 +125,12 @@ class PortfolioTest extends TestCase
 
         $response = $this->get('/sitemap.xml');
 
+        $expectedBase = SiteSetting::get('canonical_url', url('/'));
+
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/xml');
         $this->assertStringContainsString('<?xml version="1.0" encoding="UTF-8"?>', $response->getContent());
-        $this->assertStringContainsString('<loc>'.url('/').'</loc>', $response->getContent());
+        $this->assertStringContainsString('<loc>'.$expectedBase.'</loc>', $response->getContent());
         $this->assertStringContainsString('<loc>'.route('portfolio.project.show', 'sitemap-test-project').'</loc>', $response->getContent());
     }
 
@@ -135,11 +138,31 @@ class PortfolioTest extends TestCase
     {
         $response = $this->get('/robots.txt');
 
+        $expectedBase = SiteSetting::get('canonical_url', url('/'));
+
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
         $this->assertStringContainsString('User-agent: *', $response->getContent());
         $this->assertStringContainsString('Disallow: /admin', $response->getContent());
-        $this->assertStringContainsString('Sitemap: '.url('/sitemap.xml'), $response->getContent());
+        $this->assertStringContainsString('Sitemap: '.$expectedBase.'/sitemap.xml', $response->getContent());
+    }
+
+    public function test_custom_robots_txt_and_meta_robots_can_be_served_dynamically(): void
+    {
+        SiteSetting::set('robots_txt', "User-agent: GPTBot\nDisallow: /\n\nSitemap: {sitemap_url}\n");
+        SiteSetting::set('meta_robots', 'noindex, nofollow');
+
+        $robotsResponse = $this->get('/robots.txt');
+        $robotsResponse->assertStatus(200);
+        $this->assertStringContainsString('User-agent: GPTBot', $robotsResponse->getContent());
+        $this->assertStringContainsString('Sitemap: https://warrdev.site/sitemap.xml', $robotsResponse->getContent());
+
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertInertia(fn ($page) => $page
+            ->where('recruiterData.metaRobots', 'noindex, nofollow')
+            ->where('recruiterData.canonicalUrl', 'https://warrdev.site')
+        );
     }
 
     public function test_categorized_technical_arsenal_renders_credible_three_tiers(): void

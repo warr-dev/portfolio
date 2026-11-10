@@ -158,6 +158,8 @@ class PortfolioController extends Controller
             'seoDescription' => SiteSetting::get('seo_description', 'Senior Backend & Systems Software Engineer specializing in high-concurrency gaming engines, C++ hardware integrations, low-latency APIs, and distributed systems.'),
             'seoKeywords' => SiteSetting::get('seo_keywords', 'Warren Dalawampu, Senior Backend Developer, Systems Engineer, Laravel, Node.js, C++, Gaming Kiosks, Distributed Systems, High Concurrency'),
             'ogImage' => SiteSetting::get('og_image', ''),
+            'canonicalUrl' => SiteSetting::get('canonical_url', 'https://warrdev.site'),
+            'metaRobots' => SiteSetting::get('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'),
             'education' => [
                 [
                     'degree' => 'Master of Science in Information Technology (MSIT)',
@@ -305,6 +307,12 @@ class PortfolioController extends Controller
             'seoDescription' => $project->description ?: "Technical deep-dive and production architecture for {$project->title} by Warren Dalawampu.",
             'seoKeywords' => implode(', ', array_merge(['Warren Dalawampu', $project->title, $project->badge], is_array($project->tags) ? $project->tags : [])),
             'ogImage' => $project->cover_image ?: ($project->media_url ?: SiteSetting::get('og_image', '')),
+            'canonicalUrl' => SiteSetting::get('canonical_url', 'https://warrdev.site'),
+            'metaRobots' => SiteSetting::get('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'),
+            'logoTextPrimary' => SiteSetting::get('logo_text_primary', 'warr'),
+            'logoTextSecondary' => SiteSetting::get('logo_text_secondary', 'dev'),
+            'logoIconText' => SiteSetting::get('logo_icon_text', 'W'),
+            'favicon' => SiteSetting::get('favicon', '/favicon.svg'),
         ];
 
         // Fetch related/other projects
@@ -326,14 +334,15 @@ class PortfolioController extends Controller
      */
     public function sitemap()
     {
-        $baseUrl = url('/');
-        $projects = Project::orderBy('updated_at', 'desc')->get();
+        $canonicalBase = rtrim(SiteSetting::get('canonical_url', ''), '/');
+        $baseUrl = ! empty($canonicalBase) ? $canonicalBase : url('/');
+        $projects = Project::where('featured', true)->orderBy('updated_at', 'desc')->get();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
         // Homepage
-        $latestUpdate = Project::max('updated_at') ?: now()->toAtomString();
+        $latestUpdate = Project::where('featured', true)->max('updated_at') ?: now()->toAtomString();
         $xml .= "  <url>\n";
         $xml .= "    <loc>{$baseUrl}</loc>\n";
         $xml .= '    <lastmod>'.Carbon::parse($latestUpdate)->toAtomString()."</lastmod>\n";
@@ -363,7 +372,18 @@ class PortfolioController extends Controller
      */
     public function robots()
     {
-        $sitemapUrl = url('/sitemap.xml');
+        $customRobots = SiteSetting::get('robots_txt');
+        $canonicalUrl = rtrim(SiteSetting::get('canonical_url', url('/')), '/');
+        $sitemapUrl = $canonicalUrl.'/sitemap.xml';
+
+        if (! empty($customRobots)) {
+            $content = str_replace(['{sitemap_url}', '{sitemap}'], $sitemapUrl, $customRobots);
+
+            return response($content, 200, [
+                'Content-Type' => 'text/plain',
+            ]);
+        }
+
         $robots = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\n\nSitemap: {$sitemapUrl}\n";
 
         return response($robots, 200, [

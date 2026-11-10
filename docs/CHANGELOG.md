@@ -5,6 +5,16 @@ All notable changes to the **Warren Dalawampu Portfolio & Admin Engine** will be
 ## [Unreleased] - 2026-11-10
 
 ### Added
+- **Admin Control for SEO, Robots.txt & Crawler Directives (`Settings.jsx`, `SettingsController.php`, `PortfolioController.php`, `PortfolioLayout.jsx`, `2026_11_10_023000_seed_seo_and_crawler_settings.php`)**:
+  - **Dynamic `/robots.txt` Engine**: Upgraded `PortfolioController::robots()` to read custom rules stored in `SiteSetting::get('robots_txt')`. Automatically detects and replaces `{sitemap_url}` tokens with the dynamically configured canonical XML sitemap link.
+  - **Full Robots.txt Code Editor & One-Click Presets in Admin**:
+    - Created an interactive monospace syntax-styled editor inside Submodule 05 (`SEO, Robots & Crawlers`).
+    - Added one-click quick presets: "Preset: Allow All (Standard)", "Preset: Block AI Scrapers (GPTBot, CCBot, ClaudeBot, Bytespider, etc.)", "Preset: Disallow All", and "+ Sitemap Token".
+    - Added direct navigation pill links to open live `/robots.txt` and `/sitemap.xml` in new tabs for instant crawler verification.
+  - **Meta Robots Indexing Tag Control**: Added customizable meta robots tag directives in `PortfolioLayout.jsx` and Admin Settings with quick presets: "Standard Public Index", "Simple Index", "Noindex & Nofollow (Private)", and "Noindex, Follow Links".
+  - **Canonical Site URL & Base Domain**: Added configurable canonical base URL (`https://warrdev.site`), updating `<link rel="canonical">`, XML sitemap generation, OpenGraph tags, and JSON-LD structured schemas (`@id` and `url`).
+  - **Cloudflare & Hostinger Troubleshooting Advisory**: Integrated a diagnostic guide into Admin Submodule 05 explaining how Cloudflare "Bot Fight Mode" and SSL encryption modes can cause crawler "Cache miss" or 403 blocks on external readers, providing actionable steps to verify and resolve bot access issues.
+  - **Automated Verification**: Updated `PortfolioTest.php` and `AdminTest.php` to verify dynamic robots.txt serving, canonical sitemap generation, and admin settings persistence (33/33 PHPUnit tests passing).
 - **Categorized Technical Arsenal & Interactive View Switcher (`SkillsSection.jsx`, `PortfolioController.php`, `Settings.jsx`, `PortfolioTest.php`)**:
   - **Credible 3-Tier Experience Categorization**: Replaced subjective 5-star ratings with three experience-grounded categories reflecting real-world operational contexts:
     1. **Production Experience**: PHP, Laravel, Node.js, MySQL, MongoDB, Linux, Docker, Git, REST APIs, CI/CD (`Commercial / 6+ Yrs` badge).

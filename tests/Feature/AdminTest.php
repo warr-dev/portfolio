@@ -80,6 +80,9 @@ class AdminTest extends TestCase
             'seo_description' => 'Custom SEO Meta Description for test verification.',
             'seo_keywords' => 'Warren, Architect, C++, Linux, PHP',
             'og_image' => 'https://images.unsplash.com/photo-custom-test',
+            'canonical_url' => 'https://warrdev.site',
+            'meta_robots' => 'index, follow, max-image-preview:large',
+            'robots_txt' => "User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: {sitemap_url}\n",
         ];
 
         $response = $this->actingAs($this->admin)->post('/admin/settings', $payload);
@@ -102,6 +105,9 @@ class AdminTest extends TestCase
         $this->assertEquals('Custom SEO Meta Description for test verification.', SiteSetting::get('seo_description'));
         $this->assertEquals('Warren, Architect, C++, Linux, PHP', SiteSetting::get('seo_keywords'));
         $this->assertEquals('https://images.unsplash.com/photo-custom-test', SiteSetting::get('og_image'));
+        $this->assertEquals('https://warrdev.site', SiteSetting::get('canonical_url'));
+        $this->assertEquals('index, follow, max-image-preview:large', SiteSetting::get('meta_robots'));
+        $this->assertEquals("User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: {sitemap_url}", SiteSetting::get('robots_txt'));
         $this->assertCount(1, SiteSetting::get('specializedCapabilities'));
         $this->assertStringContainsString('Years', SiteSetting::get('yearsExperience'));
     }
